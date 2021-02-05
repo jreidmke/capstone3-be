@@ -92,6 +92,12 @@
 // Only viewable by admin/username
 // Shows a list of authoer's pieces
 
+// GET /writers/writer_username/pieces/new (FE ROUTE)
+// Shows form to create new piece
+
+// POST /writers/writer_username/pieces/new
+// Insert new piece into DB.
+
 // GET /writers/writer username/pieces/:piece_id
 // Only viewable by admin/username
 // Shows the details of a piece
