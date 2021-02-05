@@ -2,7 +2,10 @@
 
 // **The ONLY VIEWABLE statements are of course a first draft and will probably/definitely be changed to allow more writers/platforms to view more things. The only protected routes should be the 'edit', 'post' and delete routes. Remember, first draft**
 
-// //WRITERS//
+// 
+// **
+// WRITERS//
+// **
 
 // GET /writers
 // Shows a list of writers
@@ -42,7 +45,11 @@
 // DELETE /writers/writer_username/followed_platforms/:platform_name
 // Deletes Platform name from WRITER_FOLLOW_PLATFORM
 
-// //PORTFOLIOS
+// *
+// *
+// // //PORTFOLIOS
+// *
+// *
 
 // GET /writers/writer username/portfolios
 // Only viewable by admin/username
@@ -52,13 +59,17 @@
 // Only viewable by admin/username
 // Shows the contents of portfolio (a list of pieces)
 
+//PATCH /writers/writer username/portfolios/portfolio id/edit
+//ONLY VIEWABLE BY ADMIN/USERNAME
+// Sends patch to UPDATE portfolio name
+
 // GET /writers/writer_username/portfolios/new
 // Only viewable by admin/username
-// Shows form to create new portfolio (includes list of all pieces to add)
+// Shows form to create new portfolio
 
 // POST /writers/writer_username/portfolios/new
 // Only viewable by admin/username
-// Makes POST to create new portfolio. Redirects to /writers/writer_username/portfolios/portfolio_id. 
+// Makes POST to create new portfolio. Redirects to /writers/writer_username/portfolios. 
 
 // GET /writers/writer_username/portfolios/:portfolio_id/add_pieces/
 // Shows a list of all pices by author and AN ICON TO EITHER ADD OR REMOVE PIECE depending on wether or not it is present in portfolio. 
@@ -69,7 +80,13 @@
 // DELETE /writers/writer_username/portfolios/:portfolio_id/add_piece/:piece_id
 // Deletes piece id and portfolio id from PORTFOLIO_PIECE db. 
 
+
+//** */
+//** */
 // //PIECES
+//** */
+//** */
+
 
 // GET /writers/writer username/pieces
 // Only viewable by admin/username

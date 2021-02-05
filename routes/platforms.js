@@ -1,6 +1,11 @@
 // PLATFORM ROUTES
 
+
+
 // //PLATFORMS//
+
+
+
 
 // GET /platforms
 // Shows a list of platforms
@@ -18,6 +23,12 @@
 // DELETE /platforms/:platform_name
 // ONLY viewable by admin/platform
 // Deletes platform from db (also deletes all gigs and applications connected to platform)
+
+
+
+//FOLLOWS//
+
+
 
 // GET /platforms/:platform_name/followed_tags
 // Shows a list of followed tags and other tags to follow if you click on the icon. (*SEE WRITER ROUTING FOR SIMILAR EXAMPLES)
@@ -37,7 +48,13 @@
 // DELETE /platforms/:platform_name/followed_writers/:writer_username
 // Removes tag title and writer username from PLATFORM_FOLLOWS_WRITER db
 
+
+
+
 // //GIGS//
+
+
+
 
 // GET /platforms/:platform_name/gigs
 // Shows a list of gigs from platform
@@ -61,7 +78,13 @@
 // ONLY viewable by admin/platform
 // Deletes gig from DB (also deletes all connected applications).
 
+
+
+
 // //APPLICATIONS//
+
+
+
 
 // GET /platforms/:platform_name/gigs/:gig_id/applications
 // Shows a list of applications. 
