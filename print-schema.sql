@@ -18,7 +18,7 @@ CREATE TABLE writers (
 );
 
 CREATE TABLE tags (
-    tag TEXT PRIMARY KEY,
+    title TEXT PRIMARY KEY,
     is_fiction BOOLEAN NOT NULL
 );
 
@@ -92,8 +92,8 @@ CREATE TABLE portfolio_pieces (
 CREATE TABLE piece_tags (
     tag_title TEXT
         REFERENCES tags ON DELETE CASCADE,
-    piece_id TEXT
-        REFERENCES tags ON DELETE CASCADE,
+    piece_id INTEGER
+        REFERENCES pieces ON DELETE CASCADE,
     PRIMARY KEY (tag_title, piece_id)
 ); 
 

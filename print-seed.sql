@@ -1,5 +1,7 @@
 --both writers have the password "password"
 
+-- ***WRITERS***
+
 INSERT INTO writers (username, password, first_name, last_name, bio, age, location, email, phone, twitter_username, facebook_username, youtube_username, is_admin)
 VALUES ('test1',
     '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q',
@@ -28,23 +30,34 @@ VALUES ('test1',
     'testadmin',
     TRUE);
 
+-- **TAGS**
+
+INSERT INTO tags (title, is_fiction)
+VALUES ('Comedy', TRUE), ('Politics', FALSE), ('History', FALSE), ('Sci-Fi', TRUE), ('Cooking', FALSE), ('Horror', TRUE);
+
+-- **PORTFOLIOS**
+
 INSERT INTO portfolios (writer_username, title)
-VALUES ('test1', 'Test Portfolio 1'), ('test2', 'Test Portfolio 2'); 
+VALUES ('test1', 'Fiction Portfolio 1'), ('test2', 'Non-Fiction Portfolio 2'); 
+
+-- **PIECES**
 
 INSERT INTO pieces (writer_username, title, text)
 VALUES ('test1', 
-    'Test Piece 1', 
+    'Fiction Piece 1', 
     'Remember, a Jedi can feel the Force flowing through him. I don''t know what you''re talking about. I am a member of the Imperial Senate on a diplomatic mission to Alderaan-- Alderaan? I''m not going to Alderaan. I''ve got to go home. It''s late, I''m in for it as it is.
     You mean it controls your actions? Your eyes can deceive you. Don''t trust them. But with the blast shield down, I can''t even see! How am I supposed to fight? The more you tighten your grip, Tarkin, the more star systems will slip through your fingers.
     Look, I can take you as far as Anchorhead. You can get a transport there to Mos Eisley or wherever you''re going.'),
     ('test2',
-    'Test Piece 2', 
+    'Non-Fiction Piece 2', 
     'Remember, a Jedi can feel the Force flowing through him. I don''t know what you''re talking about. I am a member of the Imperial Senate on a diplomatic mission to Alderaan-- Alderaan? I''m not going to Alderaan. I''ve got to go home. It''s late, I''m in for it as it is.
     You mean it controls your actions? Your eyes can deceive you. Don''t trust them. But with the blast shield down, I can''t even see! How am I supposed to fight? The more you tighten your grip, Tarkin, the more star systems will slip through your fingers.
     Look, I can take you as far as Anchorhead. You can get a transport there to Mos Eisley or wherever you''re going.'
     );
 
 --both platforms have the password "password"
+
+-- **PLATFORMS**
 
 INSERT INTO platforms(name, password, location, description, logo_url, email, phone, twitter_username, facebook_username, youtube_username, is_admin)
 VALUES ('platform1',
@@ -70,7 +83,43 @@ VALUES ('platform1',
     'platform2',
     TRUE);
 
+-- **GIGS**
+
 INSERT INTO gigs (platform_name, title, description, compensation, is_remote, gig_type)
 VALUES ('platform1', 
-    'Comedy Writing Gig', 'Write us a funny    script for our youtube sketch channel', 75, TRUE, 'One-Time'),
-    ('platform2', 'New Article about Tammy Baldwin', 'We need someone to write us a story about Tammy Baldwin. If this goes well, there is potential for recurring work.', 100, FALSE, 'Recurring'); 
+    'Comedy Writing Gig', 'Write us a funny script for our youtube sketch horror-comedy channel', 75, TRUE, 'One-Time'),
+    ('platform2', 'New Article about Tammy Baldwin', 'We need someone to write us a story about Tammy Baldwin from a historical perspective. If this goes well, there is potential for recurring work.', 100, FALSE, 'Recurring'), 
+    ('platform1', 'Star Wars Sequel', 'Help us write the next Star Wars Movie for $50', 50, TRUE, 'One-Time'),
+    ('platform2', 'Recipes', 'Come write recipes for us. We need food now!', 1000, FALSE, 'Fulltime'); 
+
+-- **APPLICATIONS**
+
+INSERT INTO applications (writer_username, platform_name, gig_id, portfolio_id, is_active)
+VALUES('test1', 'platform1', 1, 1, TRUE), ('test2', 'platform2', 2, 2, TRUE);
+
+-- **PORTFOLIO PIECES
+
+INSERT INTO portfolio_pieces 
+VALUES(1, 1), (2, 2);
+
+-- **TAG JOINS**
+
+INSERT INTO piece_tags
+VALUES('Comedy', 1), ('Horror', 1), ('Politics', 2), ('History', 2); 
+
+INSERT INTO gig_tags
+VALUES(1, 'Comedy'), (1, 'Horror'), (2, 'Politics'), (2, 'History'); 
+
+-- **FOLLOWS**
+
+INSERT INTO writer_follows_tag
+VALUES('test1', 'Comedy'), ('test1', 'Horror'), ('test1', 'Sci-Fi'), ('test2', 'History'), ('test2', 'Politics'), ('test2', 'Cooking');
+
+INSERT INTO writer_follows_platform
+VALUES('test1', 'platform1'), ('test2', 'platform2');
+
+INSERT INTO platform_follows_tag
+VALUES('platform1', 'Comedy'), ('platform1', 'Horror'), ('platform1', 'Sci-Fi'), ('platform2', 'History'), ('platform2', 'Politics'), ('platform2', 'Cooking');
+
+INSERT INTO platform_follows_writer
+VALUES('platform1', 'test1'), ('platform2', 'test2');
