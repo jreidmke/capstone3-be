@@ -13,7 +13,7 @@
 // GET /platforms/:platform_name
 // Returns data on specified platform
 
-// GET /platforms/:platform_name/edit
+// GET /platforms/:platform_name/edit (FRONT END ROUTE)
 // ONLY viewable by admin/platform
 // Shows platform edit form
 
@@ -60,7 +60,7 @@
 // Shows a list of gigs from platform
 // NOTE: Clicking on these routes will not take you to `/platforms/:platform_name/gigs/:gig_id`. It will take you to `/gigs/:gig_id`. 
 
-// GET /platforms/:platform_name/gigs/new_gig
+// GET /platforms/:platform_name/gigs/new_gig (FRONT END ROUTE)
 // Shows form to create new gig
 
 // POST /platforms/:platform_name/gigs/new_gig
