@@ -9,7 +9,7 @@ const {
   BadRequestError,
   UnauthorizedError,
 } = require("../expressError");
-const checkForWriter = require('../helpers/writer');
+const checkForItem = require('../helpers/checks');
 
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
 
@@ -48,16 +48,7 @@ class Writer {
      */
 
     static async register({username, password, firstName, lastName, age, location, email, phone, twitterUsername, facebookUsername, youtubeUsername, isAdmin}) {
-      const duplicateCheck = await db.query(
-        `SELECT username
-        FROM writers
-        WHERE username = $1`,
-        [username]
-      );
-
-      if(duplicateCheck.rows[0]) {
-        throw new BadRequestError(`Duplicate username: ${username}`);
-      }; 
+      if(await checkForItem(username, 'writers', 'username')) throw new BadRequestError(`Duplicate username: ${username}. Please select another.`);
 
       const hashWord = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
 
@@ -170,7 +161,7 @@ class Writer {
     */
 
     static async getFollowedTags(username) {
-      if(!await checkForWriter(username)) throw new NotFoundError(`No user: ${username}`);
+      if(!await checkForItem(username, 'writers', 'username')) throw new NotFoundError(`No user: ${username}`);
 
       let result = await db.query(
         `SELECT * 
@@ -192,17 +183,10 @@ class Writer {
      */
 
     static async followTag(username, tagTitle) {
-      const writer = await checkForWriter(username);
+      const writer = await checkForItem(username, 'writers', 'username');
       if(!writer) throw new NotFoundError(`No User: ${username}`);
 
-      let tagRes = await db.query(
-        `SELECT title
-        FROM tags
-        WHERE title=$1`,
-        [tagTitle]
-      ); 
-
-      const tag = tagRes.rows[0];
+      const tag = await checkForItem(tagTitle, 'tags', 'title');
       if(!tag) throw new NotFoundError(`No Tag: ${tagTitle}`);
 
       let result = await db.query(
@@ -224,17 +208,10 @@ class Writer {
     */
 
     static async unfollowTag(username, tagTitle) {
-      const writer = await checkForWriter(username);
+      const writer = await checkForItem(username, 'writers', 'username');
       if(!writer) throw new NotFoundError(`No User: ${username}`);
 
-      let tagRes = await db.query(
-        `SELECT title
-        FROM tags
-        WHERE title=$1`,
-        [tagTitle]
-      ); 
-
-      const tag = tagRes.rows[0];
+      const tag = await checkForItem(tagTitle, 'tags', 'title');
       if(!tag) throw new NotFoundError(`No Tag: ${tagTitle}`);
 
       let result = await db.query(
@@ -255,7 +232,7 @@ class Writer {
     */
 
     static async getFollowedPlatforms(username) {
-      if(!await checkForWriter(username)) throw new NotFoundError(`No user: ${username}`);
+      if(!await checkForItem(username, 'writers', 'username')) throw new NotFoundError(`No user: ${username}`);
       
       const result = await db.query(
         `SELECT * FROM writer_follows_platform
@@ -275,18 +252,11 @@ class Writer {
      */
 
     static async followPlatform(username, platformHandle) {
-      const writer = await checkForWriter(username);
+      const writer = await checkForItem(username, 'writers', 'username');
       if(!writer) throw new NotFoundError(`No User: ${username}`);
 
-      let platformRes = await db.query(
-        `SELECT handle
-          FROM platforms
-          WHERE handle=$1`,
-          [platformHandle]
-      );
-
-      const platform = platformRes.rows[0];
-      if(!platform) throw new NotFoundError(`No Platform: ${platformHandle}`);
+      const platform = await checkForItem(platformHandle, 'platforms', 'handle');
+      if(!platform) throw new NotFoundError(`No Platform: ${platformHandle}`); 
 
       const result = await db.query(
         `INSERT INTO writer_follows_platform
@@ -299,18 +269,11 @@ class Writer {
     };
 
     static async unfollowPlatform(username, platformHandle) {
-      const writer = await checkForWriter(username);
+      const writer = await checkForItem(username, 'writers', 'username');
       if(!writer) throw new NotFoundError(`No Username: ${username}`);
 
-      let platformRes = await db.query(
-        `SELECT handle
-          FROM platforms
-          WHERE handle=$1`,
-          [platformHandle]
-      );
-
-      const platform = platformRes.rows[0];
-      if(!platform) throw new NotFoundError(`No Platform: ${platformHandle}`);
+      const platform = await checkForItem(platformHandle, 'platforms', 'handle');
+      if(!platform) throw new NotFoundError(`No Platform: ${platformHandle}`); 
 
       const result = await db.query(
         `DELETE FROM writer_follows_platform
