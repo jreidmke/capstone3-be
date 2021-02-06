@@ -83,7 +83,24 @@ class Writer {
       const user = result.rows[0];
 
       return user;
+    }; 
 
+    /**Finds all writers
+     * 
+     * Returns [{username, first_name, last_name, image_url, location}, ...]
+     */
+
+    static async findAll() {
+      const result = await db.query(
+        `SELECT username,
+          first_name AS firstName,
+          last_name AS lastName,
+          image_url AS imageUrl,
+          location
+        FROM writers
+        ORDER BY username`
+      );
+      return result.rows;
     }
 };
 

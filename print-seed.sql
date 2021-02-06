@@ -2,11 +2,12 @@
 
 -- ***WRITERS***
 
-INSERT INTO writers (username, password, first_name, last_name, bio, age, location, email, phone, twitter_username, facebook_username, youtube_username, is_admin)
+INSERT INTO writers (username, password, first_name, last_name, image_url, bio, age, location, email, phone, twitter_username, facebook_username, youtube_username, is_admin)
 VALUES ('test1',
     '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q',
     'Test',
     'Writer',
+    'https://searchengineland.com/figz/wp-content/seloads/2018/09/writer-writing-ss-1920.jpg',
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     32,
     'Milwaukee',
@@ -20,6 +21,7 @@ VALUES ('test1',
     '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q',
     'Test',
     'Admin',
+    'https://searchengineland.com/figz/wp-content/seloads/2018/09/writer-writing-ss-1920.jpg',
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     32,
     'Chicago',

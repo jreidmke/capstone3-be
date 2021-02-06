@@ -7,6 +7,32 @@
 // WRITERS//
 // **
 
+"use strict";
+
+const express = require("express");
+const jsonschema = require("jsonschema");
+const Writer = require("../models/writer");
+const { BadRequestError } = require("../expressError");
+const { createToken } = require("../helpers/token");
+const router = express.Router();
+
+/**GET / => {writers: [ {username, first_name, last_name, image_url, location}, ...]}
+ * 
+ * Returns a list of all writers
+ * 
+ * Auth required: admin or platform
+ */
+router.get("/", async function(req, res, next) {
+    try {
+        const writers = await Writer.findAll();
+        return res.json({ writers });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+module.exports = router;
+ 
 // GET /writers
 // Shows a list of writers
 
