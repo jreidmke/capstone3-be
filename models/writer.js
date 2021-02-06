@@ -255,6 +255,8 @@ class Writer {
     */
 
     static async getFollowedPlatforms(username) {
+      if(!await checkForWriter(username)) throw new NotFoundError(`No user: ${username}`);
+      
       const result = await db.query(
         `SELECT * FROM writer_follows_platform
         WHERE writer_username=$1`,
