@@ -70,10 +70,10 @@ router.delete("/:username", async function(req, res, next) {
 });
 module.exports = router;
 
-
-// GET /writers/writer_username/followed_tags
-// ONLY viewalbe by admin/username
-// Shows a list of tags the writer is following with ICON LINKS TO send POST || DELETE reqs. 
+/**GET /[username]/followed_tags => [{username, tagTitle},...]
+ * 
+ * Auth: admin or correct user
+ */
 
 router.get("/:username/followed_tags", async function(req, res, next) {
     try {
@@ -84,11 +84,34 @@ router.get("/:username/followed_tags", async function(req, res, next) {
     }
 });
 
-// POST /writers/writer_username/followed_tags/:tag_title
-// Adds TAG title to WRITER_FOLLOW_TAG DB
+/**POST /[username]/followed_tags/[tagTitle] => {followed: {username, tagTitle}} 
+ * 
+ * Auth: admin or correct user
+*/
 
-// DELETE /writers/writer_username/followed_tags/:tag_title
-// Deletes TAG title from WRITER_FOLLOW_TAG
+router.post("/:username/followed_tags/:tagTitle", async function(req, res, next) {
+    try {
+        const followed = await Writer.followTag(req.params.username, req.params.tagTitle);
+        return res.json({ followed });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+
+/**DELETE /[username]/followed_tags/[tagTitle] => {unfollowed: {username, tagTitle}}
+ * 
+ * Auth: admin or correct user
+ */
+
+router.delete("/:username/followed_tags/:tagTitle", async function(req, res, next) {
+    try {
+        const unfollowed = await Writer.unfollowTag(req.params.username, req.params.tagTitle);
+        return res.json({ unfollowed });
+    } catch (error) {
+        return next(error);
+    }
+})
 
 // GET /writers/writer_username/followed_platforms
 // ONLY viewalbe by admin/username 
@@ -104,6 +127,10 @@ router.get("/:username/followed_tags", async function(req, res, next) {
 // GET /writers/writer username/edit (FRONT END STUFF)
 // Only viewable by admin/username
 // Shows a writers profile edit form
+
+// GET /writers/writer_username/followed_tags (FRONT END NOTES)
+// ONLY viewalbe by admin/username
+// Shows a list of tags the writer is following with ICON LINKS TO send POST || DELETE reqs. 
 
 // *
 // *

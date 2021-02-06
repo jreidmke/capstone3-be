@@ -164,6 +164,11 @@ class Writer {
       if(!writer) throw new NotFoundError(`No Writer: ${username}`);
     };
 
+    /**GET FOLLOWED TAGS: {username} => [{username, tagTitle}, ...] 
+     * 
+     * Failure throws NotFoundError
+    */
+
     static async getFollowedTags(username) {
       let result = await db.query(
         `SELECT * 
@@ -178,6 +183,11 @@ class Writer {
       
       return followedTags;
     };
+
+    /**FOLLOW TAG: {username, tagTitle} => {username, tagTitle}
+     * 
+     * Failure throws NotFoundError
+     */
 
     static async followTag(username, tagTitle) {
       let writerRes = await db.query(
@@ -204,14 +214,47 @@ class Writer {
         `INSERT INTO writer_follows_tag
         VALUES($1, $2)
         RETURNING 
-        writer_username AS username
+        writer_username AS username,
         tag_title AS tagTitle
         `,
         [writer.username, tag.title]
       ); 
 
       return result.rows[0];
-    }
+    };
+
+    static async unfollowTag(username, tagTitle) {
+      let writerRes = await db.query(
+        `SELECT username 
+          FROM writers
+          WHERE username=$1`,
+          [username]
+      );
+
+      const writer = writerRes.rows[0];
+      if(!writer) throw new NotFoundError(`No Writer: ${username}`);
+
+      let tagRes = await db.query(
+        `SELECT title
+        FROM tags
+        WHERE title=$1`,
+        [tagTitle]
+      ); 
+
+      const tag = tagRes.rows[0];
+      if(!tag) throw new NotFoundError(`No Tag: ${tagTitle}`);
+
+      let result = await db.query(
+        `DELETE FROM writer_follows_tag
+        WHERE writer_username=$1
+        AND tag_title=$2
+        returning writer_username AS username,
+        tag_title AS tagTitle`,
+        [writer.username, tag.title]
+      );
+
+      return result.rows[0];
+    };
 };
 
 
@@ -223,11 +266,6 @@ module.exports = Writer;
 
 
 
-// FOLLOW TAG
-// -Input: Username, tag title
-// -Success returns username, tagtitle
-// -Failure throws NotFoundError.
-// Limitations: ensureCorrectUserOrAdmin, json schema for follow tag
 
 // FOLLOW PLATFORM
 // -Input: Username, platform name
