@@ -1,10 +1,51 @@
 // WRITER MODEL METHODS
 
-// AUTHENTICATE
-// -Input: username, password
-// -Success returns all data on writer except password, all portfolios, pieces, applications, followed tags, and followed platforms.
-// -Failure throws UnauthorizedError.
-// Limitations: Auth User schema
+"use strict";
+
+const db = require("../db");
+const bcrypt = require("bcrypt");
+// const { sqlForPartialUpdate } = require("../helpers/sql");
+const {
+  NotFoundError,
+  BadRequestError,
+  UnauthorizedError,
+} = require("../expressError");
+
+const { BCRYPT_WORK_FACTOR } = require("../config.js");
+
+class Writer {
+
+     /** AUTHENTICATE
+    -Input: username, password
+    -Success returns username, is_admin prop.
+    -Failure throws UnauthorizedError.
+    Works in tandem with /writers/login route to create JWT
+    used to make further requests.
+    */
+
+    static async authenticate(username, password) {
+        const result = await db.query(
+                `SELECT username, password, is_admin
+                FROM writers
+                WHERE username=$1`,
+                [username]
+        );
+
+        const user = result.rows[0];
+
+        if(user) {
+          const validPassword = await bcrypt.compare(password, user.password);
+          if(validPassword === true) {
+            delete user.password;
+            return user;
+          };
+        };
+        throw new UnauthorizedError('Invaid username/password');
+    }
+};
+
+module.exports = Writer;
+
 
 // REGISTER
 // -Input: username, password, first_name, last_name, age, location, email, phone, twitter_url, facebook_url, youtube_url, is_admin
