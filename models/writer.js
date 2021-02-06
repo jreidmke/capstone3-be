@@ -223,6 +223,11 @@ class Writer {
       return result.rows[0];
     };
 
+    /**UNFOLLOW TAG: {username, tagTitle} => {username, tagTitle} 
+     * 
+     * Failure throws NotFoundError.
+    */
+
     static async unfollowTag(username, tagTitle) {
       let writerRes = await db.query(
         `SELECT username 
@@ -256,7 +261,29 @@ class Writer {
       return result.rows[0];
     };
 
-    static async followPlatform(username, platformName) {
+    /**GET FOLLOWED PLATFORMS: {username} => [{username, platformHandle}, ...] 
+     * 
+     * Failure throws NotFoundError
+    */
+    static async getFollowedPlatforms(username) {
+      const result = await db.query(
+        `SELECT * FROM writer_follows_platform
+        WHERE writer_username=$1`,
+        [username]
+      );
+
+      const platformFollows = result.rows;
+      if(!platformFollows.length) throw new NotFoundError(`User: ${username} follows no platforms.`);
+
+      return platformFollows;
+    };
+
+    /**FOLLOW PLATFORM: {username, platformHandle} => {username, platformHandle}
+     * 
+     * Failure throws NotFoundError
+     */
+
+    static async followPlatform(username, platformHandle) {
       let writerRes = await db.query(
         `SELECT username 
           FROM writers
@@ -268,21 +295,56 @@ class Writer {
       if(!writer) throw new NotFoundError(`No Writer: ${username}`);
 
       let platformRes = await db.query(
-        `SELECT platform_name
+        `SELECT handle
           FROM platforms
-          WHERE platform_name=$1`,
-          [platformName]
+          WHERE handle=$1`,
+          [platformHandle]
       );
 
       const platform = platformRes.rows[0];
-      if(!platform) throw new NotFoundError(`No Platform: ${platformName}`);
+      if(!platform) throw new NotFoundError(`No Platform: ${platformHandle}`);
 
-      const results = await db.query(
+      const result = await db.query(
         `INSERT INTO writer_follows_platform
         VALUES($1, $2)
         RETURNING writer_username AS username,
-        platform_`
-      )
+        platform_handle AS platformHandle`,
+        [writer.username, platform.handle]
+      );
+      return result.rows[0];
+    };
+
+    static async unfollowPlatform(username, platformHandle) {
+      let writerRes = await db.query(
+        `SELECT username 
+          FROM writers
+          WHERE username=$1`,
+          [username]
+      );
+
+      const writer = writerRes.rows[0];
+      if(!writer) throw new NotFoundError(`No Writer: ${username}`);
+
+      let platformRes = await db.query(
+        `SELECT handle
+          FROM platforms
+          WHERE handle=$1`,
+          [platformHandle]
+      );
+
+      const platform = platformRes.rows[0];
+      if(!platform) throw new NotFoundError(`No Platform: ${platformHandle}`);
+
+      const result = await db.query(
+        `DELETE FROM writer_follows_platform
+        WHERE writer_username=$1
+        AND platform_handle=$2
+        returning writer_username AS username,
+        platform_handle AS platformHandle`,
+        [writer.username, platform.handle]
+      );
+
+      return result.rows[0];
     }
 };
 

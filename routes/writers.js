@@ -5,10 +5,10 @@
 "use strict";
 
 const express = require("express");
-const jsonschema = require("jsonschema");
 const Writer = require("../models/writer");
 const { BadRequestError } = require("../expressError");
-const { createToken } = require("../helpers/token");
+const jsonschema = require("jsonschema");
+
 const router = express.Router();
 
 /**GET / => {writers: [ {username, first_name, last_name, image_url, location}, ...]}
@@ -17,6 +17,7 @@ const router = express.Router();
  * 
  * Auth required: ensure logged in.
  */
+
 router.get("/", async function(req, res, next) {
     try {
         const writers = await Writer.getAll();
@@ -98,7 +99,6 @@ router.post("/:username/followed_tags/:tagTitle", async function(req, res, next)
     }
 });
 
-
 /**DELETE /[username]/followed_tags/[tagTitle] => {unfollowed: {username, tagTitle}}
  * 
  * Auth: admin or correct user
@@ -113,16 +113,47 @@ router.delete("/:username/followed_tags/:tagTitle", async function(req, res, nex
     }
 })
 
-// GET /writers/writer_username/followed_platforms
-// ONLY viewalbe by admin/username 
-// Shows a list of platforms the writer follows with ICON LINKS TO send POST || DELETE reqs. 
+/**GET /[username]/followed_platforms => [{username, platformHandle},...]
+ * 
+ * Auth: admin or correct user
+ */
 
-// POST /writers/writer_username/followed_platforms/:platform_name
-// Adds Platform name to WRITER_FOLLOW_PLATFORM
+router.get("/:username/followed_platforms", async function(req, res, next) {
+    try {
+        const platforms = await Writer.getFollowedPlatforms(req.params.username);
+        return res.json({ platforms });
+    } catch (error) {
+        return next(error);
+    };
+});
 
-// DELETE /writers/writer_username/followed_platforms/:platform_name
-// Deletes Platform name from WRITER_FOLLOW_PLATFORM
+/**POST /[username]/followed_platforms/:platformHandle
+ * 
+ * Auth: admin or correct user
+ */
 
+router.post("/:username/followed_platforms/:platformHandle", async function(req, res, next) {
+    try {
+        const followed = await Writer.followPlatform(req.params.username, req.params.platformHandle);
+        return res.json({ followed });
+    } catch (error) {
+        return next(error);
+    }
+})
+
+/**DELETE /[username]/followed_platforms/:platformHandle
+ * 
+ * Auth: admin or correct user
+ */
+
+router.delete("/:username/followed_platforms/:platformHandle", async function(req, res, next) {
+    try {
+        const unfollowed = await Writer.unfollowPlatform(req.params.username, req.params.platformHandle);
+        return res.json({ unfollowed });
+    } catch (error) {
+        return next(error);
+    }
+});
  
 // GET /writers/writer username/edit (FRONT END STUFF)
 // Only viewable by admin/username
