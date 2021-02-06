@@ -12,15 +12,14 @@ const {
 } = require("../expressError");
 
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
+const { user } = require("../db");
 
 class Writer {
 
-     /** AUTHENTICATE
-    -Input: username, password
-    -Success returns username, is_admin prop.
-    -Failure throws UnauthorizedError.
-    Works in tandem with /writers/login route to create JWT
-    used to make further requests.
+     /** AUTHENTICATE WRITER
+    Success: {username, password} => {username, is_admin}
+    Failure throws UnauthorizedError.
+    Works in tandem with /writers/login route to create JWT used to make further requests.
     */
 
     static async authenticate(username, password) {
@@ -41,6 +40,45 @@ class Writer {
           };
         };
         throw new UnauthorizedError('Invaid username/password');
+    }; 
+
+    static async register({username, password, firstName, lastName, age, location, email, phone, twitter_username, facebook_username, youtube_username, isAdmin}) {
+      const duplicateCheck = await db.query(
+        `SELECT username
+        FROM writers
+        WHERE username = $1`,
+        [username]
+      );
+
+      if(duplicateCheck.rows[0]) {
+        throw new BadRequestError(`Duplicate username: ${username}`);
+      }; 
+
+      const hashWord = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+
+      const result = await db.query(
+        `INSERT INTO writers(
+          username,
+          password,
+          first_name,
+          last_name,
+          age,
+          location,
+          email,
+          phone,
+          twitter_username,
+          facebook_username,
+          youtube_username,
+          is_admin
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        RETURNING username, is_admin`, 
+        [username, hashWord, firstName, lastName, age, location, email, phone, twitter_username, facebook_username, youtube_username, isAdmin]
+      );
+
+      const user = result.rows[0];
+
+      return user;
+
     }
 };
 

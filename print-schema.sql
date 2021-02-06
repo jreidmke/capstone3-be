@@ -6,7 +6,7 @@ CREATE TABLE writers (
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     image_url TEXT,
-    bio TEXT NOT NULL,
+    bio TEXT,
     age INTEGER NOT NULL,
     location TEXT NOT NULL,
     email TEXT NOT NULL CHECK (position('@' IN email) > 1),
