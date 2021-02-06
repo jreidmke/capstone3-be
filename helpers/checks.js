@@ -10,6 +10,7 @@ async function checkForItem(value, table, column) {
 
     const resp = result.rows[0];
     if(!resp) return false
+    if(resp.password) delete resp.password;
     return resp;
 };
 
