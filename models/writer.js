@@ -76,7 +76,7 @@ class Writer {
           youtube_username,
           is_admin
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-        RETURNING username, is_admin`, 
+        RETURNING username, is_admin AS isAdmin`, 
         [username, hashWord, firstName, lastName, age, location, email, phone, twitterUsername, facebookUsername, youtubeUsername, isAdmin]
       );
 
@@ -88,13 +88,6 @@ class Writer {
 };
 
 module.exports = Writer;
-
-
-// REGISTER
-// -Input: username, password, first_name, last_name, age, location, email, phone, twitter_url, facebook_url, youtube_url, is_admin
-// -Success returns all data on writer except password
-// -Failure throws BadRequestError
-// Limitations: Register User schema
 
 // FIND ALL
 // -Success returns all data on all writers (except their password, as well as followed tags and followed platforms)

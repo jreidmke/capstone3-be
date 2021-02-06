@@ -33,7 +33,7 @@ router.post("/writers/login", async function(req, res, next) {
 
         const { username, password } = req.body;
         const user = await Writer.authenticate(username, password);
-        const token = createToken(user);
+        const token = createToken(user, true);
         return res.json({ token });
     } catch (error) {
         return next(error);
@@ -52,7 +52,7 @@ router.post("/writers/register", async function(req, res, next) {
         //again, JSON SCHEMA VALIDATORS
 
         const newUser = await Writer.register({...req.body, isAdmin: false});
-        const token = createToken(newUser);
+        const token = createToken(newUser, true);
         return res.status(201).json({ token }); 
     } catch (error) {
         return next(error);

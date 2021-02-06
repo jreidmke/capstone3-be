@@ -29,9 +29,10 @@ class Platform {
             [username]
         ); 
         const user = result.rows[0]; 
-
+        console.log(user);
         if(user) {
             const validPassword = await bcrypt.compare(password, user.password);
+            console.log(validPassword);
             if(validPassword === true) {
                 delete user.password;
                 return user;
@@ -75,8 +76,8 @@ class Platform {
                 youtube_username,
                 is_admin
             ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-            RETURNING username, is_admin`,
-            [username, password, platformName, location, description, logoUrl, email, phone, twitterUsername, facebookUsername, youtubeUsername, isAdmin]
+            RETURNING username, is_admin AS isAdmin`,
+            [username, hashWord, platformName, location, description, logoUrl, email, phone, twitterUsername, facebookUsername, youtubeUsername, isAdmin]
         );
 
         const user = result.rows[0];
