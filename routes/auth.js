@@ -79,7 +79,12 @@ router.post("/platforms/login", async function(req, res, next) {
     };
 }); 
 
-/**POST /platforms/register:  user must include all PLATFORM PROPERTIES except is_admin, and description => { token }*/
+/**POST /platforms/register:  user must include all PLATFORM PROPERTIES except is_admin, and description => { token }
+ * 
+ * Returns JWT used to auth further reqs.
+ * 
+ * Auth required: none
+*/
 
 router.post("/platforms/register", async function(req, res, next) {
     try {
