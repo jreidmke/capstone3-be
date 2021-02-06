@@ -20,21 +20,37 @@ const router = express.Router();
  * 
  * Returns a list of all writers
  * 
- * Auth required: admin or platform
+ * Auth required: ensure logged in.
  */
 router.get("/", async function(req, res, next) {
     try {
-        const writers = await Writer.findAll();
+        const writers = await Writer.getAll();
         return res.json({ writers });
     } catch (error) {
         return next(error);
     }
 });
 
+/**GET /[username] => {user}
+ * 
+ * Returns { username, firstName, lastName, image_url, age, location, email, phone, twitterUsername, facebookUsername, youtubeUsername, portfolios }
+ *      where portfolios is { id, title, writer_username}
+ *  
+ * Auth required: ensure logged in.
+ */ 
+
+router.get("/:username", async function(req, res, next) {
+    try {
+        const writer = await Writer.getByUsername(req.params.username);
+        return res.json({ writer });
+    } catch (error) {
+        return next(error);
+    }
+})
+
 module.exports = router;
  
-// GET /writers
-// Shows a list of writers
+
 
 // GET /writers/writer username
 // Shows a writers profile

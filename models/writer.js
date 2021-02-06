@@ -85,12 +85,12 @@ class Writer {
       return user;
     }; 
 
-    /**Finds all writers
+    /**FIND ALL WRITERS
      * 
      * Returns [{username, first_name, last_name, image_url, location}, ...]
      */
 
-    static async findAll() {
+    static async getAll() {
       const result = await db.query(
         `SELECT username,
           first_name AS firstName,
@@ -101,7 +101,45 @@ class Writer {
         ORDER BY username`
       );
       return result.rows;
-    }
+    };
+
+    /**FIND WRITER BY USERNAME
+     * 
+     * Success: {username} => {username, first_name, last_name, age, location, email, phone, twitterUsername, facebookUsername, youtubeUsername, portfolios}
+     *    where portfolios is { id, title, writer_username }
+     * 
+     * Failure throws NotFoundError
+     */
+
+     static async getByUsername(username) {
+       const result = await db.query(
+         `SELECT username,
+            first_name AS firstName,
+            last_name AS lastName,
+            image_url AS imageUrl,
+            location,
+            email,
+            phone,
+            twitter_username AS twitterUsername,
+            facebook_username AS facebookUsername,
+            youtube_username AS youtubeUsername
+          FROM writers
+          WHERE username=$1`,
+          [username]
+       );
+
+       const writer = result.rows[0];
+
+       if(!writer) throw new NotFoundError(`No User: ${username}`);
+
+       const portfolioRes = await db.query(
+         `SELECT * FROM portfolios WHERE writer_username=$1`,
+         [username]
+       );
+       writer.portfolios = portfolioRes.rows.map(p => ({id: p.id, title: p.title, writer_username: p.writer_username}));
+       return writer;
+     }
+
 };
 
 module.exports = Writer;
