@@ -12,7 +12,6 @@ const {
 } = require("../expressError");
 
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
-const { user } = require("../db");
 
 class Writer {
 

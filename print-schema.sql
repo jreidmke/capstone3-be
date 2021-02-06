@@ -40,7 +40,8 @@ CREATE TABLE pieces (
 );
 
 CREATE TABLE platforms (
-    name VARCHAR(25) PRIMARY KEY,
+    username VARCHAR(25) PRIMARY KEY,
+    platform_name TEXT NOT NULL,
     password TEXT NOT NULL,
     location TEXT NOT NULL,
     description TEXT NOT NULL,
@@ -55,7 +56,7 @@ CREATE TABLE platforms (
 
 CREATE TABLE gigs (
     id SERIAL PRIMARY KEY,
-    platform_name VARCHAR(25) NOT NULL
+    platform_username VARCHAR(25) NOT NULL
         REFERENCES platforms ON DELETE CASCADE,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
@@ -72,7 +73,7 @@ CREATE TABLE applications (
     id SERIAL PRIMARY KEY,
     writer_username TEXT
         REFERENCES writers ON DELETE CASCADE,
-    platform_name VARCHAR(25)
+    platform_username VARCHAR(25)
         REFERENCES platforms ON DELETE CASCADE,
     gig_id INTEGER
         REFERENCES gigs ON DELETE CASCADE,
@@ -116,23 +117,23 @@ CREATE TABLE writer_follows_tag (
 CREATE TABLE writer_follows_platform (
     writer_username VARCHAR(20)
         REFERENCES writers ON DELETE CASCADE,
-    platform_name VARCHAR(25)
+    platform_username VARCHAR(25)
         REFERENCES platforms ON DELETE CASCADE,
-    PRIMARY KEY (writer_username, platform_name)
+    PRIMARY KEY (writer_username, platform_username)
 );
 
 CREATE TABLE platform_follows_tag (
-    platform_name VARCHAR(25)
+    platform_username VARCHAR(25)
         REFERENCES platforms ON DELETE CASCADE,
     tag_title TEXT
         REFERENCES tags ON DELETE CASCADE,
-    PRIMARY KEY (platform_name, tag_title)
+    PRIMARY KEY (platform_username, tag_title)
 );
 
 CREATE TABLE platform_follows_writer (
-    platform_name VARCHAR(25)
+    platform_username VARCHAR(25)
         REFERENCES platforms ON DELETE CASCADE,
     writer_username VARCHAR(20)
         REFERENCES writers ON DELETE CASCADE,
-    PRIMARY KEY (writer_username, platform_name)
+    PRIMARY KEY (writer_username, platform_username)
 );

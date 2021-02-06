@@ -12,12 +12,11 @@
 
 const jsonschema = require("jsonschema");
 const Writer = require("../models/writer");
+const Platform = require("../models/platform");
 const express = require("express");
 const router = new express.Router();
 const { createToken } = require("../helpers/token");
 const { BadRequestError } = require("../expressError");
-const { user } = require("../db");
-const { response } = require("express");
 
 /**POST /writers/login: {username, password} => {token}
  * 
@@ -58,6 +57,26 @@ router.post("/writers/register", async function(req, res, next) {
     } catch (error) {
         return next(error);
     }
-})
+}); 
+
+/**POST /platfomrs/login: {username, password} => {token}
+ * 
+ * Returns JWT used to auth further reqs.
+ * 
+ * Auth required: none
+ */
+
+router.post("/platforms/login", async function(req, res, next) {
+    try {
+        //JSON SCHEMA VALIDATION
+
+        const { username, password } = req.body;
+        const user = await Platform.authenticate(username, password);
+        const token = createToken(user);
+        return res.json({ token });
+    } catch (error) {
+        return next(error);
+    };
+}); 
 
 module.exports = router;
