@@ -41,6 +41,12 @@ class Writer {
         throw new UnauthorizedError('Invaid username/password');
     }; 
 
+    /**REGISTER WRITER
+     * Success: ALL WRITER PROPERTIES except bio & is_admin => { username, isAdmin }
+     * Failure throws BadRequestError
+     * Works in tandem with /writers/register to create JWT to make further reqs. 
+     */
+
     static async register({username, password, firstName, lastName, age, location, email, phone, twitterUsername, facebookUsername, youtubeUsername, isAdmin}) {
       const duplicateCheck = await db.query(
         `SELECT username

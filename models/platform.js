@@ -40,6 +40,12 @@ class Platform {
         }; 
     };
 
+    /**REGISTER PLATFORM
+     * Success: ALL PLATFORM PROPERTIES except description & is_admin => { username, isAdmin }
+     * Failure throws BadRequestError
+     * Works in tandem with /platforms/register to create JWT to make further reqs. 
+     */
+
     static async register({username, password, platformName, location, description, logoUrl, email, phone, twitterUsername, facebookUsername, youtubeUsername, isAdmin}) {
         const duplicateCheck = await db.query(
             `SELECT username
