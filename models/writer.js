@@ -41,7 +41,7 @@ class Writer {
         throw new UnauthorizedError('Invaid username/password');
     }; 
 
-    static async register({username, password, firstName, lastName, age, location, email, phone, twitter_username, facebook_username, youtube_username, isAdmin}) {
+    static async register({username, password, firstName, lastName, age, location, email, phone, twitterUsername, facebookUsername, youtubeUsername, isAdmin}) {
       const duplicateCheck = await db.query(
         `SELECT username
         FROM writers
@@ -71,7 +71,7 @@ class Writer {
           is_admin
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
         RETURNING username, is_admin`, 
-        [username, hashWord, firstName, lastName, age, location, email, phone, twitter_username, facebook_username, youtube_username, isAdmin]
+        [username, hashWord, firstName, lastName, age, location, email, phone, twitterUsername, facebookUsername, youtubeUsername, isAdmin]
       );
 
       const user = result.rows[0];

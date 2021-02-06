@@ -59,7 +59,7 @@ router.post("/writers/register", async function(req, res, next) {
     }
 }); 
 
-/**POST /platfomrs/login: {username, password} => {token}
+/**POST /platforms/login: {username, password} => {token}
  * 
  * Returns JWT used to auth further reqs.
  * 
@@ -78,5 +78,18 @@ router.post("/platforms/login", async function(req, res, next) {
         return next(error);
     };
 }); 
+
+/**POST /platforms/register:  user must include all PLATFORM PROPERTIES except is_admin, and description => { token }*/
+
+router.post("/platforms/register", async function(req, res, next) {
+    try {
+        //JSON SCHEMA VALIDATION
+        const newPlatform = await Platform.register({...req.body, isAdmin: false});
+        const token = createToken(newPlatform);
+        return res.status(201).json({ token }); 
+    } catch (error) {
+        return next(error);
+    };
+});
 
 module.exports = router;

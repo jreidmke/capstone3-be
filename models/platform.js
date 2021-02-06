@@ -38,13 +38,51 @@ class Platform {
             };
             throw new UnauthorizedError('Invalid username/password');
         }; 
-    }; 
-}
+    };
+
+    static async register({username, password, platformName, location, description, logoUrl, email, phone, twitterUsername, facebookUsername, youtubeUsername, isAdmin}) {
+        const duplicateCheck = await db.query(
+            `SELECT username
+            FROM platforms
+            WHERE username = $1`, 
+            [username]
+        );
+
+        if(duplicateCheck.rows[0]) {
+            throw new BadRequestError(`Duplicate username: ${username}`);
+        };
+
+        const hashWord = await bcrypt.hash(password, BCRYPT_WORK_FACTOR); 
+
+        const result = await db.query(
+            `INSERT INTO platforms(
+                username,
+                password,
+                platform_name,
+                location,
+                description,
+                logo_url,
+                email,
+                phone,
+                twitter_username,
+                facebook_username,
+                youtube_username,
+                is_admin
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+            RETURNING username, is_admin`,
+            [username, password, platformName, location, description, logoUrl, email, phone, twitterUsername, facebookUsername, youtubeUsername, isAdmin]
+        );
+
+        const user = result.rows[0];
+
+        return user;
+    };
+};
 
 module.exports = Platform;
 
 // REGISTER 
-// -INPUT: platform_name, password, location, description, logo_url, email, phone, twitter_url, facebook_url, youtube_url, is_admin
+// -INPUT: username, platform_name, password, location, description, logo_url, email, phone, twitter_url, facebook_url, youtube_url, is_admin
 // -Success returns all data except password
 // Failure throws BadRequestError
 // Limitations: Register platform schema

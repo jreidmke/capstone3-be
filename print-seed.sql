@@ -59,10 +59,10 @@ VALUES ('test1',
 
 -- **PLATFORMS**
 
-INSERT INTO platforms(username, platform_name, password, location, description, logo_url, email, phone, twitter_username, facebook_username, youtube_username, is_admin)
+INSERT INTO platforms(username, password, platform_name, location, description, logo_url, email, phone, twitter_username, facebook_username, youtube_username, is_admin)
 VALUES ('platform1',
-    'The First Platform.com',
     '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q',
+    'The First Platform.com',
     'Milwaukee',
     'Hey, Luke! May the Force be with you. In my experience, there is no such thing as luck. The more you tighten your grip, Tarkin, the more star systems will slip through your fingers. Kid, I''ve flown from one side of this galaxy to the other. I''ve seen a lot of strange stuff, but I''ve never seen anything to make me believe there''s one all-powerful Force controlling everything. There''s no mystical energy field that controls my destiny. It''s all a lot of simple tricks and nonsense.',
     'https://miro.medium.com/max/8000/1*JrHDbEdqGsVfnBYtxOitcw.jpeg',
@@ -73,8 +73,8 @@ VALUES ('platform1',
     'platform1',
     FALSE), 
     ('platform2',
-    'The Second Platform',
     '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q',
+    'The Second Platform',
     'Chicago',
     'Hey, Luke! May the Force be with you. In my experience, there is no such thing as luck. The more you tighten your grip, Tarkin, the more star systems will slip through your fingers. Kid, I''ve flown from one side of this galaxy to the other. I''ve seen a lot of strange stuff, but I''ve never seen anything to make me believe there''s one all-powerful Force controlling everything. There''s no mystical energy field that controls my destiny. It''s all a lot of simple tricks and nonsense.',
     'https://miro.medium.com/max/8000/1*JrHDbEdqGsVfnBYtxOitcw.jpeg',

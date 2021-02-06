@@ -41,10 +41,10 @@ CREATE TABLE pieces (
 
 CREATE TABLE platforms (
     username VARCHAR(25) PRIMARY KEY,
-    platform_name TEXT NOT NULL,
     password TEXT NOT NULL,
+    platform_name TEXT NOT NULL,
     location TEXT NOT NULL,
-    description TEXT NOT NULL,
+    description TEXT,
     logo_url TEXT,
     email TEXT UNIQUE NOT NULL CHECK (position('@' IN email) > 1),
     phone CHAR(10) NOT NULL,
