@@ -1,8 +1,3 @@
-// WRITER ROUTES
-
-// **The ONLY VIEWABLE statements are of course a first draft and will probably/definitely be changed to allow more writers/platforms to view more things. The only protected routes should be the 'edit', 'post' and delete routes. Remember, first draft**
-
-// 
 // **
 // WRITERS//
 // **
@@ -48,28 +43,46 @@ router.get("/:username", async function(req, res, next) {
     }
 })
 
-module.exports = router;
- 
 
 
-// GET /writers/writer username
-// Shows a writers profile
 
-// GET /writers/writer username/edit
-// Only viewable by admin/username
-// Shows a writers profile edit form
 
 // PATCH /writers/writer username/edit
 // Only viewable by admin/username
 // Sends request to update write data in database
 
-// DELETE /writers/writer username
-// ONLY viewalbe by admin/username
-// Sends request to delete profile. Redirects to home page.
+
+
+
+
+/**DELETE /[username] => { deleted: username }
+ * 
+ * Auth: admin or correct user
+ */
+
+router.delete("/:username", async function(req, res, next) {
+    try {
+        await Writer.remove(req.params.username);
+        return res.json({ deleted: req.params.username });
+    } catch (error) {
+        return next(error);
+    }
+});
+module.exports = router;
+
 
 // GET /writers/writer_username/followed_tags
 // ONLY viewalbe by admin/username
 // Shows a list of tags the writer is following with ICON LINKS TO send POST || DELETE reqs. 
+
+router.get("/:username/followed_tags", async function(req, res, next) {
+    try {
+        const tags = await Writer.getFollowedTags(req.params.username);
+        return res.json({ tags });
+    } catch (error) {
+        return next(error);
+    }
+});
 
 // POST /writers/writer_username/followed_tags/:tag_title
 // Adds TAG title to WRITER_FOLLOW_TAG DB
@@ -86,6 +99,11 @@ module.exports = router;
 
 // DELETE /writers/writer_username/followed_platforms/:platform_name
 // Deletes Platform name from WRITER_FOLLOW_PLATFORM
+
+ 
+// GET /writers/writer username/edit (FRONT END STUFF)
+// Only viewable by admin/username
+// Shows a writers profile edit form
 
 // *
 // *

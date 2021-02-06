@@ -12,6 +12,7 @@ const {
 } = require("../expressError");
 
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
+const { user } = require("../db");
 
 class Writer {
 
@@ -140,30 +141,87 @@ class Writer {
        return writer;
      }
 
+     // UPDATE WRITER
+    // -Input: username <=this is not changable! this is just for verification, password, first_name, last_name, age, location, email, phone, twitter_url, youtube_url, facebook_url
+    // -Success returns all data on writer except password
+    // -Failure Throws NotFoundError
+    // Limitations: ALOT OF LIMITATIONS! This could potentially allow people to become admins which is a huge security problem. ensureCorrectUserOrAdmin and update writer schema. 
+
+    // REMOVE WRITER
+    // -Input: username
+    // -Success returns undefined. 
+    // -Failure throws NotFoundError.
+    // Limitations: ensureCorrectUserOrAdmin
+
+    static async remove(username) {
+
+      let result = await db.query(
+        `DELETE FROM writers WHERE username=$1 RETURNING username`, 
+        [username]
+      );
+
+      const writer = result.rows[0];
+      if(!writer) throw new NotFoundError(`No Writer: ${username}`);
+    };
+
+    static async getFollowedTags(username) {
+      let result = await db.query(
+        `SELECT * 
+          FROM writer_follows_tag 
+          WHERE writer_username=$1`,
+          [username]
+      );
+
+      const followedTags = result.rows;
+
+      if(!followedTags.length) throw NotFoundError(`User: ${username} follows no tags.`);
+      
+      return followedTags;
+    };
+
+    static async followTag(username, tagTitle) {
+      let writerRes = await db.query(
+        `SELECT username 
+          FROM writers
+          WHERE username=$1`,
+          [username]
+      );
+
+      const writer = writerRes.rows[0];
+      if(!writer) throw new NotFoundError(`No Writer: ${username}`);
+
+      let tagRes = await db.query(
+        `SELECT title
+        FROM tags
+        WHERE title=$1`,
+        [tagTitle]
+      ); 
+
+      const tag = tagRes.rows[0];
+      if(!tag) throw new NotFoundError(`No Tag: ${tagTitle}`);
+
+      let result = await db.query(
+        `INSERT INTO writer_follows_tag
+        VALUES($1, $2)
+        RETURNING 
+        writer_username AS username
+        tag_title AS tagTitle
+        `,
+        [writer.username, tag.title]
+      ); 
+
+      return result.rows[0];
+    }
 };
+
+
 
 module.exports = Writer;
 
-// FIND ALL
-// -Success returns all data on all writers (except their password, as well as followed tags and followed platforms)
 
-// GET WRITER
-// -Input: username
-// -Success returns all data on writer except password, all portfolios, pieces, applications, followed tags, and followed platforms.
-// -Failure throws BadRequestError
-// Limitations: ensureCorrectUserOrAdmin 
 
-// UPDATE WRITER
-// -Input: username <=this is not changable! this is just for verification, password, first_name, last_name, age, location, email, phone, twitter_url, youtube_url, facebook_url
-// -Success returns all data on writer except password
-// -Failure Throws NotFoundError
-// Limitations: ALOT OF LIMITATIONS! This could potentially allow people to become admins which is a huge security problem. ensureCorrectUserOrAdmin and update writer schema. 
 
-// REMOVE WRITER
-// -Input: username, password
-// -Success returns undefined. 
-// -Failure throws NotFoundError.
-// Limitations: ensureCorrectUserOrAdmin
+
 
 // FOLLOW TAG
 // -Input: Username, tag title
