@@ -288,18 +288,4 @@ class Writer {
     }
 };
 
-
-
 module.exports = Writer;
-
-
-
-
-
-
-
-// FOLLOW PLATFORM
-// -Input: Username, platform name
-// -Success returns username, platformname
-// -Failure throws NotFoundError.
-// Limitations: ensureCorrectUserOrAdmin, json schema for follow platform.

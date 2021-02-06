@@ -8,9 +8,9 @@ async function checkForItem(value, table, column) {
           [value]
     );
 
-    const writer = result.rows[0];
-    if(!writer) return false
-    return writer;
+    const resp = result.rows[0];
+    if(!resp) return false
+    return resp;
 };
 
 module.exports = checkForItem;
