@@ -47,7 +47,7 @@ class Platform {
      * Works in tandem with /platforms/register to create JWT to make further reqs. 
      */
 
-    static async register({username, password, platformName, location, description, logoUrl, email, phone, twitterUsername, facebookUsername, youtubeUsername, isAdmin}) {
+    static async register({username, password, handle, displayName, location, description, logoUrl, email, phone, twitterUsername, facebookUsername, youtubeUsername, isAdmin}) {
         const duplicateCheck = await db.query(
             `SELECT username
             FROM platforms
@@ -65,7 +65,8 @@ class Platform {
             `INSERT INTO platforms(
                 username,
                 password,
-                platform_name,
+                handle,
+                display_name,
                 location,
                 description,
                 logo_url,
@@ -75,9 +76,9 @@ class Platform {
                 facebook_username,
                 youtube_username,
                 is_admin
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
             RETURNING username, is_admin AS isAdmin`,
-            [username, hashWord, platformName, location, description, logoUrl, email, phone, twitterUsername, facebookUsername, youtubeUsername, isAdmin]
+            [username, hashWord, handle, displayName, location, description, logoUrl, email, phone, twitterUsername, facebookUsername, youtubeUsername, isAdmin]
         );
 
         const user = result.rows[0];

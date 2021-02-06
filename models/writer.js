@@ -255,6 +255,35 @@ class Writer {
 
       return result.rows[0];
     };
+
+    static async followPlatform(username, platformName) {
+      let writerRes = await db.query(
+        `SELECT username 
+          FROM writers
+          WHERE username=$1`,
+          [username]
+      );
+
+      const writer = writerRes.rows[0];
+      if(!writer) throw new NotFoundError(`No Writer: ${username}`);
+
+      let platformRes = await db.query(
+        `SELECT platform_name
+          FROM platforms
+          WHERE platform_name=$1`,
+          [platformName]
+      );
+
+      const platform = platformRes.rows[0];
+      if(!platform) throw new NotFoundError(`No Platform: ${platformName}`);
+
+      const results = await db.query(
+        `INSERT INTO writer_follows_platform
+        VALUES($1, $2)
+        RETURNING writer_username AS username,
+        platform_`
+      )
+    }
 };
 
 
