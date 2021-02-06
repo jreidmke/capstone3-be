@@ -4,15 +4,14 @@
 
 const db = require("../db");
 const bcrypt = require("bcrypt");
-// const { sqlForPartialUpdate } = require("../helpers/sql");
 const {
   NotFoundError,
   BadRequestError,
   UnauthorizedError,
 } = require("../expressError");
+const checkForWriter = require('../helpers/writer');
 
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
-const { user } = require("../db");
 
 class Writer {
 
@@ -147,11 +146,12 @@ class Writer {
     // -Failure Throws NotFoundError
     // Limitations: ALOT OF LIMITATIONS! This could potentially allow people to become admins which is a huge security problem. ensureCorrectUserOrAdmin and update writer schema. 
 
-    // REMOVE WRITER
-    // -Input: username
-    // -Success returns undefined. 
-    // -Failure throws NotFoundError.
-    // Limitations: ensureCorrectUserOrAdmin
+    /**REMOVE WRITER
+     * 
+     * Success: {username} => undefined
+     * 
+     * Failure throws NotFoundError
+     */
 
     static async remove(username) {
 
@@ -161,7 +161,7 @@ class Writer {
       );
 
       const writer = result.rows[0];
-      if(!writer) throw new NotFoundError(`No Writer: ${username}`);
+      if(!writer) throw new NotFoundError(`No User: ${username}`);
     };
 
     /**GET FOLLOWED TAGS: {username} => [{username, tagTitle}, ...] 
@@ -170,6 +170,8 @@ class Writer {
     */
 
     static async getFollowedTags(username) {
+      if(!await checkForWriter(username)) throw new NotFoundError(`No user: ${username}`);
+
       let result = await db.query(
         `SELECT * 
           FROM writer_follows_tag 
@@ -179,7 +181,7 @@ class Writer {
 
       const followedTags = result.rows;
 
-      if(!followedTags.length) throw NotFoundError(`User: ${username} follows no tags.`);
+      if(!followedTags.length) throw new NotFoundError(`User: ${username} follows no tags.`);
       
       return followedTags;
     };
@@ -190,15 +192,8 @@ class Writer {
      */
 
     static async followTag(username, tagTitle) {
-      let writerRes = await db.query(
-        `SELECT username 
-          FROM writers
-          WHERE username=$1`,
-          [username]
-      );
-
-      const writer = writerRes.rows[0];
-      if(!writer) throw new NotFoundError(`No Writer: ${username}`);
+      const writer = await checkForWriter(username);
+      if(!writer) throw new NotFoundError(`No User: ${username}`);
 
       let tagRes = await db.query(
         `SELECT title
@@ -229,15 +224,8 @@ class Writer {
     */
 
     static async unfollowTag(username, tagTitle) {
-      let writerRes = await db.query(
-        `SELECT username 
-          FROM writers
-          WHERE username=$1`,
-          [username]
-      );
-
-      const writer = writerRes.rows[0];
-      if(!writer) throw new NotFoundError(`No Writer: ${username}`);
+      const writer = await checkForWriter(username);
+      if(!writer) throw new NotFoundError(`No User: ${username}`);
 
       let tagRes = await db.query(
         `SELECT title
@@ -265,6 +253,7 @@ class Writer {
      * 
      * Failure throws NotFoundError
     */
+
     static async getFollowedPlatforms(username) {
       const result = await db.query(
         `SELECT * FROM writer_follows_platform
@@ -284,15 +273,8 @@ class Writer {
      */
 
     static async followPlatform(username, platformHandle) {
-      let writerRes = await db.query(
-        `SELECT username 
-          FROM writers
-          WHERE username=$1`,
-          [username]
-      );
-
-      const writer = writerRes.rows[0];
-      if(!writer) throw new NotFoundError(`No Writer: ${username}`);
+      const writer = await checkForWriter(username);
+      if(!writer) throw new NotFoundError(`No User: ${username}`);
 
       let platformRes = await db.query(
         `SELECT handle
@@ -315,15 +297,8 @@ class Writer {
     };
 
     static async unfollowPlatform(username, platformHandle) {
-      let writerRes = await db.query(
-        `SELECT username 
-          FROM writers
-          WHERE username=$1`,
-          [username]
-      );
-
-      const writer = writerRes.rows[0];
-      if(!writer) throw new NotFoundError(`No Writer: ${username}`);
+      const writer = await checkForWriter(username);
+      if(!writer) throw new NotFoundError(`No Username: ${username}`);
 
       let platformRes = await db.query(
         `SELECT handle
