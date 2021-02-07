@@ -31,14 +31,14 @@ class Platform {
         const user = result.rows[0]; 
         console.log(user);
         if(user) {
+            console.log('piiza')
             const validPassword = await bcrypt.compare(password, user.password);
-            console.log(validPassword);
             if(validPassword === true) {
                 delete user.password;
                 return user;
             };
-            throw new UnauthorizedError('Invalid username/password');
         }; 
+        throw new UnauthorizedError('Invalid username/password');
     };
 
     /**REGISTER PLATFORM
