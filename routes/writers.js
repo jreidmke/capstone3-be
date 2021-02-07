@@ -70,7 +70,6 @@ router.delete("/:username", ensureCorrectUserOrAdmin, async function(req, res, n
         return next(error);
     }
 });
-module.exports = router;
 
 /**GET /[username]/followed_tags => [{username, tagTitle},...]
  * 
@@ -155,6 +154,8 @@ router.delete("/:username/followed_platforms/:platformHandle", ensureCorrectUser
         return next(error);
     }
 });
+
+module.exports = router;
  
 // GET /writers/writer username/edit (FRONT END STUFF)
 // Only viewable by admin/username

@@ -1,144 +1,138 @@
---MAIN TABLES
-
-CREATE TABLE writers (
-    username VARCHAR(20) PRIMARY KEY,
-    password TEXT NOT NULL,
-    first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL,
-    image_url TEXT,
-    bio TEXT,
-    age INTEGER NOT NULL,
-    location TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL CHECK (position('@' IN email) > 1),
-    phone CHAR(10),
-    twitter_username TEXT,
-    facebook_username TEXT,
-    youtube_username TEXT,
-    is_admin BOOLEAN DEFAULT FALSE
+CREATE TABLE writers(
+    id BIGSERIAL PRIMARY KEY,
+    first_name VARCHAR NOT NULL,
+    last_name VARCHAR NOT NULL,
+    age INTEGER NOT NULL CHECK (age > 0),
+    bio VARCHAR NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT NULL
 );
 
-CREATE TABLE tags (
-    title TEXT PRIMARY KEY,
-    is_fiction BOOLEAN NOT NULL
+CREATE TABLE platforms(
+    id BIGSERIAL PRIMARY KEY,
+    description VARCHAR NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT NULL
 );
 
-CREATE TABLE portfolios (
-    id SERIAL PRIMARY KEY,
-    writer_username VARCHAR(20) NOT NULL
-        REFERENCES writers ON DELETE CASCADE,
-    title TEXT NOT NULL
-); 
+CREATE TABLE users(
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR UNIQUE NOT NULL CHECK (position('@' IN email) > 1),
+    writer_id BIGINT REFERENCES writers(id),
+    platform_id BIGINT REFERENCES platforms(id),
+    password VARCHAR NOT NULL,
+    image_url VARCHAR NOT NULL,
+    address_1 VARCHAR NOT NULL,
+    address_2 VARCHAR,
+    city VARCHAR NOT NULL,
+    state VARCHAR NOT NULL,
+    postal_code BIGINT NOT NULL,
+    phone TEXT,
+    twitter_username VARCHAR,
+    facebook_username VARCHAR,
+    youtube_username VARCHAR,
+    is_admin BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT NULL
+);
 
-CREATE TABLE pieces (
-    id SERIAL PRIMARY KEY,
-    writer_username VARCHAR(20) NOT NULL
-        REFERENCES writers ON DELETE CASCADE,
-    title TEXT NOT NULL,
+CREATE TABLE portfolios(
+    id BIGSERIAL PRIMARY KEY,
+    writer_id BIGINT REFERENCES writers(id),
+    title VARCHAR NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT NULL
+);
+
+CREATE TABLE pieces(
+    id BIGSERIAL PRIMARY KEY,
+    title VARCHAR NOT NULL,
     text TEXT NOT NULL,
-    date_of_submission TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    date_of_last_edit TIMESTAMP DEFAULT NULL
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT NULL
 );
 
-CREATE TABLE platforms (
-    username VARCHAR(20) PRIMARY KEY,
-    password TEXT NOT NULL,
-    handle VARCHAR(20) UNIQUE CHECK (handle = lower(handle)),
-    display_name TEXT UNIQUE NOT NULL,
-    location TEXT NOT NULL,
-    description TEXT,
-    logo_url TEXT,
-    email TEXT UNIQUE NOT NULL CHECK (position('@' IN email) > 1),
-    phone CHAR(10) NOT NULL,
-    twitter_username TEXT,
-    facebook_username TEXT,
-    youtube_username TEXT,
-    is_admin BOOLEAN DEFAULT FALSE
-); 
-
-CREATE TABLE gigs (
-    id SERIAL PRIMARY KEY,
-    platform_handle VARCHAR(20) NOT NULL
-        REFERENCES platforms(handle) ON DELETE CASCADE,
-    platform_display_name TEXT NOT NULL
-        REFERENCES platforms(display_name) ON DELETE CASCADE,
-    title TEXT NOT NULL,
-    description TEXT NOT NULL,
-    compensation INTEGER CHECK (compensation > 0),
+CREATE TABLE gigs(
+    id BIGSERIAL PRIMARY KEY,
+    platform_id BIGINT REFERENCES platforms(id),
+    title VARCHAR NOT NULL,
+    description VARCHAR NOT NULL,
+    compensation DECIMAL(2) NOT NULL,
     is_remote BOOLEAN NOT NULL,
-    gig_type TEXT NOT NULL CHECK (gig_type IN ('Fulltime', 'Recurring', 'One-Time')),
-    date_posted TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    word_count BIGINT,
+    status VARCHAR NOT NULL CHECK (status in('Pending', 'Accepted', 'Rejected')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT NULL
 );
 
-
---MANY TO MANY TABLES
-
-CREATE TABLE applications (
-    id SERIAL PRIMARY KEY,
-    writer_username TEXT
-        REFERENCES writers ON DELETE CASCADE,
-    platform_handle VARCHAR(20) NOT NULL
-        REFERENCES platforms(handle) ON DELETE CASCADE,
-    platform_display_name TEXT NOT NULL
-        REFERENCES platforms(display_name) ON DELETE CASCADE,
-    gig_id INTEGER
-        REFERENCES gigs ON DELETE CASCADE,
-    portfolio_id INTEGER
-        REFERENCES portfolios ON DELETE CASCADE,
-    is_active BOOLEAN NOT NULL
+CREATE TABLE tags(
+    id BIGSERIAL PRIMARY KEY,
+    title VARCHAR NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT NULL
 );
 
-CREATE TABLE portfolio_pieces (
-    portfolio_id INTEGER
-        REFERENCES portfolios ON DELETE CASCADE,
-    piece_id INTEGER 
-        REFERENCES pieces ON DELETE CASCADE,
-    PRIMARY KEY (portfolio_id, piece_id)
+CREATE TABLE applications(
+    id BIGSERIAL PRIMARY KEY,
+    gig_id BIGINT NOT NULL REFERENCES gigs(id),
+    writer_id BIGINT NOT NULL REFERENCES writers(id),
+    portfolio_id BIGINT NOT NULL REFERENCES portfolios(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT NULL
 );
 
-CREATE TABLE piece_tags (
-    tag_title TEXT
-        REFERENCES tags ON DELETE CASCADE,
-    piece_id INTEGER
-        REFERENCES pieces ON DELETE CASCADE,
-    PRIMARY KEY (tag_title, piece_id)
-); 
-
-CREATE TABLE gig_tags (
-    gig_id INTEGER
-        REFERENCES gigs ON DELETE CASCADE,
-    tag_title TEXT
-        REFERENCES tags ON DELETE CASCADE,
-    PRIMARY KEY (gig_id, tag_title)
-); 
-
-CREATE TABLE writer_follows_tag (
-    writer_username TEXT
-        REFERENCES writers ON DELETE CASCADE,
-    tag_title TEXT
-        REFERENCES tags ON DELETE CASCADE,
-    PRIMARY KEY (writer_username, tag_title)
-); 
-
-CREATE TABLE writer_follows_platform (
-    writer_username VARCHAR(20)
-        REFERENCES writers ON DELETE CASCADE,
-    platform_handle VARCHAR(20)
-        REFERENCES platforms(handle) ON DELETE CASCADE,
-    PRIMARY KEY (writer_username, platform_handle)
+CREATE TABLE piece_portfolios(
+    id BIGSERIAL PRIMARY KEY,
+    portfolio_id BIGINT NOT NULL REFERENCES portfolios(id),
+    piece_id BIGINT NOT NULL REFERENCES pieces(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT NULL
 );
 
-CREATE TABLE platform_follows_tag (
-    platform_handle VARCHAR(20)
-        REFERENCES platforms(handle) ON DELETE CASCADE,
-    tag_title TEXT
-        REFERENCES tags ON DELETE CASCADE,
-    PRIMARY KEY (platform_handle, tag_title)
+CREATE TABLE piece_tags(
+    id BIGSERIAL PRIMARY KEY,
+    piece_id BIGINT NOT NULL REFERENCES pieces(id),
+    tag_id BIGINT NOT NULL REFERENCES tags(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT NULL
 );
 
-CREATE TABLE platform_follows_writer (
-    platform_handle VARCHAR(20)
-        REFERENCES platforms(handle) ON DELETE CASCADE,
-    writer_username VARCHAR(20)
-        REFERENCES writers ON DELETE CASCADE,
-    PRIMARY KEY (platform_handle, writer_username)
+CREATE TABLE gig_tags(
+    id BIGSERIAL PRIMARY KEY,
+    tag_id BIGINT NOT NULL REFERENCES tags(id),
+    gig_id BIGINT NOT NULL REFERENCES gigs(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT NULL
+);
+
+CREATE TABLE platform_tag_follows(
+    id BIGSERIAL PRIMARY KEY,
+    platform_id BIGINT REFERENCES platforms(id),
+    tag_id BIGINT NOT NULL REFERENCES tags(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT NULL
+);
+
+CREATE TABLE platform_writer_follows(
+    id BIGSERIAL PRIMARY KEY,
+    platform_id BIGINT REFERENCES platforms(id),
+    writer_id BIGINT REFERENCES writers(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT NULL
+);
+
+CREATE TABLE writer_platform_follows(
+    id BIGSERIAL PRIMARY KEY,
+    writer_id BIGINT REFERENCES writers(id),
+    platform_id BIGINT REFERENCES platforms(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT NULL
+);
+
+CREATE TABLE writer_tag_follows(
+    id BIGSERIAL PRIMARY KEY,
+    writer_id BIGINT REFERENCES writers(id),
+    tag_id BIGINT NOT NULL REFERENCES tags(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT NULL
 );

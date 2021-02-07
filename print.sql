@@ -6,7 +6,7 @@ CREATE DATABASE print;
 \c print; 
 
 \i print-schema.sql
-\i print-seed.sql
+-- \i print-seed.sql
 
 -- \echo 'Delete and recreate print_test db'
 -- \prompt 'Return for yes or control-C for cancel > ' foo

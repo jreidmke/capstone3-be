@@ -6,6 +6,8 @@ const { SECRET_KEY } = require("../config");
 function createToken(user, isPlatform=false) {
   console.assert(user.isAdmin !== undefined, "createToken passed user without isAdmin property");
 
+  if(isPlatform) user.username = user.handle;
+
   let payload = {
     username: user.username,
     isAdmin: user.isAdmin || false,
