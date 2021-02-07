@@ -36,9 +36,9 @@ router.get("/", ensureLoggedIn, async function(req, res, next) {
  * Auth required: ensure logged in.
  */ 
 
-router.get("/:username", ensureLoggedIn, async function(req, res, next) {
+router.get("/:id", ensureLoggedIn, async function(req, res, next) {
     try {
-        const writer = await Writer.getByUsername(req.params.username);
+        const writer = await Writer.getById(req.params.id);
         return res.json({ writer });
     } catch (error) {
         return next(error);
