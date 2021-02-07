@@ -60,10 +60,10 @@ CREATE TABLE gigs(
     platform_id BIGINT REFERENCES platforms(id),
     title VARCHAR NOT NULL,
     description VARCHAR NOT NULL,
-    compensation DECIMAL(2) NOT NULL,
+    compensation DECIMAL(6, 2) NOT NULL,
     is_remote BOOLEAN NOT NULL,
     word_count BIGINT,
-    status VARCHAR NOT NULL CHECK (status in('Pending', 'Accepted', 'Rejected')),
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL
 );
@@ -71,6 +71,7 @@ CREATE TABLE gigs(
 CREATE TABLE tags(
     id BIGSERIAL PRIMARY KEY,
     title VARCHAR NOT NULL,
+    is_fiction BOOLEAN NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL
 );
@@ -80,6 +81,7 @@ CREATE TABLE applications(
     gig_id BIGINT NOT NULL REFERENCES gigs(id),
     writer_id BIGINT NOT NULL REFERENCES writers(id),
     portfolio_id BIGINT NOT NULL REFERENCES portfolios(id),
+    status VARCHAR NOT NULL CHECK (status in('Pending', 'Accepted', 'Rejected')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL
 );
@@ -102,8 +104,8 @@ CREATE TABLE piece_tags(
 
 CREATE TABLE gig_tags(
     id BIGSERIAL PRIMARY KEY,
-    tag_id BIGINT NOT NULL REFERENCES tags(id),
     gig_id BIGINT NOT NULL REFERENCES gigs(id),
+    tag_id BIGINT NOT NULL REFERENCES tags(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL
 );
