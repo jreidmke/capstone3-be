@@ -10,6 +10,8 @@ CREATE TABLE writers(
 
 CREATE TABLE platforms(
     id BIGSERIAL PRIMARY KEY,
+    handle VARCHAR UNIQUE NOT NULL CHECK (handle = lower(handle)),
+    display_name VARCHAR UNIQUE NOT NULL,
     description VARCHAR NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL
@@ -46,6 +48,7 @@ CREATE TABLE portfolios(
 
 CREATE TABLE pieces(
     id BIGSERIAL PRIMARY KEY,
+    writer_id BIGINT REFERENCES writers(id),
     title VARCHAR NOT NULL,
     text TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
