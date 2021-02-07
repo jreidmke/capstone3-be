@@ -65,14 +65,14 @@ class Writer {
           u.youtube_username AS youtubeUsername
         FROM writers AS w
         JOIN users AS u ON w.id=u.writer_id
-        WHERE w.id=$1
+        WHERE u.id=$1
         ORDER BY lastName`,
         [id]
       );
 
       const writer = result.rows[0];
 
-      if(!writer) throw new NotFoundError(`No User With Id: ${id}`);
+      if(!writer) throw new NotFoundError(`No Writer With Id: ${id}`);
 
       const portfolioRes = await db.query(
         `SELECT * FROM portfolios WHERE writer_id=$1`,
