@@ -41,6 +41,21 @@ class User {
         throw new UnauthorizedError('Invaid username/password');
     };
 
+    /**REGISTER USER: user must include all properties of:
+
+            // USER TABLE (email, password, imageUrl, address1, address2, city, state, postalCode, phone, twitterUsername, facebookUsername, youtubeUsername)
+
+            //And WRITER TABLE (firstName, lastName, age, bio)
+
+            //OR
+
+            //PLATFORM TABLE (handle, description, display_name)
+
+    /* Returns JWT used to auth further reqs.
+    * 
+    * Auth required: none
+    */
+
     static async register({email, password, imageUrl, address1, address2, city, state, postalCode, phone, twitterUsername, facebookUsername, youtubeUsername, firstName, lastName, age, bio, handle, displayName, description}) {
 
         //duplicate email check
@@ -92,6 +107,34 @@ class User {
         return result.rows[0];
     }
 
+    /**REMOVE USER
+     * 
+     * Success: {id} => undefined
+     * 
+     * Failure throws NotFoundError
+     */
+
+    static async remove(id) {
+
+        let result = await db.query(
+            `DELETE FROM users WHERE id=$1 RETURNING writer_id AS writerId, platform_id AS platformId`, 
+            [id]
+        );
+        let user = result.rows[0];
+        if(!user) throw new NotFoundError(`No User With ID: ${id}`);
+
+        if(user.writerId) {
+            await db.query(
+                `DELETE FROM writers WHERE id=$1`,
+                [user.writerId]
+            )
+        } else {
+            await db.query(
+                `DELETE FROM platforms WHERE id=$1`,
+                [user.platformId]
+            )
+        };
+    };
 
 };
 

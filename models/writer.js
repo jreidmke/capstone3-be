@@ -52,7 +52,7 @@ class Writer {
           w.last_name AS lastName,
           w.age,
           w.bio,
-          w.created_at,
+          w.created_at AS createdAt,
           u.image_url AS imageURL,
           u.address_1 AS address1,
           u.address_2 AS address2,
@@ -113,14 +113,14 @@ class Writer {
      * Failure throws NotFoundError
     */
 
-    static async getFollowedTags(username) {
-      if(!await checkForItem(username, 'writers', 'username')) throw new NotFoundError(`No user: ${username}`);
+    static async getFollowedTags(id) {
+      if(!await checkForItem(id, 'writers', 'id')) throw new NotFoundError(`No user with ID: ${id}`);
 
       let result = await db.query(
         `SELECT * 
-          FROM writer_follows_tag 
+          FROM writer_tag_follows 
           WHERE writer_username=$1`,
-          [username]
+          [id]
       );
 
       const followedTags = result.rows;

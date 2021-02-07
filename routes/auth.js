@@ -10,6 +10,7 @@ const express = require("express");
 const router = new express.Router();
 const { createToken } = require("../helpers/token");
 const { BadRequestError } = require("../expressError");
+const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
 
 /**POST /login: {email, password} => {token}
  * 
@@ -57,6 +58,20 @@ router.post("/register", async function(req, res, next) {
     } catch (error) {
         return next(error);
     }
-})
+});
+
+/**DELETE: {id} => undefined
+ * 
+ *  * Auth: admin or correct user
+ */
+
+router.delete("/:id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        await User.remove(req.params.id);
+        return res.json({ deleted: req.params.id });
+    } catch (error) {
+        return next(error);
+    }
+});
 
 module.exports = router;

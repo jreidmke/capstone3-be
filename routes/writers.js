@@ -12,7 +12,7 @@ const jsonschema = require("jsonschema");
 
 const router = express.Router();
 
-/**GET / => {writers: [ {username, first_name, last_name, image_url, location}, ...]}
+/**GET / => {writers: [ {first_name, last_name, image_url, city, state, facebookUsername, twitterUsername, youtubeUesrname}, ...]}
  * 
  * Returns a list of all writers
  * 
@@ -30,8 +30,8 @@ router.get("/", ensureLoggedIn, async function(req, res, next) {
 
 /**GET /[username] => {user}
  * 
- * Returns { username, firstName, lastName, image_url, age, location, email, phone, twitterUsername, facebookUsername, youtubeUsername, portfolios }
- *      where portfolios is { id, title, writer_username}
+ * Returns { first_name, last_name, image_url, city, state, facebookUsername, twitterUsername, youtubeUesrname, age, bio, createdAt, address1, address2, phone, portfolios}
+ *      where portfolios is { id, title }
  *  
  * Auth required: ensure logged in.
  */ 
@@ -57,7 +57,7 @@ router.get("/:id", ensureLoggedIn, async function(req, res, next) {
 
 
 
-/**DELETE /[username] => { deleted: username }
+/**DELETE /[id] => { deleted: id }
  * 
  * Auth: admin or correct user
  */
@@ -76,9 +76,9 @@ router.delete("/:id", ensureCorrectUserOrAdmin, async function(req, res, next) {
  * Auth: admin or correct user
  */
 
-router.get("/:username/followed_tags", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.get("/:id/followed_tags", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const tags = await Writer.getFollowedTags(req.params.username);
+        const tags = await Writer.getFollowedTags(req.params.id);
         return res.json({ tags });
     } catch (error) {
         return next(error);
