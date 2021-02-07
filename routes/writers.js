@@ -6,7 +6,7 @@
 
 const express = require("express");
 const Writer = require("../models/writer");
-const {ensureLoggedIn} = require("../middleware/auth");
+const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
 const jsonschema = require("jsonschema");
 
@@ -36,7 +36,7 @@ router.get("/", ensureLoggedIn, async function(req, res, next) {
  * Auth required: ensure logged in.
  */ 
 
-router.get("/:username", async function(req, res, next) {
+router.get("/:username", ensureLoggedIn, async function(req, res, next) {
     try {
         const writer = await Writer.getByUsername(req.params.username);
         return res.json({ writer });
@@ -62,7 +62,7 @@ router.get("/:username", async function(req, res, next) {
  * Auth: admin or correct user
  */
 
-router.delete("/:username", async function(req, res, next) {
+router.delete("/:username", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
         await Writer.remove(req.params.username);
         return res.json({ deleted: req.params.username });
@@ -77,7 +77,7 @@ module.exports = router;
  * Auth: admin or correct user
  */
 
-router.get("/:username/followed_tags", async function(req, res, next) {
+router.get("/:username/followed_tags", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
         const tags = await Writer.getFollowedTags(req.params.username);
         return res.json({ tags });
@@ -91,7 +91,7 @@ router.get("/:username/followed_tags", async function(req, res, next) {
  * Auth: admin or correct user
 */
 
-router.post("/:username/followed_tags/:tagTitle", async function(req, res, next) {
+router.post("/:username/followed_tags/:tagTitle", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
         const followed = await Writer.followTag(req.params.username, req.params.tagTitle);
         return res.json({ followed });
@@ -105,7 +105,7 @@ router.post("/:username/followed_tags/:tagTitle", async function(req, res, next)
  * Auth: admin or correct user
  */
 
-router.delete("/:username/followed_tags/:tagTitle", async function(req, res, next) {
+router.delete("/:username/followed_tags/:tagTitle", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
         const unfollowed = await Writer.unfollowTag(req.params.username, req.params.tagTitle);
         return res.json({ unfollowed });
@@ -119,7 +119,7 @@ router.delete("/:username/followed_tags/:tagTitle", async function(req, res, nex
  * Auth: admin or correct user
  */
 
-router.get("/:username/followed_platforms", async function(req, res, next) {
+router.get("/:username/followed_platforms", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
         const platforms = await Writer.getFollowedPlatforms(req.params.username);
         return res.json({ platforms });
@@ -133,7 +133,7 @@ router.get("/:username/followed_platforms", async function(req, res, next) {
  * Auth: admin or correct user
  */
 
-router.post("/:username/followed_platforms/:platformHandle", async function(req, res, next) {
+router.post("/:username/followed_platforms/:platformHandle", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
         const followed = await Writer.followPlatform(req.params.username, req.params.platformHandle);
         return res.json({ followed });
@@ -147,7 +147,7 @@ router.post("/:username/followed_platforms/:platformHandle", async function(req,
  * Auth: admin or correct user
  */
 
-router.delete("/:username/followed_platforms/:platformHandle", async function(req, res, next) {
+router.delete("/:username/followed_platforms/:platformHandle", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
         const unfollowed = await Writer.unfollowPlatform(req.params.username, req.params.platformHandle);
         return res.json({ unfollowed });
