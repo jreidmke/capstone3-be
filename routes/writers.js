@@ -62,10 +62,10 @@ router.get("/:id", ensureLoggedIn, async function(req, res, next) {
  * Auth: admin or correct user
  */
 
-router.delete("/:username", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.delete("/:id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        await Writer.remove(req.params.username);
-        return res.json({ deleted: req.params.username });
+        await Writer.remove(req.params.id);
+        return res.json({ deleted: req.params.id });
     } catch (error) {
         return next(error);
     }

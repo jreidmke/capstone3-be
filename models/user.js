@@ -24,7 +24,7 @@ class User {
 
     static async authenticate(email, password) {
         const result = await db.query(
-            `SELECT email, password, is_admin
+            `SELECT id, email, password, is_admin
             FROM users
             WHERE email=$1`,
             [email]

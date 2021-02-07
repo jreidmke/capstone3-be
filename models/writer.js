@@ -97,15 +97,15 @@ class Writer {
      * Failure throws NotFoundError
      */
 
-    static async remove(username) {
+    static async remove(id) {
 
       let result = await db.query(
-        `DELETE FROM writers WHERE username=$1 RETURNING username`, 
-        [username]
+        `DELETE FROM writers WHERE id=$1 RETURNING id`, 
+        [id]
       );
 
       const writer = result.rows[0];
-      if(!writer) throw new NotFoundError(`No User: ${username}`);
+      if(!writer) throw new NotFoundError(`No User With ID: ${id}`);
     };
 
     /**GET FOLLOWED TAGS: {username} => [{username, tagTitle}, ...] 

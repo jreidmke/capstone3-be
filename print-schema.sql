@@ -20,8 +20,8 @@ CREATE TABLE platforms(
 CREATE TABLE users(
     id BIGSERIAL PRIMARY KEY,
     email VARCHAR UNIQUE NOT NULL CHECK (position('@' IN email) > 1),
-    writer_id BIGINT REFERENCES writers(id),
-    platform_id BIGINT REFERENCES platforms(id),
+    writer_id BIGINT REFERENCES writers(id) ON DELETE CASCADE,
+    platform_id BIGINT REFERENCES platforms(id) ON DELETE CASCADE,
     password VARCHAR NOT NULL,
     image_url VARCHAR NOT NULL,
     address_1 VARCHAR NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE users(
 
 CREATE TABLE portfolios(
     id BIGSERIAL PRIMARY KEY,
-    writer_id BIGINT REFERENCES writers(id),
+    writer_id BIGINT REFERENCES writers(id) ON DELETE CASCADE,
     title VARCHAR NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL
@@ -48,7 +48,7 @@ CREATE TABLE portfolios(
 
 CREATE TABLE pieces(
     id BIGSERIAL PRIMARY KEY,
-    writer_id BIGINT REFERENCES writers(id),
+    writer_id BIGINT REFERENCES writers(id) ON DELETE CASCADE,
     title VARCHAR NOT NULL,
     text TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -57,7 +57,7 @@ CREATE TABLE pieces(
 
 CREATE TABLE gigs(
     id BIGSERIAL PRIMARY KEY,
-    platform_id BIGINT REFERENCES platforms(id),
+    platform_id BIGINT REFERENCES platforms(id) ON DELETE CASCADE,
     title VARCHAR NOT NULL,
     description VARCHAR NOT NULL,
     compensation DECIMAL(6, 2) NOT NULL,
@@ -78,9 +78,9 @@ CREATE TABLE tags(
 
 CREATE TABLE applications(
     id BIGSERIAL PRIMARY KEY,
-    gig_id BIGINT NOT NULL REFERENCES gigs(id),
-    writer_id BIGINT NOT NULL REFERENCES writers(id),
-    portfolio_id BIGINT NOT NULL REFERENCES portfolios(id),
+    gig_id BIGINT NOT NULL REFERENCES gigs(id) ON DELETE CASCADE,
+    writer_id BIGINT NOT NULL REFERENCES writers(id) ON DELETE CASCADE,
+    portfolio_id BIGINT NOT NULL REFERENCES portfolios(id) ON DELETE CASCADE,
     status VARCHAR NOT NULL CHECK (status in('Pending', 'Accepted', 'Rejected')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL
@@ -88,56 +88,56 @@ CREATE TABLE applications(
 
 CREATE TABLE piece_portfolios(
     id BIGSERIAL PRIMARY KEY,
-    portfolio_id BIGINT NOT NULL REFERENCES portfolios(id),
-    piece_id BIGINT NOT NULL REFERENCES pieces(id),
+    portfolio_id BIGINT NOT NULL REFERENCES portfolios(id) ON DELETE CASCADE,
+    piece_id BIGINT NOT NULL REFERENCES pieces(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL
 );
 
 CREATE TABLE piece_tags(
     id BIGSERIAL PRIMARY KEY,
-    piece_id BIGINT NOT NULL REFERENCES pieces(id),
-    tag_id BIGINT NOT NULL REFERENCES tags(id),
+    piece_id BIGINT NOT NULL REFERENCES pieces(id) ON DELETE CASCADE,
+    tag_id BIGINT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL
 );
 
 CREATE TABLE gig_tags(
     id BIGSERIAL PRIMARY KEY,
-    gig_id BIGINT NOT NULL REFERENCES gigs(id),
-    tag_id BIGINT NOT NULL REFERENCES tags(id),
+    gig_id BIGINT NOT NULL REFERENCES gigs(id) ON DELETE CASCADE,
+    tag_id BIGINT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL
 );
 
 CREATE TABLE platform_tag_follows(
     id BIGSERIAL PRIMARY KEY,
-    platform_id BIGINT REFERENCES platforms(id),
-    tag_id BIGINT NOT NULL REFERENCES tags(id),
+    platform_id BIGINT REFERENCES platforms(id) ON DELETE CASCADE,
+    tag_id BIGINT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL
 );
 
 CREATE TABLE platform_writer_follows(
     id BIGSERIAL PRIMARY KEY,
-    platform_id BIGINT REFERENCES platforms(id),
-    writer_id BIGINT REFERENCES writers(id),
+    platform_id BIGINT REFERENCES platforms(id) ON DELETE CASCADE,
+    writer_id BIGINT REFERENCES writers(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL
 );
 
 CREATE TABLE writer_platform_follows(
     id BIGSERIAL PRIMARY KEY,
-    writer_id BIGINT REFERENCES writers(id),
-    platform_id BIGINT REFERENCES platforms(id),
+    writer_id BIGINT REFERENCES writers(id) ON DELETE CASCADE,
+    platform_id BIGINT REFERENCES platforms(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL
 );
 
 CREATE TABLE writer_tag_follows(
     id BIGSERIAL PRIMARY KEY,
-    writer_id BIGINT REFERENCES writers(id),
-    tag_id BIGINT NOT NULL REFERENCES tags(id),
+    writer_id BIGINT REFERENCES writers(id) ON DELETE CASCADE,
+    tag_id BIGINT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL
 );
