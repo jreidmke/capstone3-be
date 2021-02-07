@@ -29,7 +29,7 @@ class Platform {
             [username]
         ); 
         const user = result.rows[0]; 
-        console.log(user);
+
         if(user) {
             console.log('piiza')
             const validPassword = await bcrypt.compare(password, user.password);
@@ -88,12 +88,6 @@ class Platform {
 };
 
 module.exports = Platform;
-
-// REGISTER 
-// -INPUT: username, platform_name, password, location, description, logo_url, email, phone, twitter_url, facebook_url, youtube_url, is_admin
-// -Success returns all data except password
-// Failure throws BadRequestError
-// Limitations: Register platform schema
 
 // FIND ALL
 // -Success returns all data on all companies

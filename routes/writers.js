@@ -6,6 +6,7 @@
 
 const express = require("express");
 const Writer = require("../models/writer");
+const {ensureLoggedIn} = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
 const jsonschema = require("jsonschema");
 
@@ -18,7 +19,7 @@ const router = express.Router();
  * Auth required: ensure logged in.
  */
 
-router.get("/", async function(req, res, next) {
+router.get("/", ensureLoggedIn, async function(req, res, next) {
     try {
         const writers = await Writer.getAll();
         return res.json({ writers });
