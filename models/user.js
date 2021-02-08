@@ -9,7 +9,7 @@ const {
   BadRequestError,
   UnauthorizedError,
 } = require("../expressError");
-const checkForItem = require('../helpers/checks');
+const {checkForItem, getUserHelper} = require('../helpers/checks');
 const Writer = require("./writer");
 const Platform = require("./platform");
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
@@ -186,29 +186,52 @@ class User {
          return user;
     };
 
+    /**GET USER TAG FOLLOWS
+     *
+     * SUCCESS {id, userType string} => [{id, writer_id, tag_id, timestamps},...]
+     *
+     * Failure returns NotFoundError OR BadRequestError
+     */
+
     static async getUserTagFollows(id, userType) {
         if(userType==="writer" || userType==="platform") {
-            const result = await db.query(
-                `SELECT id, writer_id, platform_id
-                FROM users
-                WHERE id=$1`,
-                [id]
+            const user = await getUserHelper(id);
+            const tagRes = await db.query(
+                `SELECT *
+                FROM ${userType}_tag_follows
+                WHERE ${userType}_id=$1`,
+                [user.writer_id ||user.platform_id]
                 );
-                let user = result.rows[0];
-                if(!user) throw new NotFoundError(`No User With Id: ${id}`);
-
-                const tagRes = await db.query(
-                    `SELECT *
-                    FROM ${userType}_tag_follows
-                    WHERE ${userType}_id=$1`,
-                    [user.writer_id ||user.platform_id]
-                    );
-                    const tags = tagRes.rows;
-                    if(!tags) throw new NotFoundError(`User with ID: ${id} follows no tags!`);
-                    return tags;
+                const tags = tagRes.rows;
+                if(!tags) throw new NotFoundError(`User with ID: ${id} follows notags!`);
+                return tags;
         }
         throw new BadRequestError('User Type must be string: "writer" OR "platform"');
     };
+
+    /**FOLLOW TAG
+     *
+     * SUCESS: {id, userType string} => [followed: {id, writer_id, tag_id, timestamps}]
+     *
+     * Failure returns NotFoundError OR BadRequestError
+     */
+
+    static async followTag(userId, tagId, userType){
+        if(userType==="writer" || userType==="platform") {
+            const user = await checkForItem(userId, "users", "id");
+            const tag = await checkForItem(tagId, 'tags', 'id');
+            const followRes = await db.query(
+                `INSERT INTO ${userType}_tag_follows (${userType}_id, tag_id)
+                VALUES ($1, $2)
+                RETURNING tag_id AS tagId, ${userType}_id AS ${userType}Id`,
+                [user.writer_id ||user.platform_id, tagId]
+            );
+            const newFollow = followRes.rows[0];
+            newFollow.tagTitle = tag.title;
+            return newFollow;
+        }
+        throw new BadRequestError('User Type must be string: "writer" OR "platform"');
+    }
 
 };
 

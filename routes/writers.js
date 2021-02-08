@@ -59,14 +59,14 @@ router.get("/:id", ensureLoggedIn, async function(req, res, next) {
 
 
 
-/**GET /[username]/followed_tags => [{username, tagTitle},...]
+/**GET /[is]/followed_tags => [{id, writer_id, tag_id, timestamps},...]
  *
  * Auth: admin or correct user
  */
 
 router.get("/:id/followed_tags", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const tags = await User.getUserTagFollows(req.params.id, "fvbsd");
+        const tags = await User.getUserTagFollows(req.params.id, "writer");
         return res.json({ tags });
     } catch (error) {
         return next(error);
@@ -78,9 +78,9 @@ router.get("/:id/followed_tags", ensureCorrectUserOrAdmin, async function(req, r
  * Auth: admin or correct user
 */
 
-router.post("/:username/followed_tags/:tagTitle", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.post("/:id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const followed = await Writer.followTag(req.params.username, req.params.tagTitle);
+        const followed = await User.followTag(req.params.id, req.params.tag_id, "writer");
         return res.json({ followed });
     } catch (error) {
         return next(error);
