@@ -9,8 +9,9 @@ const User = require("../models/user");
 const express = require("express");
 const router = new express.Router();
 const { createToken } = require("../helpers/token");
+const userAuthSchema = require("../schemas/userAuth.json");
 const { BadRequestError } = require("../expressError");
-const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
+const {  ensureCorrectUserOrAdmin } = require("../middleware/auth");
 
 /**POST /login: {email, password} => {token}
  * 
@@ -21,9 +22,11 @@ const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth
 
 router.post("/login", async function(req, res, next) {
     try {
-        //need to add json schema validators
-        //add check for json schema
-        //throw error if fails
+        const validator = jsonschema.validate(req.body, userAuthSchema);
+            if (!validator.valid) {
+            const errs = validator.errors.map(e => e.stack);
+            throw new BadRequestError(errs);
+        }
 
         const { email, password } = req.body;
         const user = await User.authenticate(email, password);
