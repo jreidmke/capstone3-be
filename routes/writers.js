@@ -59,7 +59,7 @@ router.get("/:id", ensureLoggedIn, async function(req, res, next) {
 
 
 
-/**GET /[is]/followed_tags => [{id, writer_id, tag_id, timestamps},...]
+/**GET /[id]/followed_tags => [{id, writer_id, tag_id, timestamps},...]
  *
  * Auth: admin or correct user
  */
@@ -73,28 +73,28 @@ router.get("/:id/followed_tags", ensureCorrectUserOrAdmin, async function(req, r
     }
 });
 
-/**POST /[username]/followed_tags/[tagTitle] => {followed: {username, tagTitle}}
+/**POST /[id]/followed_tags/[tag_id] => {followed: {userID, tagId, tagTitle}}
  *
  * Auth: admin or correct user
 */
 
 router.post("/:id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const followed = await User.followTag(req.params.id, req.params.tag_id, "writer");
+        const followed = await User.followItem(req.params.id, req.params.tag_id, "writer", "tag");
         return res.json({ followed });
     } catch (error) {
         return next(error);
     }
 });
 
-/**DELETE /[username]/followed_tags/[tagTitle] => {unfollowed: {username, tagTitle}}
+/**DELETE /[id]/followed_tags/[tag_id] => {unfollowed: {userID, tagId, tagTitle}}
  *
  * Auth: admin or correct user
  */
 
-router.delete("/:username/followed_tags/:tagTitle", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.delete("/:id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const unfollowed = await Writer.unfollowTag(req.params.username, req.params.tagTitle);
+        const unfollowed = await User.unfollowItem(req.params.id, req.params.tag_id, "writer", "tag");
         return res.json({ unfollowed });
     } catch (error) {
         return next(error);

@@ -1,4 +1,5 @@
 const db = require("../db");
+const { BadRequestError, NotFoundError } = require("../expressError");
 
 async function checkForItem(value, table, column) {
     let result = await db.query(
@@ -9,10 +10,25 @@ async function checkForItem(value, table, column) {
     );
 
     const item = result.rows[0];
-    if(!item) throw new NotFoundError(`No ${table} With ${column}: ${id}`);
+    if(!item) return false;
     if(item.password) delete item.password;
     return item;
 };
+
+async function checkForFollow(userId, itemId, userType, itemType) {
+    let result = await db.query(
+        `SELECT *
+        FROM ${userType}_${itemType}_follows
+        WHERE ${userType}_id=$1
+        AND ${itemType}_id=$2`,
+        [userId, itemId]
+    );
+
+    const follow = result.rows[0];
+    console.log(follow);
+    if(follow) return true;
+    return false;
+}
 
 async function getUserHelper(id) {
     const result = await db.query(
@@ -22,8 +38,8 @@ async function getUserHelper(id) {
         [id]
     );
     let user = result.rows[0];
-    if(!user) throw new NotFoundError(`No User With Id: ${id}`);
+    if(!user) return false;
     return user;
 };
 
-module.exports = {checkForItem, getUserHelper};
+module.exports = {checkForItem, getUserHelper, checkForFollow};

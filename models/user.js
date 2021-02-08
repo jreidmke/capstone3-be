@@ -9,7 +9,7 @@ const {
   BadRequestError,
   UnauthorizedError,
 } = require("../expressError");
-const {checkForItem, getUserHelper} = require('../helpers/checks');
+const {checkForItem, getUserHelper, checkForFollow} = require('../helpers/checks');
 const Writer = require("./writer");
 const Platform = require("./platform");
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
@@ -209,30 +209,78 @@ class User {
         throw new BadRequestError('User Type must be string: "writer" OR "platform"');
     };
 
-    /**FOLLOW TAG
+    /**FOLLOW ITEM
      *
-     * SUCESS: {id, userType string} => [followed: {id, writer_id, tag_id, timestamps}]
+     * SUCESS: {id, itemId, userType string, itemType} => [followed: {writer_id, tag_id, tag_title}]
      *
      * Failure returns NotFoundError OR BadRequestError
      */
 
-    static async followTag(userId, tagId, userType){
-        if(userType==="writer" || userType==="platform") {
-            const user = await checkForItem(userId, "users", "id");
-            const tag = await checkForItem(tagId, 'tags', 'id');
+    static async followItem(userId, itemId, userType, itemType){
+        if(userType==="writer" || userType==="platform" && itemType==="tag" || itemType==="platform") {
+
+            //error handling
+            if(await checkForFollow(userId, itemId, userType, itemType)) {
+                throw new BadRequestError(`${userType} ${userId} already follows ${itemType} ${itemId}`);
+            }
+            const user = await getUserHelper(userId);
+            if(!user) throw new NotFoundError(`No ${table} With ${column}: ${id}`);
+            const item = await checkForItem(itemId, `${itemType}s`, 'id');
+            if(!item) throw new NotFoundError(`No ${table} With ${column}: ${id}`);
+
+            //Insert into DB
             const followRes = await db.query(
-                `INSERT INTO ${userType}_tag_follows (${userType}_id, tag_id)
+                `INSERT INTO ${userType}_${itemType}_follows (${userType}_id, ${itemType}_id)
                 VALUES ($1, $2)
-                RETURNING tag_id AS tagId, ${userType}_id AS ${userType}Id`,
-                [user.writer_id ||user.platform_id, tagId]
+                RETURNING ${itemType}_id AS ${itemType}Id, ${userType}_id AS ${userType}Id`,
+                [user.writer_id ||user.platform_id, itemId]
             );
+
+            //Return data to user
             const newFollow = followRes.rows[0];
-            newFollow.tagTitle = tag.title;
+            newFollow.title = item.title || item.display_name;
             return newFollow;
         }
+
+        throw new BadRequestError('User Type must be string: "writer" OR "platform"');
+    };
+
+    /**UNFOLLOW ITEM
+     *
+     * SUCESS: {id, itemId, userType string, itemType} => [followed: {writer_id, tag_id, tag_title}]
+     *
+     * Failure returns NotFoundError OR BadRequestError
+     */
+
+    static async unfollowItem(userId, itemId, userType, itemType) {
+        if(userType==="writer" || userType==="platform" && itemType==="tag" || itemType==="platform") {
+
+            //error handling
+            if(!await checkForFollow(userId, itemId, userType, itemType)) {
+                throw new BadRequestError(`${userType} ${userId} doesn't follow ${itemType} ${itemId}`);
+            }
+            const user = await getUserHelper(userId);
+            if(!user) throw new NotFoundError(`No ${table} With ${column}: ${id}`);
+            const item = await checkForItem(itemId, `${itemType}s`, 'id');
+            if(!item) throw new NotFoundError(`No ${table} With ${column}: ${id}`);
+
+            //DELETE from database
+            const unfollowRes = await db.query(
+                `DELETE FROM ${userType}_${itemType}_follows
+                WHERE ${userType}_id=$1
+                AND ${itemType}_id=$2
+                RETURNING ${itemType}_id AS ${itemType}Id, ${userType}_id AS ${userType}Id`,
+                [user.writer_id ||user.platform_id, itemId]
+            );
+
+            //return data to user
+            const unfollow = unfollowRes.rows[0];
+            unfollow.title = item.title || item.display_name;
+            return unfollow;
+        };
+
         throw new BadRequestError('User Type must be string: "writer" OR "platform"');
     }
-
 };
 
 module.exports = User;
