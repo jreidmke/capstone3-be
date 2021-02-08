@@ -45,6 +45,8 @@ class Writer {
      *    where portfolios is { id, title, writer_username }
      *
      * Failure throws NotFoundError
+     *
+     * Works in tandem with Uesr method getById()
      */
 
      static async getById(user) {

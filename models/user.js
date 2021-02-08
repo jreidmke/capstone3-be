@@ -224,7 +224,7 @@ class User {
             if(!item) throw new NotFoundError(`No ${itemType} With Id: ${itemId}`);
             if(await checkForFollow(user.writer_id || user.platform_id, itemId, userType, itemType)) {
                 throw new BadRequestError(`${userType} ${userId} already follows ${itemType} ${itemId}`);
-            }
+            };
 
             //Insert into DB
             const followRes = await db.query(
