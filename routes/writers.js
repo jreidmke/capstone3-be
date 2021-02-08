@@ -9,6 +9,7 @@ const User = require("../models/user");
 const Writer = require("../models/writer");
 const Portfolio = require("../models/portfolio");
 const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
+const Piece = require("../models/piece");
 
 const router = express.Router();
 
@@ -148,11 +149,6 @@ module.exports = router;
 // *
 // // //PORTFOLIOS
 // *
-// *
-
-// GET /writers/writer username/portfolios
-// Only viewable by admin/username
-// Shows a list of writer portfolios
 
 router.get("/:id/portfolios", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
@@ -162,10 +158,6 @@ router.get("/:id/portfolios", ensureCorrectUserOrAdmin, async function(req, res,
         return next(error);
     }
 });
-
-// POST /writers/writer_username/portfolios/new
-// Only viewable by admin/username
-// Makes POST to create new portfolio. Redirects to /writers/writer_username/portfolios.
 
 router.post("/:id/portfolios", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
@@ -193,23 +185,11 @@ router.delete("/:id/portfolios/:portfolio_id", ensureCorrectUserOrAdmin, async f
     } catch (error) {
         return next(error);
     }
-})
+});
 
 //PATCH /writers/writer username/portfolios/portfolio id/edit
 //ONLY VIEWABLE BY ADMIN/USERNAME
 // Sends patch to UPDATE portfolio name
-
-
-
-// GET /writers/writer_username/portfolios/:portfolio_id/add_pieces/
-// Shows a list of all pices by author and AN ICON TO EITHER ADD OR REMOVE PIECE depending on wether or not it is present in portfolio.
-
-// POST /writers/writer_username/portfolios/:portfolio_id/add_piece/:piece_id
-// Makes the actual post request when you CLICK ON AN ICON
-
-// DELETE /writers/writer_username/portfolios/:portfolio_id/add_piece/:piece_id
-// Deletes piece id and portfolio id from PORTFOLIO_PIECE db.
-
 
 //** */
 //** */
@@ -217,7 +197,42 @@ router.delete("/:id/portfolios/:portfolio_id", ensureCorrectUserOrAdmin, async f
 //** */
 //** */
 
+router.get("/:id/pieces", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const pieces = await Piece.getAll(req.params.id);
+        return res.json({ pieces });
+    } catch (error) {
+        return next(error);
+    }
+});
 
+router.get("/:id/pieces/:piece_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const piece = await Piece.getById(req.params.id, req.params.piece_id);
+        return res.json({ piece });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+router.post("/:id/pieces", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const { title, text } = req.body;
+        const newPiece = await Piece.createPiece(req.params.id, title, text);
+        return res.json({ newPiece });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+router.delete("/:id/pieces/:piece_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const piece = await Piece.removePiece(req.params.id, req.params.piece_id);
+        return res.json({ piece });
+    } catch (error) {
+        return next(error);
+    }
+});
 // GET /writers/writer username/pieces
 // Only viewable by admin/username
 // Shows a list of authoer's pieces
