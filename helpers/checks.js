@@ -28,7 +28,7 @@ async function checkForFollow(userId, itemId, userType, itemType) {
 
     if(follow) return true;
     return false;
-}
+};
 
 async function getUserHelper(id) {
     const result = await db.query(

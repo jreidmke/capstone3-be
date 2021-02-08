@@ -46,7 +46,7 @@ router.get("/:id/followed_tags", ensureCorrectUserOrAdmin, async function(req, r
 
 router.post("/:id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const followed = await User.followItem(req.params.id, req.params.tag_id, "writer", "tag");
+        const followed = await User.followItem(req.params.id, req.params.tag_id, "platform", "tag");
         return res.json({ followed });
     } catch (error) {
         return next(error);
@@ -60,7 +60,7 @@ router.post("/:id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, async functi
 
 router.delete("/:id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const unfollowed = await User.unfollowItem(req.params.id, req.params.tag_id, "writer", "tag");
+        const unfollowed = await User.unfollowItem(req.params.id, req.params.tag_id, "platform", "tag");
         return res.json({ unfollowed });
     } catch (error) {
         return next(error);
