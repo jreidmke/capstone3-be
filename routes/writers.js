@@ -154,6 +154,15 @@ module.exports = router;
 // Only viewable by admin/username
 // Shows a list of writer portfolios
 
+router.get("/:id/portfolios", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const portfolios = await Portfolio.getAll(req.params.id);
+        return res.json({ portfolios });
+    } catch (error) {
+        return next(error);
+    }
+})
+
 router.get("/:id/portfolios/:portfolio_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
         const portfolio = await Portfolio.getById(req.params.portfolio_id, req.params.id);

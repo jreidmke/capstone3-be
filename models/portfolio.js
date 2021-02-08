@@ -14,12 +14,12 @@ class Portfolio {
         const result = await db.query(
             `SELECT *
             FROM portfolios
-            WHERE id=$1`,
+            WHERE writer_id=$1`,
             [user.writer_id]
         );
-        const portfolio = result.rows;
-        if(!portfolio.length) throw new NotFoundError(`User: ${userId} Has No Portfolios`);
-        return portfolio;
+        const portfolios = result.rows;
+        if(!portfolios.length) throw new NotFoundError(`User: ${userId} Has No Portfolios`);
+        return portfolios;
     }
 
     static async getById(portfolioId, userId) {
