@@ -3,18 +3,14 @@
 "use strict";
 
 const db = require("../db");
-const bcrypt = require("bcrypt");
 const {
   NotFoundError,
   BadRequestError,
   UnauthorizedError,
 } = require("../expressError");
-const checkForItem = require('../helpers/checks');
 
-const { BCRYPT_WORK_FACTOR } = require("../config.js");
 
 class Writer {
-
 
     /**FIND ALL WRITERS
      *

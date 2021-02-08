@@ -1,4 +1,30 @@
 // PORTFOLIO MODEL
+const db = require("../db");
+const { getUserHelper } = require("../helpers/checks");
+const {
+  NotFoundError,
+  BadRequestError,
+  UnauthorizedError,
+} = require("../expressError")
+
+class Portfolio {
+    static async getById(portfolioId, userId) {
+        const user = await getUserHelper(userId);
+        if(!user) throw new NotFoundError(`No User With ID: ${userId}`);
+        const result = await db.query(
+            `SELECT *
+            FROM portfolios
+            WHERE id=$1`,
+            [portfolioId]
+        );
+        const portfolio = result.rows[0];
+        if(!portfolio) throw new NotFoundError(`Portfolio with ID: ${id} Not Found!`);
+        if(portfolio.writer_id !== user.writer_id) throw new UnauthorizedError();
+        return portfolio;
+    }
+};
+
+module.exports = Portfolio;
 
 // CREATE PORTFOLIO
 // -Input: author username, title

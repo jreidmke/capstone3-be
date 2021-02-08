@@ -7,6 +7,7 @@
 const express = require("express");
 const User = require("../models/user");
 const Writer = require("../models/writer");
+const Portfolio = require("../models/portfolio");
 const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
 
 const router = express.Router();
@@ -153,9 +154,14 @@ module.exports = router;
 // Only viewable by admin/username
 // Shows a list of writer portfolios
 
-// GET /writers/writer username/portfolios/portfolio id
-// Only viewable by admin/username
-// Shows the contents of portfolio (a list of pieces)
+router.get("/:id/portfolios/:portfolio_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const portfolio = await Portfolio.getById(req.params.portfolio_id, req.params.id);
+        return res.json({ portfolio });
+    } catch (error) {
+        return next(error);
+    }
+})
 
 //PATCH /writers/writer username/portfolios/portfolio id/edit
 //ONLY VIEWABLE BY ADMIN/USERNAME
