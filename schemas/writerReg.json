@@ -1,0 +1,209 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "email": "jamesreid@gmail.com",
+            "password": "password",
+            "imageUrl": "imagepix",
+            "address1": "1430 Bilarda Ct.",
+            "address2": null,
+            "city": "Geneva",
+            "state": "Illinois",
+            "postalCode": 60134,
+            "phone": "630-338-5693",
+            "twitterUsername": null,
+            "facebookUsername": null,
+            "youtubeUsername": "james",
+            "firstName": "James",
+            "lastName": "Reid",
+            "age": 32,
+            "bio": "I like to eat pizza."
+        }
+    ],
+    "required": [
+        "email",
+        "password",
+        "imageUrl",
+        "address1",
+        "address2",
+        "city",
+        "state",
+        "postalCode",
+        "phone",
+        "twitterUsername",
+        "facebookUsername",
+        "youtubeUsername",
+        "firstName",
+        "lastName",
+        "age",
+        "bio"
+    ],
+    "properties": {
+        "email": {
+            "$id": "#/properties/email",
+            "type": "string",
+            "title": "The email schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "jamesreid@gmail.com"
+            ]
+        },
+        "password": {
+            "$id": "#/properties/password",
+            "type": "string",
+            "title": "The password schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "password"
+            ]
+        },
+        "imageUrl": {
+            "$id": "#/properties/imageUrl",
+            "type": "string",
+            "title": "The imageUrl schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "imagepix"
+            ]
+        },
+        "address1": {
+            "$id": "#/properties/address1",
+            "type": "string",
+            "title": "The address1 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "1430 Bilarda Ct."
+            ]
+        },
+        "address2": {
+            "$id": "#/properties/address2",
+            "type": "null",
+            "title": "The address2 schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": null,
+            "examples": [
+                null
+            ]
+        },
+        "city": {
+            "$id": "#/properties/city",
+            "type": "string",
+            "title": "The city schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "Geneva"
+            ]
+        },
+        "state": {
+            "$id": "#/properties/state",
+            "type": "string",
+            "title": "The state schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "Illinois"
+            ]
+        },
+        "postalCode": {
+            "$id": "#/properties/postalCode",
+            "type": "integer",
+            "title": "The postalCode schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0,
+            "examples": [
+                60134
+            ]
+        },
+        "phone": {
+            "$id": "#/properties/phone",
+            "type": "string",
+            "title": "The phone schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "630-338-5693"
+            ]
+        },
+        "twitterUsername": {
+            "$id": "#/properties/twitterUsername",
+            "type": "null",
+            "title": "The twitterUsername schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": null,
+            "examples": [
+                null
+            ]
+        },
+        "facebookUsername": {
+            "$id": "#/properties/facebookUsername",
+            "type": "null",
+            "title": "The facebookUsername schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": null,
+            "examples": [
+                null
+            ]
+        },
+        "youtubeUsername": {
+            "$id": "#/properties/youtubeUsername",
+            "type": "string",
+            "title": "The youtubeUsername schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "james"
+            ]
+        },
+        "firstName": {
+            "$id": "#/properties/firstName",
+            "type": "string",
+            "title": "The firstName schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "James"
+            ]
+        },
+        "lastName": {
+            "$id": "#/properties/lastName",
+            "type": "string",
+            "title": "The lastName schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "Reid"
+            ]
+        },
+        "age": {
+            "$id": "#/properties/age",
+            "type": "integer",
+            "title": "The age schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0,
+            "examples": [
+                32
+            ]
+        },
+        "bio": {
+            "$id": "#/properties/bio",
+            "type": "string",
+            "title": "The bio schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "I like to eat pizza."
+            ]
+        }
+    },
+    "additionalProperties": true
+}

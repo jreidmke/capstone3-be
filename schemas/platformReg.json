@@ -1,0 +1,161 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "examples": [
+        {
+            "email": "newplatform@gmail.com",
+            "password": "password",
+            "imageUrl": "imagepix",
+            "address1": "1430 Bilarda Ct.",
+            "address2": "Suite 421",
+            "city": "Geneva",
+            "state": "Illinois",
+            "postalCode": 60134,
+            "phone": "630-338-5693",
+            "twitterUsername": "platform",
+            "facebookUsername": "platform",
+            "youtubeUsername": "platform",
+            "handle": "newplatform",
+            "displayName": "The New Platform",
+            "description": "IT's new man."
+        }
+    ],
+    "required": [
+        "email",
+        "password",
+        "imageUrl",
+        "address1",
+        "address2",
+        "city",
+        "state",
+        "postalCode",
+        "phone",
+        "handle",
+        "displayName",
+        "description"
+    ],
+    "properties": {
+        "email": {
+            "$id": "#/properties/email",
+            "type": "string",
+            "title": "The email schema",
+            "examples": [
+                "newplatform@gmail.com"
+            ]
+        },
+        "password": {
+            "$id": "#/properties/password",
+            "type": "string",
+            "title": "The password schema",
+            "examples": [
+                "password"
+            ]
+        },
+        "imageUrl": {
+            "$id": "#/properties/imageUrl",
+            "type": "string",
+            "title": "The imageUrl schema",
+            "examples": [
+                "imagepix"
+            ]
+        },
+        "address1": {
+            "$id": "#/properties/address1",
+            "type": "string",
+            "title": "The address1 schema",
+            "examples": [
+                "1430 Bilarda Ct."
+            ]
+        },
+        "address2": {
+            "$id": "#/properties/address2",
+            "type": ["string", "null"],
+            "title": "The address2 schema",
+            "examples": [
+                "Suite 421"
+            ]
+        },
+        "city": {
+            "$id": "#/properties/city",
+            "type": "string",
+            "title": "The city schema",
+            "examples": [
+                "Geneva"
+            ]
+        },
+        "state": {
+            "$id": "#/properties/state",
+            "type": "string",
+            "title": "The state schema",
+            "examples": [
+                "Illinois"
+            ]
+        },
+        "postalCode": {
+            "$id": "#/properties/postalCode",
+            "type": "integer",
+            "title": "The postalCode schema",
+            "examples": [
+                60134
+            ]
+        },
+        "phone": {
+            "$id": "#/properties/phone",
+            "type": "string",
+            "title": "The phone schema",
+            "examples": [
+                "630-338-5693"
+            ]
+        },
+        "twitterUsername": {
+            "$id": "#/properties/twitterUsername",
+            "type": ["string", "null"],
+            "title": "The twitterUsername schema",
+            "examples": [
+                "platform"
+            ]
+        },
+        "facebookUsername": {
+            "$id": "#/properties/facebookUsername",
+            "type": ["string", "null"],
+            "title": "The facebookUsername schema",
+            "examples": [
+                "platform"
+            ]
+        },
+        "youtubeUsername": {
+            "$id": "#/properties/youtubeUsername",
+            "type": ["string", "null"],
+            "title": "The youtubeUsername schema",
+            "examples": [
+                "platform"
+            ]
+        },
+        "handle": {
+            "$id": "#/properties/handle",
+            "type": "string",
+            "title": "The handle schema",
+            "examples": [
+                "newplatform"
+            ]
+        },
+        "displayName": {
+            "$id": "#/properties/displayName",
+            "type": "string",
+            "title": "The displayName schema",
+            "examples": [
+                "The New Platform"
+            ]
+        },
+        "description": {
+            "$id": "#/properties/description",
+            "type": "string",
+            "title": "The description schema",
+            "examples": [
+                "It's new man."
+            ]
+        }
+    },
+    "additionalProperties": false
+}

@@ -10,6 +10,8 @@ const express = require("express");
 const router = new express.Router();
 const { createToken } = require("../helpers/token");
 const userAuthSchema = require("../schemas/userAuth.json");
+const platformRegSchema = require("../schemas/platformReg.json");
+const writerRegSchema = require("../schemas/writerReg.json");
 const { BadRequestError } = require("../expressError");
 const {  ensureCorrectUserOrAdmin } = require("../middleware/auth");
 
@@ -54,7 +56,16 @@ router.post("/login", async function(req, res, next) {
 
 router.post("/register", async function(req, res, next) {
     try {
-        //json schema validators
+        let validator;
+        if("handle" in req.body || "displayName" in req.body) {
+            validator = jsonschema.validate(req.body, platformRegSchema);
+        } else {
+            validator = jsonschema.validate(req.body, writerRegSchema)
+        };
+        if (!validator.valid) {
+            const errs = validator.errors.map(e => e.stack);
+            throw new BadRequestError(errs);
+        };
         const newUser = await User.register({...req.body});
         const token = createToken(newUser);
         return res.status(201).json({ token });
