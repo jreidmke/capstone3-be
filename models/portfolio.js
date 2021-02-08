@@ -5,9 +5,23 @@ const {
   NotFoundError,
   BadRequestError,
   UnauthorizedError,
-} = require("../expressError")
+} = require("../expressError");
 
 class Portfolio {
+    static async getAll(userId) {
+        const user = await getUserHelper(userId);
+        if(!user) throw new NotFoundError(`No User With ID: ${userId}`);
+        const result = await db.query(
+            `SELECT *
+            FROM portfolios
+            WHERE id=$1`,
+            [user.writer_id]
+        );
+        const portfolio = result.rows;
+        if(!portfolio.length) throw new NotFoundError(`User: ${userId} Has No Portfolios`);
+        return portfolio;
+    }
+
     static async getById(portfolioId, userId) {
         const user = await getUserHelper(userId);
         if(!user) throw new NotFoundError(`No User With ID: ${userId}`);
