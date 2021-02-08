@@ -45,11 +45,7 @@ class User {
 
             // USER TABLE (email, password, imageUrl, address1, address2, city, state, postalCode, phone, twitterUsername, facebookUsername, youtubeUsername)
 
-            //And WRITER TABLE (firstName, lastName, age, bio)
-
-            //OR
-
-            //PLATFORM TABLE (handle, description, display_name)
+            //And WRITER TABLE (firstName, lastName, age, bio) OR PLATFORM TABLE (handle, description, display_name)
 
     /* Returns JWT used to auth further reqs.
     *
@@ -140,11 +136,7 @@ class User {
      *
      * Success: {id, userType(string: either "writer" OR "platform")} => RETURNS:
      *
-     * ALL DATA on selected WRITER, including PORTOLIOS
-     *
-     * OR
-     *
-     * ALL DATA on selected PLATFORM, including GIGS
+     * ALL DATA on selected WRITER, including PORTOLIOS OR ALL DATA on selected PLATFORM, including GIGS
      *
      * FAILURE throws NotFoundError or BadRequest
      *

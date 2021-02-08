@@ -8,8 +8,6 @@ const express = require("express");
 const User = require("../models/user");
 const Writer = require("../models/writer");
 const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
-const { BadRequestError } = require("../expressError");
-const jsonschema = require("jsonschema");
 
 const router = express.Router();
 
@@ -144,14 +142,6 @@ router.delete("/:id/followed_platforms/:platform_id", ensureCorrectUserOrAdmin, 
 });
 
 module.exports = router;
-
-// GET /writers/writer username/edit (FRONT END STUFF)
-// Only viewable by admin/username
-// Shows a writers profile edit form
-
-// GET /writers/writer_username/followed_tags (FRONT END NOTES)
-// ONLY viewalbe by admin/username
-// Shows a list of tags the writer is following with ICON LINKS TO send POST || DELETE reqs.
 
 // *
 // *

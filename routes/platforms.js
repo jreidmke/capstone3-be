@@ -1,3 +1,146 @@
+"use strict";
+
+const express = require("express");
+const User = require("../models/user");
+const Platform = require("../models/platform");
+const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
+const { BadRequestError } = require("../expressError");
+const jsonschema = require("jsonschema");
+
+const router = express.Router();
+
+/**GET / => {writers: [ {first_name, last_name, image_url, city, state, facebookUsername, twitterUsername, youtubeUesrname}, ...]}
+ *
+ * Returns a list of all writers
+ *
+ * Auth required: ensure logged in.
+ */
+
+router.get("/", ensureLoggedIn, async function(req, res, next) {
+    try {
+        const writers = await Writer.getAll();
+        return res.json({ writers });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+/**GET /[username] => {user}
+ *
+ * Returns { first_name, last_name, image_url, city, state, facebookUsername, twitterUsername, youtubeUesrname, age, bio, createdAt, address1, address2, phone, portfolios}
+ *      where portfolios is { id, title }
+ *
+ * Auth required: ensure logged in.
+ */
+
+router.get("/:id", ensureLoggedIn, async function(req, res, next) {
+    try {
+        const writer = await User.getById(req.params.id, "writer");
+        return res.json({ writer });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+
+
+
+
+// PATCH /writers/writer username/edit
+// Only viewable by admin/username
+// Sends request to update write data in database
+
+
+
+
+
+
+/**GET /[id]/followed_tags => [{id, writer_id, tag_id, timestamps},...]
+ *
+ * Auth: admin or correct user
+ */
+
+router.get("/:id/followed_tags", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const tags = await User.getItemFollows(req.params.id, "writer", "tag");
+        return res.json({ tags });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+/**POST /[id]/followed_tags/[tag_id] => {followed: {userID, tagId, tagTitle}}
+ *
+ * Auth: admin or correct user
+*/
+
+router.post("/:id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const followed = await User.followItem(req.params.id, req.params.tag_id, "writer", "tag");
+        return res.json({ followed });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+/**DELETE /[id]/followed_tags/[tag_id] => {unfollowed: {userID, tagId, tagTitle}}
+ *
+ * Auth: admin or correct user
+ */
+
+router.delete("/:id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const unfollowed = await User.unfollowItem(req.params.id, req.params.tag_id, "writer", "tag");
+        return res.json({ unfollowed });
+    } catch (error) {
+        return next(error);
+    }
+})
+
+/**GET /[id]/followed_platforms => [{id, writer_id, tag_id, timestamps},...]
+ *
+ * Auth: admin or correct user
+ */
+
+router.get("/:id/followed_platforms", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const platforms = await User.getItemFollows(req.params.id, "writer", "platform");
+        return res.json({ platforms });
+    } catch (error) {
+        return next(error);
+    };
+});
+
+/**POST /[username]/followed_platforms/:platformHandle
+ *
+ * Auth: admin or correct user
+ */
+
+router.post("/:id/followed_platforms/:platform_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const followed = await User.followItem(req.params.id, req.params.platform_id, "writer", "platform");
+        return res.json({ followed });
+    } catch (error) {
+        return next(error);
+    }
+})
+
+/**DELETE /[username]/followed_platforms/:platformHandle
+ *
+ * Auth: admin or correct user
+ */
+
+router.delete("/:id/followed_platforms/:platform_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const unfollowed = await User.unfollowItem(req.params.id, req.params.platform_id, "writer", "platform");
+        return res.json({ unfollowed });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+module.exports = router;
+
 // PLATFORM ROUTES
 
 
@@ -58,7 +201,7 @@
 
 // GET /platforms/:platform_name/gigs
 // Shows a list of gigs from platform
-// NOTE: Clicking on these routes will not take you to `/platforms/:platform_name/gigs/:gig_id`. It will take you to `/gigs/:gig_id`. 
+// NOTE: Clicking on these routes will not take you to `/platforms/:platform_name/gigs/:gig_id`. It will take you to `/gigs/:gig_id`.
 
 // GET /platforms/:platform_name/gigs/new_gig (FRONT END ROUTE)
 // Shows form to create new gig
@@ -87,10 +230,10 @@
 
 
 // GET /platforms/:platform_name/gigs/:gig_id/applications
-// Shows a list of applications. 
+// Shows a list of applications.
 
 // GET /platforms/:platform_name/gigs/:gig_id/applications/:app_id
-// Shows data on one application (including submitted portfolio). 
+// Shows data on one application (including submitted portfolio).
 
 // PATCH /platforms/:platform_name/gigs/:gig_id/applications/
 // Sets is_active for all applications for gig to either True or False.
