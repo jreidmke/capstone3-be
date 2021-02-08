@@ -193,20 +193,21 @@ class User {
      * Failure returns NotFoundError OR BadRequestError
      */
 
-    static async getUserItemFollows(id, userType, itemType) {
+    static async getItemFollows(id, userType, itemType) {
         if(userType==="writer" || userType==="platform" && itemType==="tag" || itemType==="platform") {
 
             //Error handling
             const user = await getUserHelper(id);
             if(!user) throw new NotFoundError(`No User With ID: ${id}`);
 
-            const tagRes = await db.query(
+            const itemRes = await db.query(
                 `SELECT *
-                FROM ${userType}_${itemType}_follows
+                FROM ${userType}_${itemType}_follows AS f
+                JOIN ${itemType}s AS i ON f.${itemType}_id=i.id
                 WHERE ${userType}_id=$1`,
                 [user.writer_id ||user.platform_id]
             );
-            const items = tagRes.rows;
+            const items = itemRes.rows;
             if(!items.length) throw new NotFoundError(`User with ID: ${id} not following any ${itemType}s!`);
             return items;
         }
@@ -228,7 +229,7 @@ class User {
                 throw new BadRequestError(`${userType} ${userId} already follows ${itemType} ${itemId}`);
             }
             const user = await getUserHelper(userId);
-            if(!user) throw new NotFoundError(`No User With ID: ${id}`);
+            if(!user) throw new NotFoundError(`No User With ID: ${userId}`);
             const item = await checkForItem(itemId, `${itemType}s`, 'id');
             if(!item) throw new NotFoundError(`No ${itemType} With Id: ${itemId}`);;
 

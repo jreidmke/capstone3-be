@@ -66,7 +66,7 @@ router.get("/:id", ensureLoggedIn, async function(req, res, next) {
 
 router.get("/:id/followed_tags", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const tags = await User.getUserItemFollows(req.params.id, "writer", "tag");
+        const tags = await User.getItemFollows(req.params.id, "writer", "tag");
         return res.json({ tags });
     } catch (error) {
         return next(error);
@@ -101,14 +101,14 @@ router.delete("/:id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, async func
     }
 })
 
-/**GET /[username]/followed_platforms => [{username, platformHandle},...]
+/**GET /[id]/followed_platforms => [{id, writer_id, tag_id, timestamps},...]
  *
  * Auth: admin or correct user
  */
 
-router.get("/:username/followed_platforms", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.get("/:id/followed_platforms", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const platforms = await Writer.getFollowedPlatforms(req.params.username);
+        const platforms = await User.getItemFollows(req.params.id, "writer", "platform");
         return res.json({ platforms });
     } catch (error) {
         return next(error);
@@ -120,9 +120,9 @@ router.get("/:username/followed_platforms", ensureCorrectUserOrAdmin, async func
  * Auth: admin or correct user
  */
 
-router.post("/:username/followed_platforms/:platformHandle", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.post("/:id/followed_platforms/:platform_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const followed = await Writer.followPlatform(req.params.username, req.params.platformHandle);
+        const followed = await User.followItem(req.params.id, req.params.platform_id, "writer", "platform");
         return res.json({ followed });
     } catch (error) {
         return next(error);
@@ -134,9 +134,9 @@ router.post("/:username/followed_platforms/:platformHandle", ensureCorrectUserOr
  * Auth: admin or correct user
  */
 
-router.delete("/:username/followed_platforms/:platformHandle", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.delete("/:id/followed_platforms/:platform_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const unfollowed = await Writer.unfollowPlatform(req.params.username, req.params.platformHandle);
+        const unfollowed = await User.unfollowItem(req.params.id, req.params.platform_id, "writer", "platform");
         return res.json({ unfollowed });
     } catch (error) {
         return next(error);
