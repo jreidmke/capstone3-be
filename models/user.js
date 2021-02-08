@@ -147,11 +147,14 @@ class User {
      * ALL DATA on selected PLATFORM, including GIGS
      *
      * FAILURE throws NotFoundError or BadRequest
+     *
+     * Works in tandem with either Writer.getById method OR Platform.getById method
      */
 
     static async getById(id, userType) {
         const result = await db.query(
-            `SELECT email,
+            `SELECT id,
+                email,
                 writer_id AS writerId,
                 platform_id AS platformId,
                 image_url AS imageUrl,
@@ -174,15 +177,38 @@ class User {
         if(!user) throw new NotFoundError(`No User With Id: ${id}`);
 
         if(userType==="writer") {
-            user = Writer.getWriterById(user);
+            user = Writer.getById(user);
         } else if(userType==="platform") {
-            user = Platform.getPlatformById(user);
+            user = Platform.getById(user);
         } else {
             throw new BadRequestError('User Type must be string: "writer" OR "platform"');
         }
-
          return user;
-       };
+    };
+
+    static async getUserTagFollows(id, userType) {
+        if(userType==="writer" || userType==="platform") {
+            const result = await db.query(
+                `SELECT id, writer_id, platform_id
+                FROM users
+                WHERE id=$1`,
+                [id]
+                );
+                let user = result.rows[0];
+                if(!user) throw new NotFoundError(`No User With Id: ${id}`);
+
+                const tagRes = await db.query(
+                    `SELECT *
+                    FROM ${userType}_tag_follows
+                    WHERE ${userType}_id=$1`,
+                    [user.writer_id ||user.platform_id]
+                    );
+                    const tags = tagRes.rows;
+                    if(!tags) throw new NotFoundError(`User with ID: ${id} follows no tags!`);
+                    return tags;
+        }
+        throw new BadRequestError('User Type must be string: "writer" OR "platform"');
+    };
 
 };
 

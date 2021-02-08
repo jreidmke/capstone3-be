@@ -46,7 +46,7 @@ class Writer {
      * Failure throws NotFoundError
      */
 
-     static async getWriterById(user) {
+     static async getById(user) {
         const writerRes = await db.query(
           `SELECT *
           FROM writers

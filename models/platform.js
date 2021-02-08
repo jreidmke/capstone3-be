@@ -14,7 +14,7 @@ const {
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
 
 class Platform {
-    static async getPlatformById(user) {
+    static async getById(user) {
         const platformRes = await db.query(
             `SELECT *
             FROM platforms

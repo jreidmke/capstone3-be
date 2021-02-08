@@ -58,19 +58,6 @@ router.get("/:id", ensureLoggedIn, async function(req, res, next) {
 
 
 
-/**DELETE /[id] => { deleted: id }
- *
- * Auth: admin or correct user
- */
-
-router.delete("/:id", ensureCorrectUserOrAdmin, async function(req, res, next) {
-    try {
-        await Writer.remove(req.params.id);
-        return res.json({ deleted: req.params.id });
-    } catch (error) {
-        return next(error);
-    }
-});
 
 /**GET /[username]/followed_tags => [{username, tagTitle},...]
  *
@@ -79,7 +66,7 @@ router.delete("/:id", ensureCorrectUserOrAdmin, async function(req, res, next) {
 
 router.get("/:id/followed_tags", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const tags = await Writer.getFollowedTags(req.params.id);
+        const tags = await User.getUserTagFollows(req.params.id, "fvbsd");
         return res.json({ tags });
     } catch (error) {
         return next(error);
