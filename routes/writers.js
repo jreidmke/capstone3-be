@@ -161,12 +161,35 @@ router.get("/:id/portfolios", ensureCorrectUserOrAdmin, async function(req, res,
     } catch (error) {
         return next(error);
     }
-})
+});
+
+// POST /writers/writer_username/portfolios/new
+// Only viewable by admin/username
+// Makes POST to create new portfolio. Redirects to /writers/writer_username/portfolios.
+
+router.post("/:id/portfolios", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const { title } = req.body;
+        const newPortfolio = await Portfolio.createPortfolio(req.params.id, title);
+        return res.json({ newPortfolio });
+    } catch (error) {
+        return next(error);
+    }
+});
 
 router.get("/:id/portfolios/:portfolio_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const portfolio = await Portfolio.getById(req.params.portfolio_id, req.params.id);
+        const portfolio = await Portfolio.getById(req.params.id, req.params.portfolio_id);
         return res.json({ portfolio });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+router.delete("/:id/portfolios/:portfolio_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const deleted = await Portfolio.removePortfolio(req.params.id, req.params.portfolio_id);
+        return res.json({ deleted });
     } catch (error) {
         return next(error);
     }
@@ -176,13 +199,7 @@ router.get("/:id/portfolios/:portfolio_id", ensureCorrectUserOrAdmin, async func
 //ONLY VIEWABLE BY ADMIN/USERNAME
 // Sends patch to UPDATE portfolio name
 
-// GET /writers/writer_username/portfolios/new
-// Only viewable by admin/username
-// Shows form to create new portfolio
 
-// POST /writers/writer_username/portfolios/new
-// Only viewable by admin/username
-// Makes POST to create new portfolio. Redirects to /writers/writer_username/portfolios.
 
 // GET /writers/writer_username/portfolios/:portfolio_id/add_pieces/
 // Shows a list of all pices by author and AN ICON TO EITHER ADD OR REMOVE PIECE depending on wether or not it is present in portfolio.

@@ -1,7 +1,6 @@
 const db = require("../db");
-const { BadRequestError, NotFoundError } = require("../expressError");
 
-async function checkForItem(value, table, column) {
+async function checkForItem(value, table, column, isArray=false) {
     let result = await db.query(
         `SELECT *
           FROM ${table}
@@ -9,7 +8,7 @@ async function checkForItem(value, table, column) {
           [value]
     );
 
-    const item = result.rows[0];
+    const item = isArray ? result.rows : result.rows[0];
     if(!item) return false;
     if(item.password) delete item.password;
     return item;
