@@ -12,7 +12,6 @@ const {
 const checkForItem = require('../helpers/checks');
 
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
-const { agent } = require("supertest");
 
 class User {
 
@@ -137,46 +136,82 @@ class User {
     };
 
     static async getById(id, userType) {
-
-        let result;
-        if(userType === "writer") {
-            
-        }
         const result = await db.query(
-          `SELECT w.first_name AS firstName,
-            w.last_name AS lastName,
-            w.age,
-            w.bio,
-            w.created_at AS createdAt,
-            u.image_url AS imageURL,
-            u.address_1 AS address1,
-            u.address_2 AS address2,
-            u.city,
-            u.state,
-            u.postal_code AS postalCode,
-            u.phone,
-            u.facebook_username AS facebookUsername,
-            u.twitter_username AS twitterUsername,
-            u.youtube_username AS youtubeUsername
-          FROM writers AS w
-          JOIN users AS u ON w.id=u.writer_id
-          WHERE u.id=$1
-          ORDER BY lastName`,
-          [id]
+            `SELECT email,
+                writer_id AS writerId,
+                platform_id AS platformId,
+                image_url AS imageUrl,
+                address_1 AS address1,
+                address_2 AS address2,
+                city,
+                state,
+                postal_code AS postalCode,
+                phone,
+                facebook_username AS facebookUsername,
+                twitter_username AS twitterUsername,
+                youtube_username AS youtubeUsername
+                FROM users
+                WHERE id=$1`,
+                [id]
         );
 
-        const writer = result.rows[0];
+        const user = result.rows[0];
 
-        if(!writer) throw new NotFoundError(`No Writer With Id: ${id}`);
+        if(!user) throw new NotFoundError(`No User With Id: ${id}`);
 
-        const portfolioRes = await db.query(
-          `SELECT * FROM portfolios WHERE writer_id=$1`,
-          [id]
-        );
+        if(userType==="writer") {
+            const writerRes = await db.query(
+                `SELECT *
+                FROM writers
+                WHERE id=$1`,
+                [user.writerid]
+            );
 
-        writer.portfolios = portfolioRes.rows.map(p => ({id: p.id, title: p.title}));
+            const writer = writerRes.rows[0];
 
-         return writer;
+            if(!writer) throw new NotFoundError(`No Writer With ID: ${id}`);
+
+            user.firstName = writer.first_name;
+            user.lastName = writer.last_name;
+            user.age = writer.age;
+            user.bio = writer.bio;
+            user.createdAt = writer.created_at;
+
+            const portfolioRes = await db.query(
+                `SELECT * FROM portfolios WHERE writer_id=$1`,
+                [writer.id]
+            );
+            user.portfolios = portfolioRes.rows.map(p => ({id: p.id, title: p.title}));
+        } else if(userType==="platform") {
+            const platformRes = await db.query(
+                `SELECT *
+                FROM platforms
+                WHERE id=$1`,
+                [user.platformid]
+            );
+
+            const platform = platformRes.rows[0];
+
+            if(!platform) throw new NotFoundError(`No Platform With ID: ${id}`);
+
+            user.handle = platform.handle;
+            user.displayName = platform.display_name;
+            user.description = platform.description;
+
+            const gigRes = await db.query(
+                `SELECT *
+                FROM gigs
+                WHERE platform_id=$1`,
+                [platform.id]
+            );
+
+            user.gigs = gigRes.rows.map(g => ({title: g.title, description: g.description, compensation: g.compensation, isRemote: g.is_remote, wordCount: g.word_count, isActive: g.is_active, createdAt: g.created_at}));
+
+        } else {
+            throw new BadRequestError('User Type must be string: "writer" OR "platform"');
+        }
+
+         return user;
        };
 
 };

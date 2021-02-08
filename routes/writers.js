@@ -5,6 +5,7 @@
 "use strict";
 
 const express = require("express");
+const User = require("../models/user");
 const Writer = require("../models/writer");
 const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
@@ -13,9 +14,9 @@ const jsonschema = require("jsonschema");
 const router = express.Router();
 
 /**GET / => {writers: [ {first_name, last_name, image_url, city, state, facebookUsername, twitterUsername, youtubeUesrname}, ...]}
- * 
+ *
  * Returns a list of all writers
- * 
+ *
  * Auth required: ensure logged in.
  */
 
@@ -29,21 +30,21 @@ router.get("/", ensureLoggedIn, async function(req, res, next) {
 });
 
 /**GET /[username] => {user}
- * 
+ *
  * Returns { first_name, last_name, image_url, city, state, facebookUsername, twitterUsername, youtubeUesrname, age, bio, createdAt, address1, address2, phone, portfolios}
  *      where portfolios is { id, title }
- *  
+ *
  * Auth required: ensure logged in.
- */ 
+ */
 
 router.get("/:id", ensureLoggedIn, async function(req, res, next) {
     try {
-        const writer = await Writer.getById(req.params.id);
+        const writer = await User.getById(req.params.id, "writer");
         return res.json({ writer });
     } catch (error) {
         return next(error);
     }
-})
+});
 
 
 
@@ -58,7 +59,7 @@ router.get("/:id", ensureLoggedIn, async function(req, res, next) {
 
 
 /**DELETE /[id] => { deleted: id }
- * 
+ *
  * Auth: admin or correct user
  */
 
@@ -72,7 +73,7 @@ router.delete("/:id", ensureCorrectUserOrAdmin, async function(req, res, next) {
 });
 
 /**GET /[username]/followed_tags => [{username, tagTitle},...]
- * 
+ *
  * Auth: admin or correct user
  */
 
@@ -85,8 +86,8 @@ router.get("/:id/followed_tags", ensureCorrectUserOrAdmin, async function(req, r
     }
 });
 
-/**POST /[username]/followed_tags/[tagTitle] => {followed: {username, tagTitle}} 
- * 
+/**POST /[username]/followed_tags/[tagTitle] => {followed: {username, tagTitle}}
+ *
  * Auth: admin or correct user
 */
 
@@ -100,7 +101,7 @@ router.post("/:username/followed_tags/:tagTitle", ensureCorrectUserOrAdmin, asyn
 });
 
 /**DELETE /[username]/followed_tags/[tagTitle] => {unfollowed: {username, tagTitle}}
- * 
+ *
  * Auth: admin or correct user
  */
 
@@ -114,7 +115,7 @@ router.delete("/:username/followed_tags/:tagTitle", ensureCorrectUserOrAdmin, as
 })
 
 /**GET /[username]/followed_platforms => [{username, platformHandle},...]
- * 
+ *
  * Auth: admin or correct user
  */
 
@@ -128,7 +129,7 @@ router.get("/:username/followed_platforms", ensureCorrectUserOrAdmin, async func
 });
 
 /**POST /[username]/followed_platforms/:platformHandle
- * 
+ *
  * Auth: admin or correct user
  */
 
@@ -142,7 +143,7 @@ router.post("/:username/followed_platforms/:platformHandle", ensureCorrectUserOr
 })
 
 /**DELETE /[username]/followed_platforms/:platformHandle
- * 
+ *
  * Auth: admin or correct user
  */
 
@@ -156,14 +157,14 @@ router.delete("/:username/followed_platforms/:platformHandle", ensureCorrectUser
 });
 
 module.exports = router;
- 
+
 // GET /writers/writer username/edit (FRONT END STUFF)
 // Only viewable by admin/username
 // Shows a writers profile edit form
 
 // GET /writers/writer_username/followed_tags (FRONT END NOTES)
 // ONLY viewalbe by admin/username
-// Shows a list of tags the writer is following with ICON LINKS TO send POST || DELETE reqs. 
+// Shows a list of tags the writer is following with ICON LINKS TO send POST || DELETE reqs.
 
 // *
 // *
@@ -189,16 +190,16 @@ module.exports = router;
 
 // POST /writers/writer_username/portfolios/new
 // Only viewable by admin/username
-// Makes POST to create new portfolio. Redirects to /writers/writer_username/portfolios. 
+// Makes POST to create new portfolio. Redirects to /writers/writer_username/portfolios.
 
 // GET /writers/writer_username/portfolios/:portfolio_id/add_pieces/
-// Shows a list of all pices by author and AN ICON TO EITHER ADD OR REMOVE PIECE depending on wether or not it is present in portfolio. 
+// Shows a list of all pices by author and AN ICON TO EITHER ADD OR REMOVE PIECE depending on wether or not it is present in portfolio.
 
 // POST /writers/writer_username/portfolios/:portfolio_id/add_piece/:piece_id
 // Makes the actual post request when you CLICK ON AN ICON
 
 // DELETE /writers/writer_username/portfolios/:portfolio_id/add_piece/:piece_id
-// Deletes piece id and portfolio id from PORTFOLIO_PIECE db. 
+// Deletes piece id and portfolio id from PORTFOLIO_PIECE db.
 
 
 //** */
@@ -231,10 +232,10 @@ module.exports = router;
 // Makes patch request to update piece.
 
 // GET /writers/writer_username/pieces/:piece_id/tags
-// Shows two lists of tags. Tags that the piece is already tagged with as well as all other tags. 
+// Shows two lists of tags. Tags that the piece is already tagged with as well as all other tags.
 
 // POST /writers/writer_username/pieces/:piece_id/tags/:tag_title
-// Adds tag title and pice id to PIECE_TAG db. 
+// Adds tag title and pice id to PIECE_TAG db.
 
 // DELETE /writers/writer_username/pieces/:piece_id/tags/:tag_title
 // Removes tag title and piece id from PIECE_TAG db.
