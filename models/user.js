@@ -29,7 +29,7 @@ class User {
             WHERE email=$1`,
             [email]
         );
-        const user = result.rows[0]; 
+        const user = result.rows[0];
 
         if(user) {
             const validPassword = await bcrypt.compare(password, user.password);
@@ -52,7 +52,7 @@ class User {
             //PLATFORM TABLE (handle, description, display_name)
 
     /* Returns JWT used to auth further reqs.
-    * 
+    *
     * Auth required: none
     */
 
@@ -60,7 +60,7 @@ class User {
 
         //duplicate email check
         if(await checkForItem(email, 'users', 'email')) throw new BadRequestError(`Duplicate email: ${email}. Please select another.`);
-        
+
         let user;
 
         if(firstName) {
@@ -77,7 +77,7 @@ class User {
                 VALUES ($1, $2, $3)
                 RETURNING id`,
                 [handle, displayName, description]
-            ); 
+            );
             user = result.rows[0];
         };
 
@@ -108,16 +108,16 @@ class User {
     }
 
     /**REMOVE USER
-     * 
+     *
      * Success: {id} => undefined
-     * 
+     *
      * Failure throws NotFoundError
      */
 
     static async remove(id) {
 
         let result = await db.query(
-            `DELETE FROM users WHERE id=$1 RETURNING writer_id AS writerId, platform_id AS platformId`, 
+            `DELETE FROM users WHERE id=$1 RETURNING writer_id AS writerId, platform_id AS platformId`,
             [id]
         );
         let user = result.rows[0];
@@ -135,6 +135,49 @@ class User {
             )
         };
     };
+
+    static async getById(id, userType) {
+
+        let result;
+        if(userType === "writer") {
+            
+        }
+        const result = await db.query(
+          `SELECT w.first_name AS firstName,
+            w.last_name AS lastName,
+            w.age,
+            w.bio,
+            w.created_at AS createdAt,
+            u.image_url AS imageURL,
+            u.address_1 AS address1,
+            u.address_2 AS address2,
+            u.city,
+            u.state,
+            u.postal_code AS postalCode,
+            u.phone,
+            u.facebook_username AS facebookUsername,
+            u.twitter_username AS twitterUsername,
+            u.youtube_username AS youtubeUsername
+          FROM writers AS w
+          JOIN users AS u ON w.id=u.writer_id
+          WHERE u.id=$1
+          ORDER BY lastName`,
+          [id]
+        );
+
+        const writer = result.rows[0];
+
+        if(!writer) throw new NotFoundError(`No Writer With Id: ${id}`);
+
+        const portfolioRes = await db.query(
+          `SELECT * FROM portfolios WHERE writer_id=$1`,
+          [id]
+        );
+
+        writer.portfolios = portfolioRes.rows.map(p => ({id: p.id, title: p.title}));
+
+         return writer;
+       };
 
 };
 
