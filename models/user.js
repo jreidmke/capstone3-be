@@ -10,7 +10,8 @@ const {
   UnauthorizedError,
 } = require("../expressError");
 const checkForItem = require('../helpers/checks');
-
+const Writer = require("./writer");
+const Platform = require("./platform");
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
 
 class User {
@@ -135,6 +136,19 @@ class User {
         };
     };
 
+    /**GET USER BY ID
+     *
+     * Success: {id, userType(string: either "writer" OR "platform")} => RETURNS:
+     *
+     * ALL DATA on selected WRITER, including PORTOLIOS
+     *
+     * OR
+     *
+     * ALL DATA on selected PLATFORM, including GIGS
+     *
+     * FAILURE throws NotFoundError or BadRequest
+     */
+
     static async getById(id, userType) {
         const result = await db.query(
             `SELECT email,
@@ -155,58 +169,14 @@ class User {
                 [id]
         );
 
-        const user = result.rows[0];
+        let user = result.rows[0];
 
         if(!user) throw new NotFoundError(`No User With Id: ${id}`);
 
         if(userType==="writer") {
-            const writerRes = await db.query(
-                `SELECT *
-                FROM writers
-                WHERE id=$1`,
-                [user.writerid]
-            );
-
-            const writer = writerRes.rows[0];
-
-            if(!writer) throw new NotFoundError(`No Writer With ID: ${id}`);
-
-            user.firstName = writer.first_name;
-            user.lastName = writer.last_name;
-            user.age = writer.age;
-            user.bio = writer.bio;
-            user.createdAt = writer.created_at;
-
-            const portfolioRes = await db.query(
-                `SELECT * FROM portfolios WHERE writer_id=$1`,
-                [writer.id]
-            );
-            user.portfolios = portfolioRes.rows.map(p => ({id: p.id, title: p.title}));
+            user = Writer.getWriterById(user);
         } else if(userType==="platform") {
-            const platformRes = await db.query(
-                `SELECT *
-                FROM platforms
-                WHERE id=$1`,
-                [user.platformid]
-            );
-
-            const platform = platformRes.rows[0];
-
-            if(!platform) throw new NotFoundError(`No Platform With ID: ${id}`);
-
-            user.handle = platform.handle;
-            user.displayName = platform.display_name;
-            user.description = platform.description;
-
-            const gigRes = await db.query(
-                `SELECT *
-                FROM gigs
-                WHERE platform_id=$1`,
-                [platform.id]
-            );
-
-            user.gigs = gigRes.rows.map(g => ({title: g.title, description: g.description, compensation: g.compensation, isRemote: g.is_remote, wordCount: g.word_count, isActive: g.is_active, createdAt: g.created_at}));
-
+            user = Platform.getPlatformById(user);
         } else {
             throw new BadRequestError('User Type must be string: "writer" OR "platform"');
         }

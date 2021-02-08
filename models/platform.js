@@ -14,77 +14,33 @@ const {
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
 
 class Platform {
-
-    /** AUTHENTICATE PLATFORM
-    Success: {username, password} => {username, is_admin}
-    Failure throws UnauthorizedError.
-    Works in tandem with /platforms/login route to create JWT used to make further requests.
-    */
-    
-    static async authenticate(username, password) {
-        const result = await db.query(
-            `SELECT username, password, is_admin
+    static async getPlatformById(user) {
+        const platformRes = await db.query(
+            `SELECT *
             FROM platforms
-            WHERE username=$1`,
-            [username]
-        ); 
-        const user = result.rows[0]; 
-
-        if(user) {
-            console.log('piiza')
-            const validPassword = await bcrypt.compare(password, user.password);
-            if(validPassword === true) {
-                delete user.password;
-                return user;
-            };
-        }; 
-        throw new UnauthorizedError('Invalid username/password');
-    };
-
-    /**REGISTER PLATFORM
-     * Success: ALL PLATFORM PROPERTIES except description & is_admin => { username, isAdmin }
-     * Failure throws BadRequestError
-     * Works in tandem with /platforms/register to create JWT to make further reqs. 
-     */
-
-    static async register({username, password, handle, displayName, location, description, logoUrl, email, phone, twitterUsername, facebookUsername, youtubeUsername, isAdmin}) {
-        const duplicateCheck = await db.query(
-            `SELECT username
-            FROM platforms
-            WHERE username = $1`, 
-            [username]
+            WHERE id=$1`,
+            [user.platformid]
         );
 
-        if(duplicateCheck.rows[0]) {
-            throw new BadRequestError(`Duplicate username: ${username}`);
-        };
+        const platform = platformRes.rows[0];
 
-        const hashWord = await bcrypt.hash(password, BCRYPT_WORK_FACTOR); 
+        if(!platform) throw new NotFoundError(`No Platform With ID: ${user.id}`);
 
-        const result = await db.query(
-            `INSERT INTO platforms(
-                username,
-                password,
-                handle,
-                display_name,
-                location,
-                description,
-                logo_url,
-                email,
-                phone,
-                twitter_username,
-                facebook_username,
-                youtube_username,
-                is_admin
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-            RETURNING username, is_admin AS isAdmin`,
-            [username, hashWord, handle, displayName, location, description, logoUrl, email, phone, twitterUsername, facebookUsername, youtubeUsername, isAdmin]
+        user.handle = platform.handle;
+        user.displayName = platform.display_name;
+        user.description = platform.description;
+
+        const gigRes = await db.query(
+            `SELECT *
+            FROM gigs
+            WHERE platform_id=$1`,
+            [platform.id]
         );
 
-        const user = result.rows[0];
+        user.gigs = gigRes.rows.map(g => ({title: g.title, description: g.description, compensation: g.compensation, isRemote: g.is_remote, wordCount: g.word_count, isActive: g.is_active, createdAt: g.created_at}));
 
         return user;
-    };
+    }
 };
 
 module.exports = Platform;
@@ -101,10 +57,10 @@ module.exports = Platform;
 // -INPUT: platform_name, updatedData
 // -Success returns updatedData
 // -Failure throws not found error
-// -LIMITATIONS: AGAIN!!! ALOT OF LIMITATIONS. ALOT OF LIMITATIONS! This could potentially allow people to become admins which is a huge security problem. ensureCorrectPlatformOrAdmin and update platform schema. 
+// -LIMITATIONS: AGAIN!!! ALOT OF LIMITATIONS. ALOT OF LIMITATIONS! This could potentially allow people to become admins which is a huge security problem. ensureCorrectPlatformOrAdmin and update platform schema.
 
 // REMOVE PLATFORM
 // -INPUT: platform_name
 // -Success returns undefined
 // -Failure throws errorNotFound
-// -Limitations: ensureCorrectPlatformOrAdmin 
+// -Limitations: ensureCorrectPlatformOrAdmin

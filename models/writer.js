@@ -46,42 +46,31 @@ class Writer {
      * Failure throws NotFoundError
      */
 
-     static async getById(id) {
-      const result = await db.query(
-        `SELECT w.first_name AS firstName,
-          w.last_name AS lastName,
-          w.age,
-          w.bio,
-          w.created_at AS createdAt,
-          u.image_url AS imageURL,
-          u.address_1 AS address1,
-          u.address_2 AS address2,
-          u.city,
-          u.state,
-          u.postal_code AS postalCode,
-          u.phone,
-          u.facebook_username AS facebookUsername,
-          u.twitter_username AS twitterUsername,
-          u.youtube_username AS youtubeUsername
-        FROM writers AS w
-        JOIN users AS u ON w.id=u.writer_id
-        WHERE u.id=$1
-        ORDER BY lastName`,
-        [id]
-      );
+     static async getWriterById(user) {
+        const writerRes = await db.query(
+          `SELECT *
+          FROM writers
+          WHERE id=$1`,
+          [user.writerid]
+        );
 
-      const writer = result.rows[0];
+        const writer = writerRes.rows[0];
 
-      if(!writer) throw new NotFoundError(`No Writer With Id: ${id}`);
+        if(!writer) throw new NotFoundError(`No Writer With ID: ${user.id}`);
 
-      const portfolioRes = await db.query(
-        `SELECT * FROM portfolios WHERE writer_id=$1`,
-        [id]
-      );
+        user.firstName = writer.first_name;
+        user.lastName = writer.last_name;
+        user.age = writer.age;
+        user.bio = writer.bio;
+        user.createdAt = writer.created_at;
 
-      writer.portfolios = portfolioRes.rows.map(p => ({id: p.id, title: p.title}));
+        const portfolioRes = await db.query(
+            `SELECT * FROM portfolios WHERE writer_id=$1`,
+            [writer.id]
+        );
+        user.portfolios = portfolioRes.rows.map(p => ({id: p.id, title: p.title}));
 
-       return writer;
+        return user;
      };
 
      // UPDATE WRITER
