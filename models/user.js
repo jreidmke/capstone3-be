@@ -203,7 +203,7 @@ class User {
             if(!items.length) throw new NotFoundError(`User with ID: ${id} not following any ${itemType}s!`);
             return items;
         }
-        throw new BadRequestError('User Type must be string: "writer" OR "platform"');
+        throw new BadRequestError('User Type must be string: "writer" OR "platform". Item Type must be string: "writer", "platform" or "tag"');
     };
 
     /**FOLLOW ITEM
@@ -240,7 +240,7 @@ class User {
             return newFollow;
         }
 
-        throw new BadRequestError('User Type must be string: "writer" OR "platform"');
+        throw new BadRequestError('User Type must be string: "writer" OR "platform". Item Type must be string: "writer", "platform" or "tag"');
     };
 
     /**UNFOLLOW ITEM
@@ -277,7 +277,7 @@ class User {
             return unfollow;
         };
 
-        throw new BadRequestError('User Type must be string: "writer" OR "platform"');
+        throw new BadRequestError('User Type must be string: "writer" OR "platform". Item Type must be string: "writer", "platform" or "tag"');
     }
 };
 
