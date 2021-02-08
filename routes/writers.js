@@ -66,7 +66,7 @@ router.get("/:id", ensureLoggedIn, async function(req, res, next) {
 
 router.get("/:id/followed_tags", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const tags = await User.getUserTagFollows(req.params.id, "writer");
+        const tags = await User.getUserItemFollows(req.params.id, "writer", "tag");
         return res.json({ tags });
     } catch (error) {
         return next(error);

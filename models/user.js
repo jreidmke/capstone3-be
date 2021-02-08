@@ -193,18 +193,22 @@ class User {
      * Failure returns NotFoundError OR BadRequestError
      */
 
-    static async getUserTagFollows(id, userType) {
-        if(userType==="writer" || userType==="platform") {
+    static async getUserItemFollows(id, userType, itemType) {
+        if(userType==="writer" || userType==="platform" && itemType==="tag" || itemType==="platform") {
+
+            //Error handling
             const user = await getUserHelper(id);
+            if(!user) throw new NotFoundError(`No User With ID: ${id}`);
+
             const tagRes = await db.query(
                 `SELECT *
-                FROM ${userType}_tag_follows
+                FROM ${userType}_${itemType}_follows
                 WHERE ${userType}_id=$1`,
                 [user.writer_id ||user.platform_id]
-                );
-                const tags = tagRes.rows;
-                if(!tags) throw new NotFoundError(`User with ID: ${id} follows notags!`);
-                return tags;
+            );
+            const items = tagRes.rows;
+            if(!items.length) throw new NotFoundError(`User with ID: ${id} not following any ${itemType}s!`);
+            return items;
         }
         throw new BadRequestError('User Type must be string: "writer" OR "platform"');
     };
@@ -224,9 +228,9 @@ class User {
                 throw new BadRequestError(`${userType} ${userId} already follows ${itemType} ${itemId}`);
             }
             const user = await getUserHelper(userId);
-            if(!user) throw new NotFoundError(`No ${table} With ${column}: ${id}`);
+            if(!user) throw new NotFoundError(`No User With ID: ${id}`);
             const item = await checkForItem(itemId, `${itemType}s`, 'id');
-            if(!item) throw new NotFoundError(`No ${table} With ${column}: ${id}`);
+            if(!item) throw new NotFoundError(`No ${itemType} With Id: ${itemId}`);;
 
             //Insert into DB
             const followRes = await db.query(
@@ -260,9 +264,9 @@ class User {
                 throw new BadRequestError(`${userType} ${userId} doesn't follow ${itemType} ${itemId}`);
             }
             const user = await getUserHelper(userId);
-            if(!user) throw new NotFoundError(`No ${table} With ${column}: ${id}`);
+            if(!user) throw new NotFoundError(`No User With ID: ${id}`);
             const item = await checkForItem(itemId, `${itemType}s`, 'id');
-            if(!item) throw new NotFoundError(`No ${table} With ${column}: ${id}`);
+            if(!item) throw new NotFoundError(`No ${itemType} With Id: ${itemId}`);
 
             //DELETE from database
             const unfollowRes = await db.query(

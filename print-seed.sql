@@ -28,7 +28,7 @@ INSERT INTO portfolios(writer_id, title)
 VALUES(1, 'Recipes'), (1, 'Politics'), (2, 'Funny Stuff'), (2, 'Scary Stuff'), (2, 'Future Stuff'), (3, 'Religion'), (3, 'Football'), (4, 'Pokemon'), (4, 'Trucks'), (4, 'Parents'), (5, 'History'), (5, 'Theory');
 
 INSERT INTO pieces(writer_id, title, text)
-VALUES(1, 'Chickend Soup', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'), 
+VALUES(1, 'Chickend Soup', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'),
 (1, 'Pizza', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'),
 (1, 'Kamala and Me', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'),
 (2, 'Clown Stuff', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'),
@@ -61,8 +61,8 @@ VALUES(1, 'Political Interview', 'Interview this Politician and write us a story
 (4, 'Goulash', 'How about this? Can you make this', 543, TRUE, 234, TRUE),
 (5, 'Civil War', 'Write about how the civil war happend', 521, TRUE, 943, TRUE),
 (5, 'WW2', 'How did WWII go down', 534, TRUE, 75, TRUE);
- 
- 
+
+
 INSERT INTO tags (title, is_fiction)
 VALUES('Cooking', FALSE), ('Food', FALSE), ('Recipes', FALSE), ('Political Comedy', FALSE), ('Political History', FALSE), ('Politics', FALSE), ('Sitcom', TRUE), ('Stand Up', FALSE), ('Nerd Humor', TRUE), ('True Crime', TRUE), ('Monsters', FALSE), ('Slashers', TRUE), ('Space Tech', FALSE), ('Sci-Fi', TRUE), ('Gaming', FALSE), ('Automobiles', FALSE), ('Trucks', FALSE), ('Parenting', FALSE), ('Religion Studies', FALSE), ('Sports', FALSE);
 
@@ -72,7 +72,7 @@ VALUES(1, 1, 2, 'Pending'), (1, 5, 12, 'Pending'), (2, 1, 2, 'Pending'), (2, 5, 
 INSERT INTO piece_portfolios (portfolio_id, piece_id)
 VALUES(1, 1), (1, 2), (2, 3), (3, 4), (3, 5), (4, 6), (4, 7), (5, 8), (5, 9), (6, 10), (6, 11), (7, 12), (7, 13), (8, 14), (8, 15), (9, 16), (9, 17), (10, 18), (11, 19), (11, 20), (12, 21);
 
-INSERT INTO piece_tags (piece_id, tag_id) 
+INSERT INTO piece_tags (piece_id, tag_id)
 VALUES(1, 1), (1, 2), (1, 3), (2, 1), (2, 2), (2, 3), (3, 6), (4, 8), (4, 9), (5, 8), (6, 11), (6, 12), (7, 11), (7, 12), (8, 13), (8, 14), (9, 19), (10, 19), (11, 20), (12, 20), (13, 14), (14, 14), (15, 16), (16, 16), (17, 17);
 
 INSERT INTO gig_tags (gig_id, tag_id)
@@ -85,7 +85,7 @@ INSERT INTO platform_writer_follows (platform_id, writer_id)
 VALUES (1, 5), (1, 1), (2, 2), (3, 2), (4, 1), (5, 1), (5, 2), (5, 3), (5, 4), (5, 5);
 
 INSERT INTO writer_platform_follows(writer_id, platform_id)
-VALUES(1, 1), (1, 2), (3, 1), (4, 2), (4, 2), (5, 5);
+VALUES(1, 1), (1, 2), (3, 1), (4, 2), (4, 2), (5, 5), (2, 1), (2, 2), (2, 3), (2, 4);
 
 INSERT INTO writer_tag_follows(writer_id, tag_id)
 VALUES(1, 2), (5, 3), (2, 2), (3, 3), (4, 4), (5, 1);
