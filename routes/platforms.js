@@ -4,65 +4,35 @@ const express = require("express");
 const User = require("../models/user");
 const Platform = require("../models/platform");
 const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
-const { BadRequestError } = require("../expressError");
-const jsonschema = require("jsonschema");
 
 const router = express.Router();
 
-/**GET / => {writers: [ {first_name, last_name, image_url, city, state, facebookUsername, twitterUsername, youtubeUesrname}, ...]}
- *
- * Returns a list of all writers
- *
- * Auth required: ensure logged in.
- */
-
 router.get("/", ensureLoggedIn, async function(req, res, next) {
     try {
-        const writers = await Writer.getAll();
-        return res.json({ writers });
+        const platforms = await Platform.getAll();
+        return res.json({ platforms });
     } catch (error) {
         return next(error);
     }
 });
-
-/**GET /[username] => {user}
- *
- * Returns { first_name, last_name, image_url, city, state, facebookUsername, twitterUsername, youtubeUesrname, age, bio, createdAt, address1, address2, phone, portfolios}
- *      where portfolios is { id, title }
- *
- * Auth required: ensure logged in.
- */
 
 router.get("/:id", ensureLoggedIn, async function(req, res, next) {
     try {
-        const writer = await User.getById(req.params.id, "writer");
-        return res.json({ writer });
+        const platform = await User.getById(req.params.id, "platform");
+        return res.json({ platform });
     } catch (error) {
         return next(error);
     }
 });
-
-
-
 
 
 // PATCH /writers/writer username/edit
 // Only viewable by admin/username
 // Sends request to update write data in database
 
-
-
-
-
-
-/**GET /[id]/followed_tags => [{id, writer_id, tag_id, timestamps},...]
- *
- * Auth: admin or correct user
- */
-
 router.get("/:id/followed_tags", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const tags = await User.getItemFollows(req.params.id, "writer", "tag");
+        const tags = await User.getItemFollows(req.params.id, "platform", "tag");
         return res.json({ tags });
     } catch (error) {
         return next(error);

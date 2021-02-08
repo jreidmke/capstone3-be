@@ -217,13 +217,14 @@ class User {
         if(userType==="writer" || userType==="platform" && itemType==="tag" || itemType==="platform") {
 
             //error handling
-            if(await checkForFollow(userId, itemId, userType, itemType)) {
-                throw new BadRequestError(`${userType} ${userId} already follows ${itemType} ${itemId}`);
-            }
+
             const user = await getUserHelper(userId);
             if(!user) throw new NotFoundError(`No User With ID: ${userId}`);
             const item = await checkForItem(itemId, `${itemType}s`, 'id');
-            if(!item) throw new NotFoundError(`No ${itemType} With Id: ${itemId}`);;
+            if(!item) throw new NotFoundError(`No ${itemType} With Id: ${itemId}`);
+            if(await checkForFollow(user.writer_id, itemId, userType, itemType)) {
+                throw new BadRequestError(`${userType} ${userId} already follows ${itemType} ${itemId}`);
+            }
 
             //Insert into DB
             const followRes = await db.query(
@@ -253,13 +254,13 @@ class User {
         if(userType==="writer" || userType==="platform" && itemType==="tag" || itemType==="platform") {
 
             //error handling
-            if(!await checkForFollow(userId, itemId, userType, itemType)) {
-                throw new BadRequestError(`${userType} ${userId} doesn't follow ${itemType} ${itemId}`);
-            }
             const user = await getUserHelper(userId);
             if(!user) throw new NotFoundError(`No User With ID: ${id}`);
             const item = await checkForItem(itemId, `${itemType}s`, 'id');
             if(!item) throw new NotFoundError(`No ${itemType} With Id: ${itemId}`);
+            if(!await checkForFollow(user.writer_id, itemId, userType, itemType)) {
+                throw new BadRequestError(`${userType} ${userId} doesn't follow ${itemType} ${itemId}`);
+            }
 
             //DELETE from database
             const unfollowRes = await db.query(

@@ -25,7 +25,7 @@ async function checkForFollow(userId, itemId, userType, itemType) {
     );
 
     const follow = result.rows[0];
-    console.log(follow);
+
     if(follow) return true;
     return false;
 }

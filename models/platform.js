@@ -14,6 +14,26 @@ const {
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
 
 class Platform {
+
+    static async getAll() {
+        const result = await db.query(
+          `SELECT p.handle AS handle,
+            p.display_name AS displayName,
+            p.description,
+            u.image_url AS imageURL,
+            u.city,
+            u.state,
+            u.facebook_username AS facebookUsername,
+            u.twitter_username AS twitterUsername,
+            u.youtube_username AS youtubeUsername
+          FROM platforms AS p
+          JOIN users AS u ON p.id=u.platform_id
+          ORDER BY handle`
+        );
+        return result.rows;
+      };
+
+
     static async getById(user) {
         const platformRes = await db.query(
             `SELECT *
@@ -45,22 +65,9 @@ class Platform {
 
 module.exports = Platform;
 
-// FIND ALL
-// -Success returns all data on all companies
-
-// GET PLATFORM
-// -INPUT: platform_name
-// -Success: Returns all data on platform except password
-// -Failure: errorNotFound
 
 // UPDATE PLATFORM
 // -INPUT: platform_name, updatedData
 // -Success returns updatedData
 // -Failure throws not found error
 // -LIMITATIONS: AGAIN!!! ALOT OF LIMITATIONS. ALOT OF LIMITATIONS! This could potentially allow people to become admins which is a huge security problem. ensureCorrectPlatformOrAdmin and update platform schema.
-
-// REMOVE PLATFORM
-// -INPUT: platform_name
-// -Success returns undefined
-// -Failure throws errorNotFound
-// -Limitations: ensureCorrectPlatformOrAdmin
