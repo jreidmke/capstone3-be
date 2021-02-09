@@ -7,9 +7,7 @@
 const express = require("express");
 const User = require("../models/user");
 const Writer = require("../models/writer");
-const Portfolio = require("../models/portfolio");
 const Follow = require("../models/follow");
-const Piece = require("../models/piece");
 const WriterUpload = require("../models/writerUploads");
 const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
 
@@ -235,19 +233,15 @@ router.delete("/:id/pieces/:piece_id", ensureCorrectUserOrAdmin, async function(
         return next(error);
     }
 });
-// GET /writers/writer username/pieces
-// Only viewable by admin/username
-// Shows a list of authoer's pieces
 
-// GET /writers/writer username/pieces/:piece_id
-// Only viewable by admin/username
-// Shows the details of a piece
-
-// GET /writers/writer_username/pieces/new (FE ROUTE)
-// Shows form to create new piece
-
-// POST /writers/writer_username/pieces/new
-// Insert new piece into DB.
+router.get("/:id/pieces/:piece_id/tags", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const pieceTags = await WriterUpload.getPieceTags(req.params.id, req.params.piece_id);
+        return res.json({ pieceTags });
+    } catch (error) {
+        return next(error);
+    }
+})
 
 // GET /writers/writer username/pieces/:piece_id/edit
 // Only viewable by admin/username

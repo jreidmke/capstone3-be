@@ -22,12 +22,30 @@ class WriterUpload {
         throw new BadRequestError('Item Type must be string: "portfolio" or "piece"');
     };
 
+    /**RETURNS ALL DATA on selected ITEM.
+     *
+     * If itemType="piece", returns related piece_tags.
+     *
+     * If itemType="portfolio", returns related portfolio_pieces.
+     * */
+
     static async getById(userId, itemId, itemType) {
         if(itemType==="piece" || itemType==="portfolio") {
             const user = await getUserHelper(userId);
             const item = await checkForItem(itemId, `${itemType}s`, 'id');
             if(!item) throw new NotFoundError(`${itemType} with ID: ${itemId} Not Found!`);
             if(user.writer_id !== item.writer_id) throw new UnauthorizedError();
+            if(itemType==="piece") {
+                let tags = await checkForItem(itemId, 'piece_tags', 'piece_id', true);
+                tags= tags.map(t => t.tag_id);
+                tags = await Promise.all(tags.map((t) => {
+                    return checkForItem(t, 'tags', 'id', true);
+                }));
+                item.tags=tags;
+            } else {
+                const pieces = await checkForItem(itemId, 'piece_portfolios', 'portfolio_id', true);
+                item.pieces = pieces;
+            }
             return item;
         };
         throw new BadRequestError('Item Type must be string: "portfolio" or "piece"');
@@ -72,6 +90,23 @@ class WriterUpload {
         const piece = result.rows[0];
         return piece;
     };
+
+    static async addPieceToPortfolio(userId, portfolioId, pieceId) {
+        //get writer
+        //get piece
+    };
+
+    static async removePieceFromPortfolio(userId, portfolioId, pieceId) {
+
+    };
+
+    static async addTagToPiece(userId, pieceId, tagId) {
+
+    }
+
+    static async removeTagFromPiece(userId, pieceId, tagId) {
+
+    }
 };
 
 module.exports = WriterUpload;
