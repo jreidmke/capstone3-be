@@ -88,8 +88,8 @@ CREATE TABLE applications(
 
 CREATE TABLE piece_portfolios(
     id BIGSERIAL PRIMARY KEY,
-    portfolio_id BIGINT NOT NULL REFERENCES portfolios(id) ON DELETE CASCADE,
     piece_id BIGINT NOT NULL REFERENCES pieces(id) ON DELETE CASCADE,
+    portfolio_id BIGINT NOT NULL REFERENCES portfolios(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL
 );

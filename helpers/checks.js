@@ -41,4 +41,19 @@ async function getUserHelper(id) {
     return user;
 };
 
-module.exports = {checkForItem, getUserHelper, checkForFollow};
+async function checkForPieceItem(pieceId, itemId, itemType) {
+    let result = await db.query(
+        `SELECT *
+        FROM piece_${itemType}s
+        WHERE piece_id=$1
+        AND ${itemType}_id=$2`,
+        [pieceId, itemId]
+    );
+    let item = result.rows[0];
+    if(!item) return false;
+    return item;
+}
+
+
+
+module.exports = {checkForItem, getUserHelper, checkForFollow, checkForPieceItem};

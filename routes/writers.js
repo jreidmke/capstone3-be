@@ -234,28 +234,38 @@ router.delete("/:id/pieces/:piece_id", ensureCorrectUserOrAdmin, async function(
     }
 });
 
-router.get("/:id/pieces/:piece_id/tags", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.post("/:id/pieces/:piece_id/tags/:tag_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const pieceTags = await WriterUpload.getPieceTags(req.params.id, req.params.piece_id);
-        return res.json({ pieceTags });
+        const newPieceTag = await WriterUpload.addItemToPiece(req.params.id, req.params.piece_id, req.params.tag_id, "tag");
+        return res.json({ newPieceTag });
     } catch (error) {
         return next(error);
     }
-})
+});
 
-// GET /writers/writer username/pieces/:piece_id/edit
-// Only viewable by admin/username
-// Shows edit form to allow you to edit piece
+router.delete("/:id/pieces/:piece_id/tags/:tag_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const removedItem = await WriterUpload.removeItemFromPiece(req.params.id, req.params.piece_id, req.params.tag_id, "tag");
+        return res.json({ removedItem });
+    } catch (error) {
+        return next(error);
+    }
+});
 
-// PATCH /writers/writer username/pieces/:piece_id/edit
-// Only viewable by admin/username
-// Makes patch request to update piece.
+router.post("/:id/pieces/:piece_id/portfolios/:portfolio_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const newPiecePortfolio = await WriterUpload.addItemToPiece(req.params.id, req.params.piece_id, req.params.portfolio_id, "portfolio");
+        return res.json({ newPiecePortfolio });
+    } catch (error) {
+        return next(error);
+    }
+});
 
-// GET /writers/writer_username/pieces/:piece_id/tags
-// Shows two lists of tags. Tags that the piece is already tagged with as well as all other tags.
-
-// POST /writers/writer_username/pieces/:piece_id/tags/:tag_title
-// Adds tag title and pice id to PIECE_TAG db.
-
-// DELETE /writers/writer_username/pieces/:piece_id/tags/:tag_title
-// Removes tag title and piece id from PIECE_TAG db.
+router.delete("/:id/pieces/:piece_id/portfolios/:portfolio_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const removedItem = await WriterUpload.removeItemFromPiece(req.params.id, req.params.piece_id, req.params.portfolio_id, "portfolio");
+        return res.json({ removedItem });
+    } catch (error) {
+        return next(error);
+    }
+});
