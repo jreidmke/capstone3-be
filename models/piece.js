@@ -3,7 +3,6 @@ const db = require("../db");
 const { getUserHelper, checkForItem } = require("../helpers/checks");
 const {
   NotFoundError,
-  BadRequestError,
   UnauthorizedError,
 } = require("../expressError");
 
