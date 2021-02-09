@@ -46,19 +46,6 @@ router.get("/:id", ensureLoggedIn, async function(req, res, next) {
     }
 });
 
-
-
-
-
-// PATCH /writers/writer username/edit
-// Only viewable by admin/username
-// Sends request to update write data in database
-
-
-
-
-
-
 /**GET /[id]/followed_tags => [{id, writer_id, tag_id, timestamps},...]
  *
  * Auth: admin or correct user
@@ -143,8 +130,6 @@ router.delete("/:id/followed_platforms/:platform_id", ensureCorrectUserOrAdmin, 
     }
 });
 
-module.exports = router;
-
 // *
 // *
 // // //PORTFOLIOS
@@ -186,10 +171,6 @@ router.delete("/:id/portfolios/:portfolio_id", ensureCorrectUserOrAdmin, async f
         return next(error);
     }
 });
-
-//PATCH /writers/writer username/portfolios/portfolio id/edit
-//ONLY VIEWABLE BY ADMIN/USERNAME
-// Sends patch to UPDATE portfolio name
 
 //** */
 //** */
@@ -269,3 +250,5 @@ router.delete("/:id/pieces/:piece_id/portfolios/:portfolio_id", ensureCorrectUse
         return next(error);
     }
 });
+
+module.exports = router;
