@@ -8,8 +8,9 @@ const express = require("express");
 const User = require("../models/user");
 const Writer = require("../models/writer");
 const Portfolio = require("../models/portfolio");
-const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
+const Follow = require("../models/follow");
 const Piece = require("../models/piece");
+const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
 
 const router = express.Router();
 

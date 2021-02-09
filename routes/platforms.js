@@ -3,6 +3,7 @@
 const express = require("express");
 const User = require("../models/user");
 const Platform = require("../models/platform");
+const Follow = require("../models/follow");
 const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
 
 const router = express.Router();
