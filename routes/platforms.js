@@ -32,7 +32,7 @@ router.get("/:id", ensureLoggedIn, async function(req, res, next) {
 
 router.get("/:id/followed_tags", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const tags = await User.getItemFollows(req.params.id, "platform", "tag");
+        const tags = await Follow.getItemFollows(req.params.id, "platform", "tag");
         return res.json({ tags });
     } catch (error) {
         return next(error);
@@ -41,7 +41,7 @@ router.get("/:id/followed_tags", ensureCorrectUserOrAdmin, async function(req, r
 
 router.post("/:id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const followed = await User.followItem(req.params.id, req.params.tag_id, "platform", "tag");
+        const followed = await Follow.followItem(req.params.id, req.params.tag_id, "platform", "tag");
         return res.json({ followed });
     } catch (error) {
         return next(error);
@@ -50,7 +50,7 @@ router.post("/:id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, async functi
 
 router.delete("/:id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const unfollowed = await User.unfollowItem(req.params.id, req.params.tag_id, "platform", "tag");
+        const unfollowed = await Follow.unfollowItem(req.params.id, req.params.tag_id, "platform", "tag");
         return res.json({ unfollowed });
     } catch (error) {
         return next(error);
@@ -59,7 +59,7 @@ router.delete("/:id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, async func
 
 router.get("/:id/followed_writers", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const writers = await User.getItemFollows(req.params.id, "platform", "writer");
+        const writers = await Follow.getItemFollows(req.params.id, "platform", "writer");
         return res.json({ writers });
     } catch (error) {
         return next(error);
@@ -68,7 +68,7 @@ router.get("/:id/followed_writers", ensureCorrectUserOrAdmin, async function(req
 
 router.post("/:id/followed_writers/:writer_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const followed = await User.followItem(req.params.id, req.params.writer_id, "platform", "writer");
+        const followed = await Follow.followItem(req.params.id, req.params.writer_id, "platform", "writer");
         return res.json({ followed });
     } catch (error) {
         return next(error);
@@ -77,7 +77,7 @@ router.post("/:id/followed_writers/:writer_id", ensureCorrectUserOrAdmin, async 
 
 router.delete("/:id/followed_writers/:writer_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const unfollowed = await User.unfollowItem(req.params.id, req.params.writer_id, "platform", "writer");
+        const unfollowed = await Follow.unfollowItem(req.params.id, req.params.writer_id, "platform", "writer");
         return res.json({ unfollowed });
     } catch (error) {
         return next(error);
