@@ -4,6 +4,7 @@ const express = require("express");
 const User = require("../models/user");
 const Platform = require("../models/platform");
 const Follow = require("../models/follow");
+const Gig = require("../models/gig");
 const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
 
 const router = express.Router();
@@ -85,14 +86,21 @@ router.delete("/:id/followed_writers/:writer_id", ensureCorrectUserOrAdmin, asyn
     }
 });
 
+//GIG STUFF
+router.post("/:id/gigs", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const newGig = await Gig.createGig(req.params.id, {...req.body});
+        return res.status(201).json({ newGig });
+    } catch (error) {
+        return next(error);
+    }
+})
+
 module.exports = router;
 
 // PLATFORM ROUTES
 
 // //GIGS//
-
-
-
 
 // GET /platforms/:platform_name/gigs
 // Shows a list of gigs from platform

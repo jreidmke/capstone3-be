@@ -42,7 +42,7 @@ class Gig {
         return gigs;
     }
 
-    static async createGig({ platformId, title, description, compensation, isRemote, wordCount, isActive}) {
+    static async createGig(platformId, { title, description, compensation, isRemote, wordCount }) {
         const redundantGigCheck = await db.query(
             `SELECT *
             FROM gigs
@@ -50,18 +50,19 @@ class Gig {
             AND title=$2`,
             [platformId, title]
         );
+        if(redundantGigCheck.rows[0]) throw new BadRequestError(`Gig with title: ${title} already posted by Platform: ${platformId}`);
+
         const platfromResult = await db.query(
             `SELECT p.display_name
-            FROM platforms JOIN users AS u
+            FROM platforms AS p JOIN users AS u
             ON p.id=u.platform_id`
         );
 
-        if(redundantGigCheck) throw new BadRequestError(`Gig with title: ${title} already posted by Platform: ${platformId}`);
         const result = await db.query(
-            `INSERT INTO gigs (platform_id, title, description, compensation, is_remote, word_count, is_active)
-            VALUES($1, $2, $3, $4, $5, $6, $7)
+            `INSERT INTO gigs (platform_id, title, description, compensation, is_remote, word_count)
+            VALUES($1, $2, $3, $4, $5, $6)
             RETURNING title, description, compensation, is_remote AS isRemote, word_count AS wordCount, is_active AS isActive`,
-            [platformId, title, description, compensation, isRemote, wordCount, isActive]
+            [platformId, title, description, compensation, isRemote, wordCount]
         );
         const newGig = result.rows[0];
         newGig.platformName = platfromResult.rows[0];
