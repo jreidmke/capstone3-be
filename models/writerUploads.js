@@ -93,6 +93,8 @@ class WriterUpload {
         return piece;
     };
 
+    /**Used to ADD or REMOVE the connections between pieces and tags or pieces and portfolios */
+
     static async addOrRemovePieceItem(userId, pieceId, itemId, itemType, action) {
         if(itemType==="tag" || itemType==="portfolio" && action==="add" || action==="remove") {
 

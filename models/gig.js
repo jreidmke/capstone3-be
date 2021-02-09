@@ -1,4 +1,75 @@
 // GIG MODEL
+const db = require("../db");
+const {
+    NotFoundError,
+    BadRequestError
+  } = require("../expressError");
+const {checkForItem, getUserHelper, checkForFollow} = require('../helpers/checks');
+
+class Gig {
+
+    /**Returns a list of all gigs. */
+    static async getAll() {
+        const result = await db.query(
+            `SELECT *
+            FROM gigs`
+        );
+        return result.rows;
+    };
+
+    static async getById(id) {
+        const gig = await checkForItem(id, 'gigs', 'id');
+        if(!gig) throw new NotFoundError(`Gig: ${id} Not Found!`);
+        return gig;
+    };
+
+    static async getByTagTitle(title) {
+        const tag = await checkForItem(title, 'tags', 'title');
+        if(!tag) throw new NotFoundError(`Tag: ${title} Not Found!`);
+        const gigTags = await checkForItem(tag.id, 'gig_tags', 'tag_id', true);
+        if(!gigTags.length) throw new NotFoundError(`Tag: ${title} Has No Gigs`);
+        const gigs = await Promise.all(gigTags.map(gt => (
+            checkForItem(gt.gig_id, 'gigs', 'id')
+        )));
+        return gigs;
+    };
+
+    static async getByPlatformId(platformId) {
+        const platform = await checkForItem(platformId, 'users', 'id');
+        if(!platform || !platform.platform_id) throw new NotFoundError(`Platform: ${platformId} Not Found!`);
+        const gigs = await checkForItem(platform.platform_id, 'gigs', 'platform_id', true);
+        if(!gigs.length) throw new NotFoundError(`Platform: ${platformId} has no gigs currently`);
+        return gigs;
+    }
+
+    static async createGig({ platformId, title, description, compensation, isRemote, wordCount, isActive}) {
+        const redundantGigCheck = await db.query(
+            `SELECT *
+            FROM gigs
+            WHERE platform_id=$1
+            AND title=$2`,
+            [platformId, title]
+        );
+        const platfromResult = await db.query(
+            `SELECT p.display_name
+            FROM platforms JOIN users AS u
+            ON p.id=u.platform_id`
+        );
+
+        if(redundantGigCheck) throw new BadRequestError(`Gig with title: ${title} already posted by Platform: ${platformId}`);
+        const result = await db.query(
+            `INSERT INTO gigs (platform_id, title, description, compensation, is_remote, word_count, is_active)
+            VALUES($1, $2, $3, $4, $5, $6, $7)
+            RETURNING title, description, compensation, is_remote AS isRemote, word_count AS wordCount, is_active AS isActive`,
+            [platformId, title, description, compensation, isRemote, wordCount, isActive]
+        );
+        const newGig = result.rows[0];
+        newGig.platformName = platfromResult.rows[0];
+        return newGig;
+    }
+};
+
+//GET ALL GIGS
 
 // CREATE GIG
 // -INPUT: platform_name, title, description, compensation, is_remote, number_of_words, gig_type
@@ -11,7 +82,7 @@
 // -FAILURE: errorNotFound
 // -LIMITATIONS: Update gig schema, ensureCorrectPlatformOrAdmin
 
-// REMOVE GIG: 
+// REMOVE GIG:
 // -INPUT: title
 // -SUCESS: Returns undefined
 // -FAILURE: errorNotFound
@@ -29,9 +100,4 @@
 // -Failure returns errorNotFound
 // -Limitations: ensureCorrectPlatformOrAdmin
 
-// GET GIGS BY TAG
-// -INPUT: tag_title
-// -Sucess: returns all gigs that contain tag
-// -Failure: errorNotFound
-// -Limitations: tag schema
-
+module.exports = Gig;
