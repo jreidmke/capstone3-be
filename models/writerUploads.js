@@ -93,12 +93,8 @@ class WriterUpload {
         return piece;
     };
 
-    static async addItemToPiece(userId, pieceId, itemId, itemType) {
-        if(itemType==="tag" || itemType==="portfolio") {
-
-            //CHECK TO SEE IF PIECE FOLLOWS TAG OR IS IN PORTFOLIO
-            const redundantAddCheck = await checkForPieceItem(pieceId, itemId, itemType);
-            if(redundantAddCheck) throw new BadRequestError(`Piece: ${pieceId} already added to ${itemType}: ${itemId}`);
+    static async addOrRemovePieceItem(userId, pieceId, itemId, itemType, action) {
+        if(itemType==="tag" || itemType==="portfolio" && action==="add" || action==="remove") {
 
             //CHECK TO MAKE SURE PIECE AND PORTFOLIO BELONG TO WRITER
             const user = await getUserHelper(userId);
@@ -110,48 +106,32 @@ class WriterUpload {
                 if(user.writer_id !== item.writer_id) throw new UnauthorizedError();
             };
 
-            //INSERT INTO TABLE
-            const result = await db.query(
-                `INSERT INTO piece_${itemType}s (piece_id, ${itemType}_id)
-                VALUES ($1, $2)
-                RETURNING piece_id AS pieceId,
-                ${itemType}_id AS ${itemType}Id`,
-                [pieceId, itemId]
-            );
-
-            return result.rows[0];
+            if(action==="add") {
+                //CHECK TO SEE IF PIECE FOLLOWS TAG OR IS IN PORTFOLIO
+                const redundantAddCheck = await checkForPieceItem(pieceId, itemId, itemType);
+                if(redundantAddCheck) throw new BadRequestError(`Piece: ${pieceId} already added to ${itemType}: ${itemId}`);
+                const result = await db.query(
+                    `INSERT INTO piece_${itemType}s (piece_id, ${itemType}_id)
+                    VALUES ($1, $2)
+                    RETURNING piece_id AS pieceId,
+                    ${itemType}_id AS ${itemType}Id`,
+                    [pieceId, itemId]
+                    );
+                    return result.rows[0];
+            } else {
+                const redundantAddCheck = await checkForPieceItem(pieceId, itemId, itemType);
+                if(!redundantAddCheck) throw new BadRequestError(`Piece: ${pieceId} is not added to ${itemType}: ${itemId}`);
+                await db.query(
+                    `DELETE FROM piece_${itemType}s
+                    WHERE piece_id=$1
+                    AND ${itemType}_id=$2`,
+                    [pieceId, itemId]
+                );
+                return 'deleted';
+            }
         }
-
-        throw new BadRequestError('Item Type must be string: "portfolio" or "tag"');
+        throw new BadRequestError('Item Type must be string: "portfolio" or "tag". Action must be string: "add" or "remove".');
     };
-
-    static async removeItemFromPiece(userId, pieceId, itemId, itemType) {
-        if(itemType==="tag" || itemType==="portfolio") {
-
-            //CHECK TO SEE IF PIECE FOLLOWS TAG OR IS IN PORTFOLIO
-            const redundantAddCheck = await checkForPieceItem(pieceId, itemId, itemType);
-            if(!redundantAddCheck) throw new BadRequestError(`Piece: ${pieceId} is not added to ${itemType}: ${itemId}`);
-
-            //CHECK TO MAKE SURE PIECE AND PORTFOLIO BELONG TO WRITER
-            const user = await getUserHelper(userId);
-            const piece = await checkForItem(pieceId, 'pieces', 'id');
-            const item = await checkForItem(itemId, `${itemType}s`, 'id');
-            if(user.writer_id !== piece.writer_id) throw new UnauthorizedError();
-            if(itemType==="portfolio") {
-                if(user.writer_id !== item.writer_id) throw new UnauthorizedError();
-            };
-
-            await db.query(
-                `DELETE FROM piece_${itemType}s
-                WHERE piece_id=$1
-                AND ${itemType}_id=$2`,
-                [pieceId, itemId]
-            );
-            return 'deleted';
-        };
-        throw new BadRequestError('Item Type must be string: "portfolio" or "tag"');
-    };
-
 };
 
 module.exports = WriterUpload;

@@ -236,7 +236,7 @@ router.delete("/:id/pieces/:piece_id", ensureCorrectUserOrAdmin, async function(
 
 router.post("/:id/pieces/:piece_id/tags/:tag_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const newPieceTag = await WriterUpload.addItemToPiece(req.params.id, req.params.piece_id, req.params.tag_id, "tag");
+        const newPieceTag = await WriterUpload.addOrRemovePieceItem(req.params.id, req.params.piece_id, req.params.tag_id, "tag", "add");
         return res.json({ newPieceTag });
     } catch (error) {
         return next(error);
@@ -245,7 +245,7 @@ router.post("/:id/pieces/:piece_id/tags/:tag_id", ensureCorrectUserOrAdmin, asyn
 
 router.delete("/:id/pieces/:piece_id/tags/:tag_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const removedItem = await WriterUpload.removeItemFromPiece(req.params.id, req.params.piece_id, req.params.tag_id, "tag");
+        const removedItem = await WriterUpload.addOrRemovePieceItem(req.params.id, req.params.piece_id, req.params.tag_id, "tag", "remove");
         return res.json({ removedItem });
     } catch (error) {
         return next(error);
@@ -254,7 +254,7 @@ router.delete("/:id/pieces/:piece_id/tags/:tag_id", ensureCorrectUserOrAdmin, as
 
 router.post("/:id/pieces/:piece_id/portfolios/:portfolio_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const newPiecePortfolio = await WriterUpload.addItemToPiece(req.params.id, req.params.piece_id, req.params.portfolio_id, "portfolio");
+        const newPiecePortfolio = await WriterUpload.addOrRemovePieceItem(req.params.id, req.params.piece_id, req.params.portfolio_id, "portfolio", "add");
         return res.json({ newPiecePortfolio });
     } catch (error) {
         return next(error);
@@ -263,7 +263,7 @@ router.post("/:id/pieces/:piece_id/portfolios/:portfolio_id", ensureCorrectUserO
 
 router.delete("/:id/pieces/:piece_id/portfolios/:portfolio_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const removedItem = await WriterUpload.removeItemFromPiece(req.params.id, req.params.piece_id, req.params.portfolio_id, "portfolio");
+        const removedItem = await WriterUpload.addOrRemovePieceItem(req.params.id, req.params.piece_id, req.params.portfolio_id, "portfolio", "remove");
         return res.json({ removedItem });
     } catch (error) {
         return next(error);
