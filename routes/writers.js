@@ -10,6 +10,7 @@ const Writer = require("../models/writer");
 const Portfolio = require("../models/portfolio");
 const Follow = require("../models/follow");
 const Piece = require("../models/piece");
+const WriterUpload = require("../models/writerUploads");
 const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
 
 const router = express.Router();
@@ -153,7 +154,7 @@ module.exports = router;
 
 router.get("/:id/portfolios", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const portfolios = await Portfolio.getAll(req.params.id);
+        const portfolios = await WriterUpload.getAll(req.params.id, "portfolio");
         return res.json({ portfolios });
     } catch (error) {
         return next(error);
@@ -163,7 +164,7 @@ router.get("/:id/portfolios", ensureCorrectUserOrAdmin, async function(req, res,
 router.post("/:id/portfolios", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
         const { title } = req.body;
-        const newPortfolio = await Portfolio.createPortfolio(req.params.id, title);
+        const newPortfolio = await WriterUpload.createPortfolio(req.params.id, title);
         return res.json({ newPortfolio });
     } catch (error) {
         return next(error);
@@ -172,7 +173,7 @@ router.post("/:id/portfolios", ensureCorrectUserOrAdmin, async function(req, res
 
 router.get("/:id/portfolios/:portfolio_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const portfolio = await Portfolio.getById(req.params.id, req.params.portfolio_id);
+        const portfolio = await WriterUpload.getById(req.params.id, req.params.portfolio_id, "portfolio");
         return res.json({ portfolio });
     } catch (error) {
         return next(error);
@@ -181,7 +182,7 @@ router.get("/:id/portfolios/:portfolio_id", ensureCorrectUserOrAdmin, async func
 
 router.delete("/:id/portfolios/:portfolio_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const deleted = await Portfolio.removePortfolio(req.params.id, req.params.portfolio_id);
+        const deleted = await WriterUpload.remove(req.params.id, req.params.portfolio_id, "portfolio");
         return res.json({ deleted });
     } catch (error) {
         return next(error);
@@ -200,7 +201,7 @@ router.delete("/:id/portfolios/:portfolio_id", ensureCorrectUserOrAdmin, async f
 
 router.get("/:id/pieces", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const pieces = await Piece.getAll(req.params.id);
+        const pieces = await WriterUpload.getAll(req.params.id, "piece");
         return res.json({ pieces });
     } catch (error) {
         return next(error);
@@ -209,7 +210,7 @@ router.get("/:id/pieces", ensureCorrectUserOrAdmin, async function(req, res, nex
 
 router.get("/:id/pieces/:piece_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const piece = await Piece.getById(req.params.id, req.params.piece_id);
+        const piece = await WriterUpload.getById(req.params.id, req.params.piece_id, "piece");
         return res.json({ piece });
     } catch (error) {
         return next(error);
@@ -219,7 +220,7 @@ router.get("/:id/pieces/:piece_id", ensureCorrectUserOrAdmin, async function(req
 router.post("/:id/pieces", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
         const { title, text } = req.body;
-        const newPiece = await Piece.createPiece(req.params.id, title, text);
+        const newPiece = await WriterUpload.createPiece(req.params.id, title, text);
         return res.json({ newPiece });
     } catch (error) {
         return next(error);
@@ -228,7 +229,7 @@ router.post("/:id/pieces", ensureCorrectUserOrAdmin, async function(req, res, ne
 
 router.delete("/:id/pieces/:piece_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const piece = await Piece.removePiece(req.params.id, req.params.piece_id);
+        const piece = await WriterUpload.remove(req.params.id, req.params.piece_id, "piece");
         return res.json({ piece });
     } catch (error) {
         return next(error);
