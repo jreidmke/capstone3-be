@@ -94,6 +94,15 @@ router.post("/:id/gigs", ensureCorrectUserOrAdmin, async function(req, res, next
     } catch (error) {
         return next(error);
     }
+});
+
+router.delete("/:id/gigs/:gig_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const deletedGig = await Gig.removeGig(req.params.id, req.params.gig_id);
+        return res.status(201).json({ deletedGig });
+    } catch (error) {
+        return next(error);
+    }
 })
 
 module.exports = router;
