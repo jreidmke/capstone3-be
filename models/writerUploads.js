@@ -100,7 +100,6 @@ class WriterUpload {
             const user = await getUserHelper(userId);
             const piece = await checkForItem(pieceId, 'pieces', 'id');
             const item = await checkForItem(itemId, `${itemType}s`, 'id');
-            console.log(item);
             if(user.writer_id !== piece.writer_id) throw new UnauthorizedError();
             if(itemType==="portfolio") {
                 if(user.writer_id !== item.writer_id) throw new UnauthorizedError();
@@ -119,8 +118,9 @@ class WriterUpload {
                     );
                     return result.rows[0];
             } else {
-                const redundantAddCheck = await checkForPieceItem(pieceId, itemId, itemType);
-                if(!redundantAddCheck) throw new BadRequestError(`Piece: ${pieceId} is not added to ${itemType}: ${itemId}`);
+                //CHECK TO SEE IF PIECE FOLLOWS TAG OR IS IN PORTFOLIO
+                const redundantRemoveCheck = await checkForPieceItem(pieceId, itemId, itemType);
+                if(!redundantRemoveCheck) throw new BadRequestError(`Piece: ${pieceId} is not added to ${itemType}: ${itemId}`);
                 await db.query(
                     `DELETE FROM piece_${itemType}s
                     WHERE piece_id=$1
