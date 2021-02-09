@@ -27,11 +27,6 @@ router.get("/:id", ensureLoggedIn, async function(req, res, next) {
     }
 });
 
-
-// PATCH /writers/writer username/edit
-// Only viewable by admin/username
-// Sends request to update write data in database
-
 router.get("/:id/followed_tags", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
         const tags = await Follow.getItemFollows(req.params.id, "platform", "tag");
@@ -108,38 +103,6 @@ router.delete("/:id/gigs/:gig_id", ensureCorrectUserOrAdmin, async function(req,
 module.exports = router;
 
 // PLATFORM ROUTES
-
-// //GIGS//
-
-// GET /platforms/:platform_name/gigs
-// Shows a list of gigs from platform
-// NOTE: Clicking on these routes will not take you to `/platforms/:platform_name/gigs/:gig_id`. It will take you to `/gigs/:gig_id`.
-
-// GET /platforms/:platform_name/gigs/new_gig (FRONT END ROUTE)
-// Shows form to create new gig
-
-// POST /platforms/:platform_name/gigs/new_gig
-// Creates new gig and commits it to Gigs DB.
-
-// GET /platforms/:platform_name/gigs/:gig_id/edit
-// ONLY viewable by admin/platform
-// Shows form to edit gig data
-
-// PATCH /platforms/:platform_name/gigs/:gig_id/edit
-// ONLY viewable by admin/platform
-// Commits edits to gigs database
-
-// DELETE /platforms/:platform_name/gigs/:gig_id
-// ONLY viewable by admin/platform
-// Deletes gig from DB (also deletes all connected applications).
-
-
-
-
-// //APPLICATIONS//
-
-
-
 
 // GET /platforms/:platform_name/gigs/:gig_id/applications
 // Shows a list of applications.
