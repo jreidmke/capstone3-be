@@ -83,8 +83,6 @@ class Gig {
         const platform = await getUserHelper(platformId);
         const gig = await checkForItem(gigId, 'gigs', 'id');
         if(!platform || !gig) throw new NotFoundError('Can\'t find resource');
-        console.log(platform.platform_id);
-        console.log(gig.platform_id);
         if(platform.platform_id !== gig.platform_id) throw new UnauthorizedError();
         await db.query(
             `DELETE FROM gigs
