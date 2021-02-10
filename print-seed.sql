@@ -64,7 +64,7 @@ VALUES(1, 'Political Interview', 'Interview this Politician and write us a story
 
 
 INSERT INTO tags (title, is_fiction)
-VALUES('Cooking', FALSE), ('Food', FALSE), ('Recipes', FALSE), ('Political Comedy', FALSE), ('Political History', FALSE), ('Politics', FALSE), ('Sitcom', TRUE), ('Stand Up', FALSE), ('Nerd Humor', TRUE), ('True Crime', TRUE), ('Monsters', FALSE), ('Slashers', TRUE), ('Space Tech', FALSE), ('Sci-Fi', TRUE), ('Gaming', FALSE), ('Automobiles', FALSE), ('Trucks', FALSE), ('Parenting', FALSE), ('Religion Studies', FALSE), ('Sports', FALSE);
+VALUES('cooking', FALSE), ('food', FALSE), ('recipes', FALSE), ('political comedy', FALSE), ('political history', FALSE), ('politics', FALSE), ('sitcom', TRUE), ('stand up comedy', FALSE), ('humor', TRUE), ('true crime', TRUE), ('monsters', FALSE), ('slashers', TRUE), ('space tech', FALSE), ('sci-fi', TRUE), ('gaming', FALSE), ('automobiles', FALSE), ('trucks', FALSE), ('parenting', FALSE), ('religion studies', FALSE), ('sports', FALSE);
 
 INSERT INTO applications (gig_id, writer_id, portfolio_id, status)
 VALUES(1, 1, 2, 'Pending'), (1, 5, 12, 'Pending'), (2, 1, 2, 'Pending'), (2, 5, 12, 'Pending'), (3, 2, 5, 'Accepted'), (4, 2, 5, 'Rejected'), (5, 2, 4, 'Pending'), (6, 2, 4, 'Accepted'), (7, 1, 1, 'Accepted'), (8, 1, 1, 'Rejected'), (9, 5, 11, 'Pending'), (9, 5, 11, 'Pending');

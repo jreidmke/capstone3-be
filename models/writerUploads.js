@@ -96,7 +96,7 @@ class WriterUpload {
     /**Used to ADD or REMOVE the connections between pieces and tags or pieces and portfolios */
 
     static async addOrRemovePieceItem(userId, pieceId, itemId, itemType, action) {
-        if(itemType==="tag" || itemType==="portfolio" && action==="add" || action==="remove") {
+        if((itemType==="tag" || itemType==="portfolio") && (action==="add" || action==="remove")) {
 
             //CHECK TO MAKE SURE PIECE AND PORTFOLIO BELONG TO WRITER
             const user = await getUserHelper(userId);

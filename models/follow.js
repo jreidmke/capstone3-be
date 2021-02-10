@@ -27,7 +27,7 @@ class Follow {
                 FROM ${userType}_${itemType}_follows AS f
                 JOIN ${itemType}s AS i ON f.${itemType}_id=i.id
                 WHERE ${userType}_id=$1`,
-                [user.writer_id ||user.platform_id]
+                [user.writer_id || user.platform_id]
             );
             const items = itemRes.rows;
             if(!items.length) throw new NotFoundError(`User with ID: ${id} not following any ${itemType}s!`);
