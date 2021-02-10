@@ -98,17 +98,6 @@ router.delete("/:id/gigs/:gig_id", ensureCorrectUserOrAdmin, async function(req,
     } catch (error) {
         return next(error);
     }
-})
+});
 
 module.exports = router;
-
-// PLATFORM ROUTES
-
-// GET /platforms/:platform_name/gigs/:gig_id/applications
-// Shows a list of applications.
-
-// GET /platforms/:platform_name/gigs/:gig_id/applications/:app_id
-// Shows data on one application (including submitted portfolio).
-
-// PATCH /platforms/:platform_name/gigs/:gig_id/applications/
-// Sets is_active for all applications for gig to either True or False.

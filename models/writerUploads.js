@@ -106,10 +106,9 @@ class WriterUpload {
             if(itemType==="portfolio") {
                 if(user.writer_id !== item.writer_id) throw new UnauthorizedError();
             };
+            const redundantAddCheck = await checkForPieceItem(pieceId, itemId, itemType);
 
             if(action==="add") {
-                //CHECK TO SEE IF PIECE FOLLOWS TAG OR IS IN PORTFOLIO
-                const redundantAddCheck = await checkForPieceItem(pieceId, itemId, itemType);
                 if(redundantAddCheck) throw new BadRequestError(`Piece: ${pieceId} already added to ${itemType}: ${itemId}`);
                 const result = await db.query(
                     `INSERT INTO piece_${itemType}s (piece_id, ${itemType}_id)
@@ -120,9 +119,7 @@ class WriterUpload {
                     );
                     return result.rows[0];
             } else {
-                //CHECK TO SEE IF PIECE FOLLOWS TAG OR IS IN PORTFOLIO
-                const redundantRemoveCheck = await checkForPieceItem(pieceId, itemId, itemType);
-                if(!redundantRemoveCheck) throw new BadRequestError(`Piece: ${pieceId} is not added to ${itemType}: ${itemId}`);
+                if(!redundantAddCheck) throw new BadRequestError(`Piece: ${pieceId} is not added to ${itemType}: ${itemId}`);
                 await db.query(
                     `DELETE FROM piece_${itemType}s
                     WHERE piece_id=$1

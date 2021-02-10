@@ -1,19 +1,38 @@
 // APPLICATION MODEL
+const db = require("../db");
+const { getUserHelper, checkForItem, checkForPieceItem } = require("../helpers/checks");
+const {
+  NotFoundError,
+  UnauthorizedError,
+  BadRequestError
+} = require("../expressError");
 
-// SUBMIT APPLICATION
-// INPUT: writer username, platform name, gig id, portfolio id
-// SUCCESS: - returns applications is active status
-// FAILURE: returns notFoundError. 
-// LIMITATIONS: ensure correct user
+class Application {
 
-// WITHDRAWL APPLICATION
-// INPUT: application id
-// SUCCESS: returns undefined
-// FAILURE: returns notFoundError
-// LIMItations: ensureCorrectUser
+    //Returns all Applications. Just for Admin
+    static async getAll() {
 
-// SET APPLICATION STATUS
-// INPUT: application id, status
-// SUCCESS: returns application status
-// FAILURE: returns notFoundError
-// LIMITATIONS: ensureCorrectPlatformOrAdmin
+    };
+
+    //Returns all applications by user id
+    static async getByUserId(writerId) {
+
+    };
+
+    //Posts application and returns relavent data
+    static async submitApplication(writerId, gigId) {
+
+    };
+
+    //Removes application from table. Only writer can ping
+    static async withdrawlApplication(writerId, applicationId) {
+
+    };
+
+    //Updates application status. Only platform can ping
+    static async setApplicationStatus(platformId, gigId) {
+
+    };
+}
+
+module.exports = Application;

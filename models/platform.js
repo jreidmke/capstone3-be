@@ -6,9 +6,7 @@ const db = require("../db");
 const bcrypt = require("bcrypt");
 // const { sqlForPartialUpdate } = require("../helpers/sql");
 const {
-  NotFoundError,
-  BadRequestError,
-  UnauthorizedError,
+  NotFoundError
 } = require("../expressError");
 
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
@@ -64,10 +62,3 @@ class Platform {
 };
 
 module.exports = Platform;
-
-
-// UPDATE PLATFORM
-// -INPUT: platform_name, updatedData
-// -Success returns updatedData
-// -Failure throws not found error
-// -LIMITATIONS: AGAIN!!! ALOT OF LIMITATIONS. ALOT OF LIMITATIONS! This could potentially allow people to become admins which is a huge security problem. ensureCorrectPlatformOrAdmin and update platform schema.
