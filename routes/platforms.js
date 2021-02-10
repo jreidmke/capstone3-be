@@ -27,6 +27,7 @@ router.get("/:id", ensureLoggedIn, async function(req, res, next) {
     }
 });
 
+//FOLLOW STUFF
 router.get("/:id/followed_tags", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
         const tags = await Follow.getItemFollows(req.params.id, "platform", "tag");

@@ -11,7 +11,7 @@ const { authenticateJWT } = require("./middleware/auth");
 const authRoutes = require("./routes/auth");
 const writerRoutes = require("./routes/writers");
 const platformRoutes = require("./routes/platforms");
-const gigRoutes = require("./routes/gigs-applications");
+const gigRoutes = require("./routes/gigs");
 const morgan = require("morgan");
 
 const app = express();

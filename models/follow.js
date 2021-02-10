@@ -16,7 +16,7 @@ class Follow {
      */
 
     static async getItemFollows(id, userType, itemType) {
-        if(userType==="writer" || userType==="platform" && itemType==="tag" || itemType==="platform" || itemType==="writer") {
+        if((userType==="writer" || userType==="platform") && (itemType==="tag" || itemType==="platform" || itemType==="writer")) {
 
             //Error handling
             const user = await getUserHelper(id);
@@ -44,7 +44,7 @@ class Follow {
      */
 
     static async followItem(userId, itemId, userType, itemType){
-        if(userType==="writer" || userType==="platform" && itemType==="tag" || itemType==="platform" || itemType==="writer") {
+        if((userType==="writer" || userType==="platform") && (itemType==="tag" || itemType==="platform" || itemType==="writer")) {
 
             //error handling
 
@@ -81,7 +81,7 @@ class Follow {
      */
 
     static async unfollowItem(userId, itemId, userType, itemType) {
-        if(userType==="writer" || userType==="platform" && itemType==="tag" || itemType==="platform" || itemType==="writer") {
+        if((userType==="writer" || userType==="platform") && (itemType==="tag" || itemType==="platform" || itemType==="writer")) {
 
             //error handling
             const user = await getUserHelper(userId);

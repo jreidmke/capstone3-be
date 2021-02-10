@@ -4,9 +4,7 @@
 
 const db = require("../db");
 const {
-  NotFoundError,
-  BadRequestError,
-  UnauthorizedError,
+  NotFoundError
 } = require("../expressError");
 
 
@@ -71,12 +69,6 @@ class Writer {
 
         return user;
      };
-
-     // UPDATE WRITER
-    // -Input: username <=this is not changable! this is just for verification, password, first_name, last_name, age, location, email, phone, twitter_url, youtube_url, facebook_url
-    // -Success returns all data on writer except password
-    // -Failure Throws NotFoundError
-    // Limitations: ALOT OF LIMITATIONS! This could potentially allow people to become admins which is a huge security problem. ensureCorrectUserOrAdmin and update writer schema.
 };
 
 module.exports = Writer;

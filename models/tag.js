@@ -1,9 +1,21 @@
 // TAG MODEL
+const db = require("../db");
+const { getUserHelper, checkForItem, checkForPieceItem } = require("../helpers/checks");
+const {
+  NotFoundError,
+  UnauthorizedError,
+  BadRequestError
+} = require("../expressError");
 
-// GET ALL TAGS
-// -INPUT: none
-// -SUCCESS: Returns list of all tags
+class Tag {
+    
+    static async getAll() {
 
-// GET TAGS BY FICTION BOOLEAN
-// -INPUT: boolean is_fiction
-// -SUCCESS: Returns list of all fiction or nonfiction tags
+    };
+
+    static async getByIsFiction(isFiction) {
+
+    };
+};
+
+module.exports = Tag;

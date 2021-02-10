@@ -1,6 +1,6 @@
 // GIGS ROUTES
 const express = require("express");
-const Gig = require("./../models/gig");
+const Gig = require("../models/gig");
 const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
 
 const router = express.Router();
