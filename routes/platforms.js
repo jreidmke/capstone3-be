@@ -9,15 +9,6 @@ const { ensureLoggedIn, ensureCorrectUserOrAdmin, ensureCorrectPlatformOrAdmin }
 
 const router = express.Router();
 
-router.delete("/:platform_id", ensureCorrectPlatformOrAdmin, async(req, res, next) => {
-    try {
-        const deleted = await Platform.remove(req.params.platform_id);
-        return res.json({ deleted });
-    } catch (error) {
-        return next(error);
-    }
-})
-
 router.get("/", ensureLoggedIn, async function(req, res, next) {
     try {
         const platforms = await Platform.getAll();
@@ -31,6 +22,15 @@ router.get("/:id", ensureLoggedIn, async function(req, res, next) {
     try {
         const platform = await User.getById(req.params.id, "platform");
         return res.json({ platform });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+router.delete("/:platform_id", ensureCorrectPlatformOrAdmin, async(req, res, next) => {
+    try {
+        const deleted = await Platform.remove(req.params.platform_id);
+        return res.json({ deleted });
     } catch (error) {
         return next(error);
     }

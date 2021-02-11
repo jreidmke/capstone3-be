@@ -14,15 +14,6 @@ const Application = require("../models/application");
 
 const router = express.Router();
 
-router.delete("/:writer_id", ensureCorrectWriterOrAdmin, async(req, res, next) => {
-    try {
-        const deleted = Writer.remove(req.params.writer_id);
-        return res.json({ deleted });
-    } catch (error) {
-        return next(error);
-    }
-})
-
 /**GET / => {writers: [ {first_name, last_name, image_url, city, state, facebookUsername, twitterUsername, youtubeUesrname}, ...]}
  *
  * Returns a list of all writers
@@ -56,12 +47,23 @@ router.get("/:id", ensureLoggedIn, async function(req, res, next) {
     }
 });
 
+/**DELETE */
+
+router.delete("/:writer_id", ensureCorrectWriterOrAdmin, async(req, res, next) => {
+    try {
+        const deleted = Writer.remove(req.params.writer_id);
+        return res.json({ deleted });
+    } catch (error) {
+        return next(error);
+    }
+})
+
 /**GET /[id]/followed_tags => [{id, writer_id, tag_id, timestamps},...]
  *
  * Auth: admin or correct user
  */
 
-router.get("/:id/followed_tags", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.get("/:id/followed_tags", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
         const tags = await Follow.getItemFollows(req.params.id, "writer", "tag");
         return res.json({ tags });
