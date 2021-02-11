@@ -10,6 +10,7 @@ const WriterUpload = require("../models/writerUploads");
 const { ensureLoggedIn, ensureCorrectUserOrAdmin, ensureCorrectWriterOrAdmin } = require("../middleware/auth");
 const Application = require("../models/application");
 const Portfolio = require("../models/portfolio");
+const Piece = require("../models/piece");
 
 const router = express.Router();
 
@@ -145,7 +146,7 @@ router.delete("/:writer_id/followed_platforms/:platform_id", ensureCorrectWriter
 // // //PORTFOLIOS
 // *
 
-router.get("/:writer_id/portfolios", ensureCorrectWriterOrAdmin, async function(req, res, next) {
+router.get("/:writer_id/portfolios", ensureLoggedIn, async function(req, res, next) {
     try {
         const portfolios = await Portfolio.getAllByWriterId(req.params.writer_id);
         return res.json({ portfolios });
@@ -154,16 +155,16 @@ router.get("/:writer_id/portfolios", ensureCorrectWriterOrAdmin, async function(
     }
 });
 
-router.get("/:writer_id/portfolios/:portfolio_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
+router.get("/:writer_id/portfolios/:portfolio_id", ensureLoggedIn, async function(req, res, next) {
     try {
-        const portfolio = await Portfolio.getById(req.params.portfolio_id, req.params.writer_id);
+        const portfolio = await Portfolio.getById(req.params.portfolio_id);
         return res.json({ portfolio });
     } catch (error) {
         return next(error);
     }
 });
 
-router.post("/:writer_id/portfolios", ensureCorrectWriterOrAdmin, async function(req, res, next) {
+router.post("/:writer_id/portfolios/new", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
         const { title } = req.body;
         const newPortfolio = await Portfolio.create(req.params.writer_id, title);
@@ -188,25 +189,25 @@ router.delete("/:writer_id/portfolios/:portfolio_id", ensureCorrectWriterOrAdmin
 //** */
 //** */
 
-router.get("/:id/pieces", ensureCorrectWriterOrAdmin, async function(req, res, next) {
+router.get("/:writer_id/pieces", ensureLoggedIn, async function(req, res, next) {
     try {
-        const pieces = await WriterUpload.getAll(req.params.id, "piece");
+        const pieces = await Piece.getAllByWriterId(req.params.writer_id);
         return res.json({ pieces });
     } catch (error) {
         return next(error);
     }
 });
 
-router.get("/:id/pieces/:piece_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
+router.get("/:writer_id/pieces/:piece_id", ensureLoggedIn, async function(req, res, next) {
     try {
-        const piece = await WriterUpload.getById(req.params.id, req.params.piece_id, "piece");
+        const piece = await Piece.getById(req.params.piece_id);
         return res.json({ piece });
     } catch (error) {
         return next(error);
     }
 });
 
-router.post("/:id/pieces", ensureCorrectWriterOrAdmin, async function(req, res, next) {
+router.post("/:id/pieces/new", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
         const { title, text } = req.body;
         const newPiece = await WriterUpload.createPiece(req.params.id, title, text);

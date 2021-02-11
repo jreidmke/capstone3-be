@@ -1,7 +1,7 @@
 const db = require("../db");
-const { getUserHelper, checkForItem, checkForPieceItem } = require("../helpers/checks");
 const {
-  NotFoundError, UnauthorizedError
+  NotFoundError, 
+  UnauthorizedError
 } = require("../expressError");
 
 class Portfolio {
@@ -20,7 +20,7 @@ class Portfolio {
         return portfolios;
     };
 
-    static async getById(portfolioId, writerId) {
+    static async getById(portfolioId) {
         const result = await db.query(
             `SELECT * FROM portfolios
             WHERE id=$1`,
@@ -28,9 +28,8 @@ class Portfolio {
         );
         const portfolio = result.rows[0];
 
+        //Error Handlers
         if(!portfolio) throw new NotFoundError(`Portfolio:${portfolioId} Not Found!`);
-
-        if(portfolio.writer_id !== writerId) throw new UnauthorizedError();
 
         const pieceResult = await db.query(
             `SELECT * FROM pieces AS p
@@ -60,8 +59,9 @@ class Portfolio {
             `SELECT * FROM portfolios WHERE id=$1`,
             [portfolioId]
         );
-        if(!authCheck.rows[0]) throw new NotFoundError(`Portfolio: ${portfolioId} Not Found!`);
 
+        //Error Handling
+        if(!authCheck.rows[0]) throw new NotFoundError(`Portfolio: ${portfolioId} Not Found!`);
         if(authCheck.rows[0].writer_id !== writerId) throw new UnauthorizedError();
 
         const result = await db.query(
