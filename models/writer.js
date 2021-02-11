@@ -69,6 +69,18 @@ class Writer {
 
         return user;
      };
+
+     static async remove(writerId) {
+       const result = await db.query(
+         `DELETE FROM users
+         WHERE writer_id=$1
+         RETURNING writer_id AS writerId`,
+         [writerId]
+       );
+       const writer = result.rows[0];
+       if(!writer) throw new NotFoundError(`Writer with ID: ${writerId} Not Found!`);
+       return 'deleted'
+     }
 };
 
 module.exports = Writer;

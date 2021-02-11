@@ -58,6 +58,19 @@ class Platform {
         user.gigs = gigRes.rows.map(g => ({title: g.title, description: g.description, compensation: g.compensation, isRemote: g.is_remote, wordCount: g.word_count, isActive: g.is_active, createdAt: g.created_at}));
 
         return user;
+    };
+
+    static async remove(platformId) {
+      const result = await db.query(
+        `DELETE FROM users
+        WHERE platform_id=$1
+        AND writer_id=NULL
+        RETURNING platform_id`,
+        [platformId]
+      );
+      const platform = result.rows[0];
+      if(!platform) throw new NotFoundError(`Platform: ${platformId} Not Found!`);
+      return 'deleted';
     }
 };
 

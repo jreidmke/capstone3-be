@@ -75,9 +75,36 @@ function ensureCorrectUserOrAdmin(req, res, next) {
   }
 };
 
+function ensureCorrectWriterOrAdmin(req, res, next) {
+  try {
+    const user = res.locals.user;
+    console.log(user.writerId === req.params.writer_id)
+    if(!(user && (user.isAdmin || (user.writerId === req.params.writer_id && user.platformId === null)))) {
+      throw new UnauthorizedError();
+    };
+    return next();
+  } catch (error) {
+    return next(error);
+  }
+};
+
+function ensureCorrectPlatformOrAdmin(req, res, next) {
+  try {
+    const user = res.locals.user;
+    if(!(user && (user.isAdmin || (user.platformId === req.params.platform_id && user.writerId === null)))) {
+      throw new UnauthorizedError();
+    };
+    return next();
+  } catch (error) {
+    return next(error);
+  }
+};
+
 module.exports = {
   authenticateJWT,
   ensureLoggedIn,
   ensureAdmin,
   ensureCorrectUserOrAdmin,
+  ensureCorrectWriterOrAdmin,
+  ensureCorrectPlatformOrAdmin
 };

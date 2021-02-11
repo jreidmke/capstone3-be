@@ -9,10 +9,19 @@ const User = require("../models/user");
 const Writer = require("../models/writer");
 const Follow = require("../models/follow");
 const WriterUpload = require("../models/writerUploads");
-const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
+const { ensureLoggedIn, ensureCorrectUserOrAdmin, ensureCorrectWriterOrAdmin } = require("../middleware/auth");
 const Application = require("../models/application");
 
 const router = express.Router();
+
+router.delete("/:writer_id", ensureCorrectWriterOrAdmin, async(req, res, next) => {
+    try {
+        const deleted = Writer.remove(req.params.writer_id);
+        return res.json({ deleted });
+    } catch (error) {
+        return next(error);
+    }
+})
 
 /**GET / => {writers: [ {first_name, last_name, image_url, city, state, facebookUsername, twitterUsername, youtubeUesrname}, ...]}
  *

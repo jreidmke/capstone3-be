@@ -5,9 +5,18 @@ const User = require("../models/user");
 const Platform = require("../models/platform");
 const Follow = require("../models/follow");
 const Gig = require("../models/gig");
-const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
+const { ensureLoggedIn, ensureCorrectUserOrAdmin, ensureCorrectPlatformOrAdmin } = require("../middleware/auth");
 
 const router = express.Router();
+
+router.delete("/:platform_id", ensureCorrectPlatformOrAdmin, async(req, res, next) => {
+    try {
+        const deleted = await Platform.remove(req.params.platform_id);
+        return res.json({ deleted });
+    } catch (error) {
+        return next(error);
+    }
+})
 
 router.get("/", ensureLoggedIn, async function(req, res, next) {
     try {

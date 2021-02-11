@@ -24,7 +24,7 @@ class User {
 
     static async authenticate(email, password) {
         const result = await db.query(
-            `SELECT id, email, password, is_admin
+            `SELECT id, email, password, writer_id, platform_id, is_admin
             FROM users
             WHERE email=$1`,
             [email]
@@ -82,7 +82,7 @@ class User {
         const result = await db.query(
             `INSERT INTO users (email, writer_id, platform_id, password, image_url, address_1, address_2, city, state, postal_code, phone, twitter_username, facebook_username, youtube_username)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
-            RETURNING email, is_admin`,
+            RETURNING email, is_admin, writer_id, platform_id`,
             [
                 email,
                 firstName ? user.id : null,
