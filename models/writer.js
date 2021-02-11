@@ -4,7 +4,8 @@
 
 const db = require("../db");
 const {
-  NotFoundError
+  NotFoundError,
+  BadRequestError
 } = require("../expressError");
 
 
@@ -43,31 +44,20 @@ class Writer {
      * Works in tandem with Uesr method getById()
      */
 
-     static async getById(user) {
-        const writerRes = await db.query(
-          `SELECT *
-          FROM writers
-          WHERE id=$1`,
-          [user.writerid]
-        );
+     static async getById(writerId) {
+      const result = await db.query(
+        `SELECT * FROM users AS u
+        JOIN writers AS w
+        ON u.writer_id=w.id
+        WHERE u.writer_id=$1`,
+        [writerId]
+      );
+      const writer = result.rows[0];
 
-        const writer = writerRes.rows[0];
+      if(!writer) throw new NotFoundError(`Writer with ID: ${writerId} Not Found!`);
 
-        if(!writer) throw new NotFoundError(`No Writer With ID: ${user.id}`);
-
-        user.firstName = writer.first_name;
-        user.lastName = writer.last_name;
-        user.age = writer.age;
-        user.bio = writer.bio;
-        user.createdAt = writer.created_at;
-
-        const portfolioRes = await db.query(
-            `SELECT * FROM portfolios WHERE writer_id=$1`,
-            [writer.id]
-        );
-        user.portfolios = portfolioRes.rows.map(p => ({id: p.id, title: p.title}));
-
-        return user;
+      delete writer.password;
+      return writer;
      };
 
      static async remove(writerId) {
@@ -80,7 +70,67 @@ class Writer {
        const writer = result.rows[0];
        if(!writer) throw new NotFoundError(`Writer with ID: ${writerId} Not Found!`);
        return 'deleted'
-     }
+     };
+
+     static async getFollows(writerId, itemType) {
+      if(itemType === "tag" || itemType === "platform") {
+        const result = await db.query(
+          `SELECT * FROM writer_${itemType}_follows AS f
+          JOIN ${itemType}s AS t
+          ON t.id = f.${itemType}_id
+          WHERE f.writer_id=$1`,
+          [writerId]
+        );
+        const follows = result.rows;
+        if(!follows) throw new NotFoundError(`Writer with ID: ${writerId} Follows No ${itemType.toUpperCase()}`);
+        return follows;
+       }
+       throw new BadRequestError("Item Type must be String: 'tag' or 'platform'");
+      };
+
+      static async followItem(writerId, itemId, itemType) {
+        if(itemType==="tag" || itemType==="platform") {
+
+          //CHECK IF WRITER ALREADY FOLLOWS
+          const duplicateCheck = await db.query(
+            `SELECT * FROM writer_${itemType}_follows
+            WHERE writer_id=$1 AND ${itemType}_id=$2`,
+            [writerId, itemId]
+          );
+          if(duplicateCheck.rows[0]) throw new BadRequestError(`Writer: ${writerId} already follows ${itemType.toUpperCase()}: ${itemId}`); 
+
+
+          const result = await db.query(
+            `INSERT INTO writer_${itemType}_follows (writer_id, ${itemType}_id)
+            VALUES($1, $2)
+            RETURNING writer_id AS writerId,
+            ${itemType}_id AS ${itemType}Id`,
+            [writerId, itemId]
+          );
+          return result.rows[0];
+        };
+
+       throw new BadRequestError("Item Type must be String: 'tag' or 'platform'");
+      };
+
+      static async unfollowItem(writerId, itemId, itemType) {
+        if(itemType==="tag" || itemType==="platform") {
+
+          const result = await db.query(
+            `DELETE FROM writer_${itemType}_follows
+            WHERE ${itemType}_id=$1
+            AND writer_id=$2
+            RETURNING writer_id AS writerId,
+            ${itemType}_id AS ${itemType}Id`,
+            [itemId, writerId]
+          );
+
+          //CHECK TO SEE IF THEY EVEN FOLLOWED
+          if(!result.rows[0]) throw new NotFoundError(`Writer: ${writerId} does not follow ${itemType.toUpperCase()}: ${itemId}`);
+
+          return result.rows[0];
+        };
+      };
 };
 
 module.exports = Writer;
