@@ -82,7 +82,7 @@ class Writer {
           [writerId]
         );
         const follows = result.rows;
-        if(!follows) throw new NotFoundError(`Writer with ID: ${writerId} Follows No ${itemType.toUpperCase()}`);
+        if(!follows) throw new NotFoundError(`Writer with ID: ${writerId} Follows No ${itemType.toUpperCase()}S`);
         return follows;
        }
        throw new BadRequestError("Item Type must be String: 'tag' or 'platform'");
