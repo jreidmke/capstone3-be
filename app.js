@@ -30,8 +30,6 @@ app.use("/gigs", gigRoutes);
 app.use("/tags", tagRoutes);
 app.use("/admin", adminRoutes);
 
-console.log("pizza");
-
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {
     return next(new NotFoundError());

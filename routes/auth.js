@@ -57,7 +57,7 @@ router.post("/login", async function(req, res, next) {
 router.post("/register", async function(req, res, next) {
     try {
         let validator;
-        if("handle" in req.body || "displayName" in req.body) {
+        if("displayName" in req.body) {
             validator = jsonschema.validate(req.body, platformRegSchema);
         } else {
             validator = jsonschema.validate(req.body, writerRegSchema)
