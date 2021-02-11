@@ -3,7 +3,6 @@
 const express = require("express");
 const User = require("../models/user");
 const Platform = require("../models/platform");
-const Follow = require("../models/follow");
 const Gig = require("../models/gig");
 const { ensureLoggedIn, ensureCorrectUserOrAdmin, ensureCorrectPlatformOrAdmin } = require("../middleware/auth");
 
@@ -62,7 +61,9 @@ router.delete("/:platform_id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, a
     } catch (error) {
         return next(error);
     }
-})
+});
+
+//FOLLOWED WRITERS
 
 router.get("/:platform_id/followed_writers", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
@@ -80,7 +81,7 @@ router.post("/:platform_id/followed_writers/:writer_id", ensureCorrectUserOrAdmi
     } catch (error) {
         return next(error);
     }
-})
+});
 
 router.delete("/:platform_id/followed_writers/:writer_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
@@ -92,18 +93,28 @@ router.delete("/:platform_id/followed_writers/:writer_id", ensureCorrectUserOrAd
 });
 
 //GIG STUFF
-router.post("/:id/gigs", ensureCorrectUserOrAdmin, async function(req, res, next) {
+
+router.get("/:platform_id/gigs", ensureLoggedIn, async function(req, res, next) {
     try {
-        const newGig = await Gig.createGig(req.params.id, {...req.body});
+        const gigs = await Gig.getByPlatformId(req.params.platform_id);
+        return res.json({ gigs });
+    } catch (error) {
+        return next(error);
+    }
+})
+
+router.post("/:platform_id/gigs/new", ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const newGig = await Gig.createGig(req.params.platform_id, {...req.body});
         return res.status(201).json({ newGig });
     } catch (error) {
         return next(error);
     }
 });
 
-router.delete("/:id/gigs/:gig_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.delete("/:platform_id/gigs/:gig_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const deletedGig = await Gig.removeGig(req.params.id, req.params.gig_id);
+        const deletedGig = await Gig.removeGig(req.params.platform_id, req.params.gig_id);
         return res.status(201).json({ deletedGig });
     } catch (error) {
         return next(error);

@@ -46,44 +46,33 @@ class Gig {
         const gigs = await checkForItem(platform.platform_id, 'gigs', 'platform_id', true);
         if(!gigs.length) throw new NotFoundError(`Platform: ${platformId} has no gigs currently`);
         return gigs;
-    }
+    };
 
     static async createGig(platformId, { title, description, compensation, isRemote, wordCount }) {
-        const platfromResult = await db.query(
-            `SELECT p.id, p.display_name
-            FROM platforms AS p JOIN users AS u
-            ON p.id=u.platform_id
-            WHERE u.id=$1`,
-            [platformId]
-        );
-
-        const platform = platfromResult.rows[0];
-
         const redundantGigCheck = await db.query(
             `SELECT *
             FROM gigs
             WHERE platform_id=$1
             AND title=$2`,
-            [platform.id, title]
+            [platformId, title]
         );
-        if(redundantGigCheck.rows[0]) throw new BadRequestError(`Gig with title: ${title} already posted by Platform: ${platform.id}`);
+        if(redundantGigCheck.rows[0]) throw new BadRequestError(`Gig with title: ${title} already posted by Platform: ${platformId}`);
 
         const result = await db.query(
             `INSERT INTO gigs (platform_id, title, description, compensation, is_remote, word_count)
             VALUES($1, $2, $3, $4, $5, $6)
             RETURNING title, description, compensation, is_remote AS isRemote, word_count AS wordCount, is_active AS isActive`,
-            [platform.id, title, description, compensation, isRemote, wordCount]
+            [platformId, title, description, compensation, isRemote, wordCount]
         );
+        
         const newGig = result.rows[0];
-        newGig.platformName = platform.display_name;
         return newGig;
     };
 
     static async removeGig(platformId, gigId) {
-        const platform = await getUserHelper(platformId);
         const gig = await checkForItem(gigId, 'gigs', 'id');
-        if(!platform || !gig) throw new NotFoundError('Can\'t find resource');
-        if(platform.platform_id !== gig.platform_id) throw new UnauthorizedError();
+        if(!gig) throw new NotFoundError('Can\'t find resource');
+        if(platformId !== gig.platform_id) throw new UnauthorizedError();
         await db.query(
             `DELETE FROM gigs
             WHERE id=$1`,
