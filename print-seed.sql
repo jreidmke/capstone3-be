@@ -82,7 +82,7 @@ INSERT INTO platform_tag_follows (platform_id, tag_id)
 VALUES(1, 1), (1, 4), (1, 5), (1, 6), (2, 14), (2, 13), (3, 12), (3, 11), (3, 10), (4, 1), (4, 2), (4, 3), (5, 4), (5, 5), (5, 6);
 
 INSERT INTO platform_writer_follows (platform_id, writer_id)
-VALUES (1, 1), (1, 5), (1, 1), (2, 2), (3, 2), (4, 1), (5, 1), (5, 2), (5, 3), (5, 4), (5, 5);
+VALUES (1, 1), (1, 5), (2, 2), (3, 2), (4, 1), (5, 1), (5, 2), (5, 3), (5, 4), (5, 5);
 
 INSERT INTO writer_platform_follows(writer_id, platform_id)
 VALUES(1, 1), (1, 2), (3, 1), (4, 2), (4, 2), (5, 5), (2, 1), (2, 2), (2, 3), (2, 4);

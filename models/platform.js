@@ -6,7 +6,8 @@ const db = require("../db");
 const bcrypt = require("bcrypt");
 // const { sqlForPartialUpdate } = require("../helpers/sql");
 const {
-  NotFoundError
+  NotFoundError,
+  BadRequestError
 } = require("../expressError");
 
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
@@ -70,7 +71,71 @@ class Platform {
       const platform = result.rows[0];
       if(!platform) throw new NotFoundError(`Platform: ${platformId} Not Found!`);
       return 'deleted';
-    }
+    };
+
+    static async getFollows(platformId, itemType) {
+      if(itemType === "tag" || itemType === "writer") {
+        const result = await db.query(
+          `SELECT * FROM platform_${itemType}_follows AS f
+          JOIN ${itemType}s AS t
+          ON t.id = f.${itemType}_id
+          WHERE f.platform_id=$1`,
+          [platformId]
+        );
+
+        const follows = result.rows;
+        if(!follows) throw new NotFoundError(`Platform with ID: ${platformId} Follows No ${itemType.toUpperCase()}S`);
+        return follows;
+
+       };
+       
+       throw new BadRequestError("Item Type must be String: 'tag' or 'writer'");
+      };
+
+      static async followItem(platformId, itemId, itemType) {
+        if(itemType==="tag" || itemType==="writer") {
+
+          //CHECK IF WRITER ALREADY FOLLOWS
+          const duplicateCheck = await db.query(
+            `SELECT * FROM platform_${itemType}_follows
+            WHERE platform_id=$1 AND ${itemType}_id=$2`,
+            [platformId, itemId]
+          );
+          if(duplicateCheck.rows[0]) throw new BadRequestError(`Platform: ${platformId} already follows ${itemType.toUpperCase()}: ${itemId}`); 
+
+
+          const result = await db.query(
+            `INSERT INTO platform_${itemType}_follows (platform_id, ${itemType}_id)
+            VALUES($1, $2)
+            RETURNING platform_id AS platformId,
+            ${itemType}_id AS ${itemType}Id`,
+            [platformId, itemId]
+          );
+          return result.rows[0];
+        };
+
+       throw new BadRequestError("Item Type must be String: 'tag' or 'writer'");
+      };
+
+      static async unfollowItem(platformId, itemId, itemType) {
+        if(itemType==="tag" || itemType==="writer") {
+
+          const result = await db.query(
+            `DELETE FROM platform_${itemType}_follows
+            WHERE ${itemType}_id=$1
+            AND platform_id=$2
+            RETURNING platform_id AS platformId,
+            ${itemType}_id AS ${itemType}Id`,
+            [itemId, platformId]
+          );
+
+          //CHECK TO SEE IF THEY EVEN FOLLOWED
+          if(!result.rows[0]) throw new NotFoundError(`Platform: ${platformId} does not follow ${itemType.toUpperCase()}: ${itemId}`);
+
+          return result.rows[0];
+        };
+        throw new BadRequestError("Item Type must be String: 'tag' or 'writer'");
+      };
 };
 
 module.exports = Platform;

@@ -18,9 +18,9 @@ router.get("/", ensureLoggedIn, async function(req, res, next) {
     }
 });
 
-router.get("/:id", ensureLoggedIn, async function(req, res, next) {
+router.get("/:platform_id", ensureLoggedIn, async function(req, res, next) {
     try {
-        const platform = await User.getById(req.params.id, "platform");
+        const platform = await User.getById(req.params.platform_id, "platform");
         return res.json({ platform });
     } catch (error) {
         return next(error);
@@ -36,55 +36,55 @@ router.delete("/:platform_id", ensureCorrectPlatformOrAdmin, async(req, res, nex
     }
 });
 
-//FOLLOW STUFF
-router.get("/:id/followed_tags", ensureCorrectUserOrAdmin, async function(req, res, next) {
+//FOLLOW TAGS
+router.get("/:platform_id/followed_tags", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const tags = await Follow.getItemFollows(req.params.id, "platform", "tag");
+        const tags = await Platform.getFollows(req.params.platform_id, "tag");
         return res.json({ tags });
     } catch (error) {
         return next(error);
     }
 });
 
-router.post("/:id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.post("/:platform_id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const followed = await Follow.followItem(req.params.id, req.params.tag_id, "platform", "tag");
+        const followed = await Platform.followItem(req.params.platform_id, req.params.tag_id, "tag");
         return res.json({ followed });
     } catch (error) {
         return next(error);
     }
 });
 
-router.delete("/:id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.delete("/:platform_id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const unfollowed = await Follow.unfollowItem(req.params.id, req.params.tag_id, "platform", "tag");
+        const unfollowed = await Platform.unfollowItem(req.params.platform_id, req.params.tag_id, "tag");
         return res.json({ unfollowed });
     } catch (error) {
         return next(error);
     }
 })
 
-router.get("/:id/followed_writers", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.get("/:platform_id/followed_writers", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const writers = await Follow.getItemFollows(req.params.id, "platform", "writer");
+        const writers = await Platform.getFollows(req.params.platform_id, "writer");
         return res.json({ writers });
     } catch (error) {
         return next(error);
     };
 });
 
-router.post("/:id/followed_writers/:writer_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.post("/:platform_id/followed_writers/:writer_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const followed = await Follow.followItem(req.params.id, req.params.writer_id, "platform", "writer");
+        const followed = await Platform.followItem(req.params.platform_id, req.params.writer_id, "writer");
         return res.json({ followed });
     } catch (error) {
         return next(error);
     }
 })
 
-router.delete("/:id/followed_writers/:writer_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.delete("/:platform_id/followed_writers/:writer_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const unfollowed = await Follow.unfollowItem(req.params.id, req.params.writer_id, "platform", "writer");
+        const unfollowed = await Platform.unfollowItem(req.params.platform_id, req.params.writer_id, "writer");
         return res.json({ unfollowed });
     } catch (error) {
         return next(error);
