@@ -10,6 +10,7 @@ const Writer = require("../models/writer");
 const Follow = require("../models/follow");
 const WriterUpload = require("../models/writerUploads");
 const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
+const Application = require("../models/application");
 
 const router = express.Router();
 
@@ -248,7 +249,20 @@ router.delete("/:id/pieces/:piece_id/portfolios/:portfolio_id", ensureCorrectUse
         return res.json({ removedItem });
     } catch (error) {
         return next(error);
-    }
+    };
 });
+
+//Applications
+
+router.get("/:id/applications", ensureCorrectUserOrAdmin, async(req, res, next) => {
+    try {
+        const apps = await Application.getByUserId(req.params.id);
+        return res.json({ apps });
+    } catch (error) {
+        return next(error);
+    };
+});
+
+router.post("/:id/applications/")
 
 module.exports = router;

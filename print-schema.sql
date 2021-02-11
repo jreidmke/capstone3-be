@@ -81,7 +81,7 @@ CREATE TABLE applications(
     gig_id BIGINT NOT NULL REFERENCES gigs(id) ON DELETE CASCADE,
     writer_id BIGINT NOT NULL REFERENCES writers(id) ON DELETE CASCADE,
     portfolio_id BIGINT NOT NULL REFERENCES portfolios(id) ON DELETE CASCADE,
-    status VARCHAR NOT NULL CHECK (status in('Pending', 'Accepted', 'Rejected')),
+    status VARCHAR NOT NULL CHECK (status in('Pending', 'Accepted', 'Rejected')) DEFAULT 'Pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL
 );
