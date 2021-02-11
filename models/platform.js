@@ -64,7 +64,6 @@ class Platform {
       const result = await db.query(
         `DELETE FROM users
         WHERE platform_id=$1
-        AND writer_id=NULL
         RETURNING platform_id`,
         [platformId]
       );
