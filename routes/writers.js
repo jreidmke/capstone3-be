@@ -7,7 +7,7 @@
 const express = require("express");
 const Writer = require("../models/writer");
 const WriterUpload = require("../models/writerUploads");
-const { ensureLoggedIn, ensureCorrectUserOrAdmin, ensureCorrectWriterOrAdmin } = require("../middleware/auth");
+const { ensureLoggedIn, ensureCorrectWriterOrAdmin } = require("../middleware/auth");
 const Application = require("../models/application");
 const Portfolio = require("../models/portfolio");
 const Piece = require("../models/piece");
@@ -184,9 +184,7 @@ router.delete("/:writer_id/portfolios/:portfolio_id", ensureCorrectWriterOrAdmin
 });
 
 //** */
-//** */
 // //PIECES
-//** */
 //** */
 
 router.get("/:writer_id/pieces", ensureLoggedIn, async function(req, res, next) {
@@ -207,19 +205,19 @@ router.get("/:writer_id/pieces/:piece_id", ensureLoggedIn, async function(req, r
     }
 });
 
-router.post("/:id/pieces/new", ensureCorrectWriterOrAdmin, async function(req, res, next) {
+router.post("/:writer_id/pieces/new", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
         const { title, text } = req.body;
-        const newPiece = await WriterUpload.createPiece(req.params.id, title, text);
+        const newPiece = await Piece.create(req.params.writer_id, title, text);
         return res.json({ newPiece });
     } catch (error) {
         return next(error);
     }
 });
 
-router.delete("/:id/pieces/:piece_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
+router.delete("/:writer_id/pieces/:piece_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
-        const piece = await WriterUpload.remove(req.params.id, req.params.piece_id, "piece");
+        const piece = await Piece.remove(req.params.writer_id, req.params.piece_id);
         return res.json({ piece });
     } catch (error) {
         return next(error);

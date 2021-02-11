@@ -41,6 +41,36 @@ class Piece {
 
         return piece;
     };
+
+    static async create(writerId, title, text) {
+        const result = await db.query(
+            `INSERT INTO pieces (writer_id, title, text)
+            VALUES ($1, $2, $3)
+            RETURNING *`,
+            [writerId, title, text]
+        );
+        const piece = result.rows[0];
+        return piece;
+    };
+
+    static async remove(writerId, pieceId) {
+        const authCheck = await db.query(
+            `SELECT * FROM pieces WHERE id=$1`,
+            [pieceId]
+        );
+
+        //Error Handling
+        if(!authCheck.rows[0]) throw new NotFoundError(`Portfolio: ${pieceId} Not Found!`);
+        if(authCheck.rows[0].writer_id !== writerId) throw new UnauthorizedError();
+
+        const result = await db.query(
+            `DELETE FROM pieces
+            WHERE id=$1
+            RETURNING *`,
+            [pieceId]
+        );
+        return result.rows[0];
+    };
 };
 
 module.exports = Piece;
