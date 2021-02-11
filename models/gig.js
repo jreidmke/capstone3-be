@@ -41,9 +41,7 @@ class Gig {
     };
 
     static async getByPlatformId(platformId) {
-        const platform = await checkForItem(platformId, 'users', 'id');
-        if(!platform || !platform.platform_id) throw new NotFoundError(`Platform: ${platformId} Not Found!`);
-        const gigs = await checkForItem(platform.platform_id, 'gigs', 'platform_id', true);
+        const gigs = await checkForItem(platformId, 'gigs', 'platform_id', true);
         if(!gigs.length) throw new NotFoundError(`Platform: ${platformId} has no gigs currently`);
         return gigs;
     };
@@ -80,6 +78,34 @@ class Gig {
         );
         return 'deleted';
     };
+
+    static async addTagToGig(platformId, gigId, tagId) {
+        const gig = await checkForItem(gigId, 'gigs', 'id');
+        const tag = await checkForItem(tagId, 'tags', 'id');
+        if(!gig || !tag) throw new NotFoundError('Can\'t find resource');
+        if(platformId !== gig.platform_id) throw new UnauthorizedError();
+        const result = await db.query(
+            `INSERT INTO gig_tags (gig_id, tag_id)
+            VALUES ($1, $2)
+            RETURNING gig_id AS gigId, tag_id AS tagId`,
+            [gigId, tagId]
+        ); 
+        return result.rows[0];
+    };
+
+    static async removeTagFromGig(platformId, gigId, tagId) {
+        const gig = await checkForItem(gigId, 'gigs', 'id');
+        const tag = await checkForItem(tagId, 'tags', 'id');
+        if(!gig || !tag) throw new NotFoundError('Can\'t find resource');
+        if(platformId !== gig.platform_id) throw new UnauthorizedError();
+        await db.query(
+            `DELETE FROM gig_tags
+            WHERE gig_id=$1
+            AND tag_id=$2`,
+            [gigId, tagId]
+        );
+        return 'deleted';
+    }
 };
 
 //GET ALL GIGS

@@ -103,7 +103,7 @@ router.get("/:platform_id/gigs", ensureLoggedIn, async function(req, res, next) 
     }
 })
 
-router.post("/:platform_id/gigs/new", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.post("/:platform_id/gigs/new", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
         const newGig = await Gig.createGig(req.params.platform_id, {...req.body});
         return res.status(201).json({ newGig });
@@ -112,10 +112,28 @@ router.post("/:platform_id/gigs/new", ensureCorrectUserOrAdmin, async function(r
     }
 });
 
-router.delete("/:platform_id/gigs/:gig_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.delete("/:platform_id/gigs/:gig_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
         const deletedGig = await Gig.removeGig(req.params.platform_id, req.params.gig_id);
         return res.status(201).json({ deletedGig });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+router.post("/:platform_id/gigs/:gig_id/tags/:tag_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
+    try {
+        const newTag = await Gig.addTagToGig(req.params.platform_id, req.params.gig_id, req.params.tag_id);
+        return res.json({ newTag });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+router.delete("/:platform_id/gigs/:gig_id/tags/:tag_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
+    try {
+        const newTag = await Gig.removeTagFromGig(req.params.platform_id, req.params.gig_id, req.params.tag_id);
+        return res.json({ newTag });
     } catch (error) {
         return next(error);
     }

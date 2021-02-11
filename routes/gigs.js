@@ -47,6 +47,6 @@ router.get("/platforms/:platform_id", ensureLoggedIn, async(req, res, next) => {
     } catch (error) {
         return next(error);
     }
-})
+});
 
 module.exports = router;
