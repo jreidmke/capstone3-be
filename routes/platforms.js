@@ -7,6 +7,7 @@ const Gig = require("../models/gig");
 const Application = require("../models/application");
 const jsonschema = require("jsonschema");
 const createGig = require("./../schemas/createGig.json");
+const updateGig = require("./../schemas/updateGig.json");
 const updatePlatform = require("./../schemas/updatePlatform.json");
 const { ensureLoggedIn, ensureCorrectPlatformOrAdmin } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
@@ -138,6 +139,21 @@ router.post("/:platform_id/gigs/new", ensureCorrectPlatformOrAdmin, async functi
         return next(error);
     }
 });
+
+router.patch("/:platform_id/gigs/:gig_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
+    try {
+        const validator = jsonschema.validate(req.body, updateGig);
+        if(!validator.valid) {
+            const errs = validator.errors.map(e => e.stack);
+            throw new BadRequestError(errs);
+        };
+        const updatedGig = await Gig.update(req.params.platform_id, req.params.gig_id, req.body);
+        return res.json({ updatedGig });
+    } catch (error) {
+        return next(error);
+    }
+})
+
 
 router.delete("/:platform_id/gigs/:gig_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {

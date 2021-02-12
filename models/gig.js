@@ -5,7 +5,8 @@ const {
     BadRequestError,
     UnauthorizedError
   } = require("../expressError");
-const {checkForItem, getUserHelper, checkForFollow} = require('../helpers/checks');
+const {checkForItem} = require('../helpers/checks');
+const {sqlForPartialUpdate} = require("./../helpers/sql");
 
 class Gig {
 
@@ -65,6 +66,35 @@ class Gig {
         
         const newGig = result.rows[0];
         return newGig;
+    };
+
+    static async update(platformId, gigId, data) {
+        const authCheck = await db.query(
+          `SELECT * FROM gigs WHERE id=$1`,
+          [gigId]
+        );
+    
+        if(authCheck.rows[0].platform_id !== platformId) throw new UnauthorizedError();
+    
+        let { setCols, values } = sqlForPartialUpdate(data, {
+            isRemote: "is_remote",
+            wordCount: "word_count",
+            isActive: "is_active"
+        });
+
+        const gigIdVarIdx = "$" + (values.length + 1);
+    
+        const querySql = `UPDATE gigs 
+                          SET ${setCols} 
+                          WHERE id = ${gigIdVarIdx} 
+                          RETURNING *`;
+    
+        const result = await db.query(querySql, [...values, gigId]);
+        const gig = result.rows[0];
+    
+        if (!gig) throw new NotFoundError(`No writer: ${gig}`);
+       
+        return gig;
     };
 
     static async removeGig(platformId, gigId) {

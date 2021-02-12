@@ -1,0 +1,82 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "title": "The Updated Gig",
+            "description": "You gotta clean our updated tables. They are updated.",
+            "compensation": 25.0,
+            "isRemote": true,
+            "wordCount": 1000,
+            "isActive": true
+        }
+    ],
+    "required": [],
+    "properties": {
+        "title": {
+            "$id": "#/properties/title",
+            "type": "string",
+            "title": "The title schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "The Updated Gig"
+            ]
+        },
+        "description": {
+            "$id": "#/properties/description",
+            "type": "string",
+            "title": "The description schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "You gotta clean our updated tables. They are updated."
+            ]
+        },
+        "compensation": {
+            "$id": "#/properties/compensation",
+            "type": "number",
+            "title": "The compensation schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0.0,
+            "examples": [
+                25.0
+            ]
+        },
+        "isRemote": {
+            "$id": "#/properties/isRemote",
+            "type": "boolean",
+            "title": "The isRemote schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": false,
+            "examples": [
+                true
+            ]
+        },
+        "wordCount": {
+            "$id": "#/properties/wordCount",
+            "type": "integer",
+            "title": "The wordCount schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0,
+            "examples": [
+                1000
+            ]
+        },
+        "isActive": {
+            "$id": "#/properties/isActive",
+            "type": "boolean",
+            "title": "The isActive schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": false,
+            "examples": [
+                true
+            ]
+        }
+    },
+    "additionalProperties": false
+}

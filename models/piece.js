@@ -4,6 +4,7 @@ const {
   UnauthorizedError,
   BadRequestError
 } = require("../expressError");
+const { sqlForPartialUpdate } = require('./../helpers/sql');
 
 class Piece {
     static async getAllByWriterId(writerId) {
@@ -65,17 +66,17 @@ class Piece {
         let { setCols, values } = sqlForPartialUpdate(data, {});
         const pieceIdVarIdx = "$" + (values.length + 1);
     
-        const querySql = `UPDATE writers 
+        const querySql = `UPDATE pieces 
                           SET ${setCols} 
                           WHERE id = ${pieceIdVarIdx} 
                           RETURNING *`;
     
         const result = await db.query(querySql, [...values, pieceId]);
-        const writer = result.rows[0];
+        const piece = result.rows[0];
     
-        if (!writer) throw new NotFoundError(`No writer: ${writerId}`);
+        if (!piece) throw new NotFoundError(`No piece: ${pieceId}`);
        
-        return user;
+        return piece;
     };
     
     static async remove(writerId, pieceId) {
