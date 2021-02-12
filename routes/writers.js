@@ -14,7 +14,6 @@ const jsonschema = require("jsonschema");
 const createPiece = require("../schemas/createPiece.json");
 const updateWriter = require("../schemas/updateWriter.json");
 const { BadRequestError } = require("../expressError");
-const { user } = require("../db");
 
 const router = express.Router();
 
@@ -60,7 +59,8 @@ router.patch("/:writer_id", ensureCorrectWriterOrAdmin, async function(req, res,
             const errs = validator.errors.map(e => e.stack);
             throw new BadRequestError(errs);
         }
-        const updatedWriter = await user.update();
+        const { writerData, userData } = req.body;
+        const updatedWriter = await Writer.update(req.params.writer_id, writerData, userData);
         return res.json({ updatedWriter });
     } catch (error) {
         return next(error);

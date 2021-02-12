@@ -7,174 +7,226 @@
     "default": {},
     "examples": [
         {
-            "firstName": "Ted",
-            "lastName": "Williams",
-            "age": 99,
-            "bio": "Lorem ipsum.",
-            "password": "xyz",
-            "imageUrl": "Pix.com",
-            "address1": "1430 Bilarda Ct.",
-            "address2": null,
-            "city": "Geneva",
-            "state": "IL",
-            "postalCode": 60135,
-            "phone": "630-338-5693",
-            "twitterUsername": "blah",
-            "facebookUsername": "bleh",
-            "youtubeUsername": "bloh"
+            "writerData": {
+                "firstName": "Ted",
+                "lastName": "Williams",
+                "age": 99,
+                "bio": "Lorem ipsum."
+            },
+            "userData": {
+                "password": "xyz",
+                "imageUrl": "Pix.com",
+                "address1": "1430 Bilarda Ct.",
+                "address2": null,
+                "city": "Geneva",
+                "state": "IL",
+                "postalCode": 60135,
+                "phone": "630-338-5693",
+                "twitterUsername": "blah",
+                "facebookUsername": "bleh",
+                "youtubeUsername": "bloh"
+            }
         }
     ],
-    "required": [],
+    "required": [
+        "writerData",
+        "userData"
+    ],
     "properties": {
-        "firstName": {
-            "$id": "#/properties/firstName",
-            "type": "string",
-            "title": "The firstName schema",
+        "writerData": {
+            "$id": "#/properties/writerData",
+            "type": "object",
+            "title": "The writerData schema",
             "description": "An explanation about the purpose of this instance.",
-            "default": "",
+            "default": {},
             "examples": [
-                "Ted"
-            ]
+                {
+                    "firstName": "Ted",
+                    "lastName": "Williams",
+                    "age": 99,
+                    "bio": "Lorem ipsum."
+                }
+            ],
+            "required": [],
+            "properties": {
+                "firstName": {
+                    "$id": "#/properties/writerData/properties/firstName",
+                    "type": "string",
+                    "title": "The firstName schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "Ted"
+                    ]
+                },
+                "lastName": {
+                    "$id": "#/properties/writerData/properties/lastName",
+                    "type": "string",
+                    "title": "The lastName schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "Williams"
+                    ]
+                },
+                "age": {
+                    "$id": "#/properties/writerData/properties/age",
+                    "type": "integer",
+                    "title": "The age schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": 0,
+                    "examples": [
+                        99
+                    ]
+                },
+                "bio": {
+                    "$id": "#/properties/writerData/properties/bio",
+                    "type": "string",
+                    "title": "The bio schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "Lorem ipsum."
+                    ]
+                }
+            },
+            "additionalProperties": false
         },
-        "lastName": {
-            "$id": "#/properties/lastName",
-            "type": "string",
-            "title": "The lastName schema",
+        "userData": {
+            "$id": "#/properties/userData",
+            "type": "object",
+            "title": "The userData schema",
             "description": "An explanation about the purpose of this instance.",
-            "default": "",
+            "default": {},
             "examples": [
-                "Williams"
-            ]
-        },
-        "age": {
-            "$id": "#/properties/age",
-            "type": "integer",
-            "title": "The age schema",
-            "description": "An explanation about the purpose of this instance.",
-            "default": 0,
-            "examples": [
-                99
-            ]
-        },
-        "bio": {
-            "$id": "#/properties/bio",
-            "type": "string",
-            "title": "The bio schema",
-            "description": "An explanation about the purpose of this instance.",
-            "default": "",
-            "examples": [
-                "Lorem ipsum."
-            ]
-        },
-        "password": {
-            "$id": "#/properties/password",
-            "type": "string",
-            "title": "The password schema",
-            "description": "An explanation about the purpose of this instance.",
-            "default": "",
-            "examples": [
-                "xyz"
-            ]
-        },
-        "imageUrl": {
-            "$id": "#/properties/imageUrl",
-            "type": "string",
-            "title": "The imageUrl schema",
-            "description": "An explanation about the purpose of this instance.",
-            "default": "",
-            "examples": [
-                "Pix.com"
-            ]
-        },
-        "address1": {
-            "$id": "#/properties/address1",
-            "type": "string",
-            "title": "The address1 schema",
-            "description": "An explanation about the purpose of this instance.",
-            "default": "",
-            "examples": [
-                "1430 Bilarda Ct."
-            ]
-        },
-        "address2": {
-            "$id": "#/properties/address2",
-            "type": "null",
-            "title": "The address2 schema",
-            "description": "An explanation about the purpose of this instance.",
-            "default": null,
-            "examples": [
-                null
-            ]
-        },
-        "city": {
-            "$id": "#/properties/city",
-            "type": "string",
-            "title": "The city schema",
-            "description": "An explanation about the purpose of this instance.",
-            "default": "",
-            "examples": [
-                "Geneva"
-            ]
-        },
-        "state": {
-            "$id": "#/properties/state",
-            "type": "string",
-            "title": "The state schema",
-            "description": "An explanation about the purpose of this instance.",
-            "default": "",
-            "examples": [
-                "IL"
-            ]
-        },
-        "postalCode": {
-            "$id": "#/properties/postalCode",
-            "type": "integer",
-            "title": "The postalCode schema",
-            "description": "An explanation about the purpose of this instance.",
-            "default": 0,
-            "examples": [
-                60135
-            ]
-        },
-        "phone": {
-            "$id": "#/properties/phone",
-            "type": "string",
-            "title": "The phone schema",
-            "description": "An explanation about the purpose of this instance.",
-            "default": "",
-            "examples": [
-                "630-338-5693"
-            ]
-        },
-        "twitterUsername": {
-            "$id": "#/properties/twitterUsername",
-            "type": "string",
-            "title": "The twitterUsername schema",
-            "description": "An explanation about the purpose of this instance.",
-            "default": "",
-            "examples": [
-                "blah"
-            ]
-        },
-        "facebookUsername": {
-            "$id": "#/properties/facebookUsername",
-            "type": "string",
-            "title": "The facebookUsername schema",
-            "description": "An explanation about the purpose of this instance.",
-            "default": "",
-            "examples": [
-                "bleh"
-            ]
-        },
-        "youtubeUsername": {
-            "$id": "#/properties/youtubeUsername",
-            "type": "string",
-            "title": "The youtubeUsername schema",
-            "description": "An explanation about the purpose of this instance.",
-            "default": "",
-            "examples": [
-                "bloh"
-            ]
+                {
+                    "password": "xyz",
+                    "imageUrl": "Pix.com",
+                    "address1": "1430 Bilarda Ct.",
+                    "address2": null,
+                    "city": "Geneva",
+                    "state": "IL",
+                    "postalCode": 60135,
+                    "phone": "630-338-5693",
+                    "twitterUsername": "blah",
+                    "facebookUsername": "bleh",
+                    "youtubeUsername": "bloh"
+                }
+            ],
+            "required": [],
+            "properties": {
+                "password": {
+                    "$id": "#/properties/userData/properties/password",
+                    "type": "string",
+                    "title": "The password schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "xyz"
+                    ]
+                },
+                "imageUrl": {
+                    "$id": "#/properties/userData/properties/imageUrl",
+                    "type": "string",
+                    "title": "The imageUrl schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "Pix.com"
+                    ]
+                },
+                "address1": {
+                    "$id": "#/properties/userData/properties/address1",
+                    "type": "string",
+                    "title": "The address1 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "1430 Bilarda Ct."
+                    ]
+                },
+                "address2": {
+                    "$id": "#/properties/userData/properties/address2",
+                    "type": "null",
+                    "title": "The address2 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": null,
+                    "examples": [
+                        null
+                    ]
+                },
+                "city": {
+                    "$id": "#/properties/userData/properties/city",
+                    "type": "string",
+                    "title": "The city schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "Geneva"
+                    ]
+                },
+                "state": {
+                    "$id": "#/properties/userData/properties/state",
+                    "type": "string",
+                    "title": "The state schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "IL"
+                    ]
+                },
+                "postalCode": {
+                    "$id": "#/properties/userData/properties/postalCode",
+                    "type": "integer",
+                    "title": "The postalCode schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": 0,
+                    "examples": [
+                        60135
+                    ]
+                },
+                "phone": {
+                    "$id": "#/properties/userData/properties/phone",
+                    "type": "string",
+                    "title": "The phone schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "630-338-5693"
+                    ]
+                },
+                "twitterUsername": {
+                    "$id": "#/properties/userData/properties/twitterUsername",
+                    "type": "string",
+                    "title": "The twitterUsername schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "blah"
+                    ]
+                },
+                "facebookUsername": {
+                    "$id": "#/properties/userData/properties/facebookUsername",
+                    "type": "string",
+                    "title": "The facebookUsername schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "bleh"
+                    ]
+                },
+                "youtubeUsername": {
+                    "$id": "#/properties/userData/properties/youtubeUsername",
+                    "type": "string",
+                    "title": "The youtubeUsername schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "bloh"
+                    ]
+                }
+            },
+            "additionalProperties": false
         }
     },
     "additionalProperties": false

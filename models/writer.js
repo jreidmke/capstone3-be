@@ -1,12 +1,15 @@
 // WRITER MODEL METHODS
 
 "use strict";
+const bcrypt = require("bcrypt");
+const { BCRYPT_WORK_FACTOR } = require("../config.js");
 
 const db = require("../db");
 const {
   NotFoundError,
   BadRequestError
 } = require("../expressError");
+const { sqlForPartialUpdate } = require("../helpers/sql");
 
 
 class Writer {
@@ -89,34 +92,70 @@ class Writer {
    * or a serious security risks are opened.
    */
 
-  static async update(writerId, data) {
-    if (data.password) {
-      data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
-    }
+  static async update(writerId, writerData, userData) {
+    if (userData.password) {
+      userData.password = await bcrypt.hash(userData.password, BCRYPT_WORK_FACTOR);
+    };
 
-    const { setCols, values } = sqlForPartialUpdate(
-        data,
+    let { setCols, values } = sqlForPartialUpdate(
+      writerData,
         {
           firstName: "first_name",
-          lastName: "last_name",
-          isAdmin: "is_admin",
+          lastName: "last_name"
         });
-    const usernameVarIdx = "$" + (values.length + 1);
+    const writerIdVarIdx = "$" + (values.length + 1);
 
-    const querySql = `UPDATE users 
+    const writerQuerySql = `UPDATE writers 
                       SET ${setCols} 
-                      WHERE username = ${usernameVarIdx} 
-                      RETURNING username,
-                                first_name AS "firstName",
+                      WHERE id = ${writerIdVarIdx} 
+                      RETURNING first_name AS "firstName",
                                 last_name AS "lastName",
-                                email,
-                                is_admin AS "isAdmin"`;
-    const result = await db.query(querySql, [...values, username]);
-    const user = result.rows[0];
+                                age, bio`;
+    console.log(writerQuerySql);
 
-    if (!user) throw new NotFoundError(`No user: ${username}`);
+    const wResult = await db.query(writerQuerySql, [...values, writerId]);
+    const writer = wResult.rows[0];
 
-    delete user.password;
+    if (!writer) throw new NotFoundError(`No writer: ${writerId}`);
+
+    async function updateUser() {
+      let { setCols, values } = sqlForPartialUpdate(
+        userData,
+        {
+          imageUrl: "image_url",
+          address1: "address_1",
+          address2: "address_2",
+          postalCode: "postal_code",
+          twitterUsername: "twitter_username",
+          facebookUsername: "facebook_username",
+          youtubeUsername: "youtube_username"
+        });
+  
+        const userIdVarIdx = "$" + (values.length + 1);
+        console.log("HEY")
+      const userQuerySql = `UPDATE users
+                        SET ${setCols}
+                        WHERE writer_id = ${userIdVarIdx}
+                        RETURNING email,
+                                  image_url AS imageUrl,
+                                  address_1 AS address1,
+                                  address_2 AS address2,
+                                  city, state, 
+                                  postal_code AS postalCode,
+                                  phone,
+                                  twitter_username AS twitterUsername,
+                                  facebook_username AS
+                                  facebookUsername,
+                                  youtube_username AS
+                                  youtubeUsername`;
+                              console.log(userQuerySql);
+      const uResult = await db.query(userQuerySql, [...values, writerId]);
+      const user = uResult.rows[0];
+      return user;
+    }
+    const user = await updateUser();
+    user.writerData = writer;
+
     return user;
   }
 
