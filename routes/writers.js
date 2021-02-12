@@ -12,7 +12,9 @@ const Portfolio = require("../models/portfolio");
 const Piece = require("../models/piece");
 const jsonschema = require("jsonschema");
 const createPiece = require("../schemas/createPiece.json");
+const updateWriter = require("../schemas/updateWriter.json");
 const { BadRequestError } = require("../expressError");
+const { user } = require("../db");
 
 const router = express.Router();
 
@@ -48,6 +50,22 @@ router.get("/:writer_id", ensureLoggedIn, async function(req, res, next) {
         return next(error);
     }
 });
+
+/**UPDATE WRITER portfolio */
+
+router.patch("/:writer_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
+    try {
+        const validator = jsonschema.validate(req.body, updateWriter);
+        if(!validator.valid) {
+            const errs = validator.errors.map(e => e.stack);
+            throw new BadRequestError(errs);
+        }
+        const updatedWriter = await user.update();
+        return res.json({ updatedWriter });
+    } catch (error) {
+        return next(error);
+    }
+})
 
 /**DELETE NEEDS DOC STRINGS*/
 
