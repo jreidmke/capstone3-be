@@ -1,18 +1,30 @@
 "use strict";
 
 const express = require("express");
+const router = express.Router();
+
 const User = require("../models/user");
 const Platform = require("../models/platform");
 const Gig = require("../models/gig");
 const Application = require("../models/application");
+
 const jsonschema = require("jsonschema");
 const createGig = require("./../schemas/createGig.json");
 const updateGig = require("./../schemas/updateGig.json");
 const updatePlatform = require("./../schemas/updatePlatform.json");
+
 const { ensureLoggedIn, ensureCorrectPlatformOrAdmin } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
 
-const router = express.Router();
+//PLATFORM STUFF//
+
+/** GET /  =>
+ *   { companies: [ { displayname, imageurl, city, state, facebookusername, twitterusername, youtubeusername }, ...] }
+ *
+ * GET ALL PLATFORMS
+ *
+ * Authorization required: Logged In
+ */
 
 router.get("/", ensureLoggedIn, async function(req, res, next) {
     try {
@@ -23,6 +35,14 @@ router.get("/", ensureLoggedIn, async function(req, res, next) {
     }
 });
 
+/** GET /platforms/[platformId]  =>
+ *   { platform: { displayname, imageurl, city, state, facebookusername, twitterusername, youtubeusername } }
+ *
+ * GET PLATFORM SPECIFIED BY ID
+ *
+ * Authorization required: Logged In
+ */
+
 router.get("/:platform_id", ensureLoggedIn, async function(req, res, next) {
     try {
         const platform = await User.getById(req.params.platform_id, "platform");
@@ -31,6 +51,15 @@ router.get("/:platform_id", ensureLoggedIn, async function(req, res, next) {
         return next(error);
     }
 });
+
+/** PATCH /platforms/[platformId] { fld1, fld2, ... } => { updatedPlatform: {platformData} }
+ *
+ * UPDATES SPECIFIED PLATFORM
+ * 
+ * Also Updates Connected User Row
+ *
+ * Authorization required: admin
+ */
 
 router.patch("/:platform_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
@@ -47,6 +76,14 @@ router.patch("/:platform_id", ensureCorrectPlatformOrAdmin, async function(req, 
     }
 });
 
+/** DELETE /  =>
+ *   { deleted: "deleted" }
+ *
+ * DELETE PLATFORM PLATFORM SPECIFIED BY ID
+ *
+ * Authorization required: Admin or Correct Platform
+ */
+
 router.delete("/:platform_id", ensureCorrectPlatformOrAdmin, async(req, res, next) => {
     try {
         const deleted = await Platform.remove(req.params.platform_id);
@@ -56,7 +93,15 @@ router.delete("/:platform_id", ensureCorrectPlatformOrAdmin, async(req, res, nex
     }
 });
 
-//FOLLOW TAGS
+//FOLLOWS//
+
+/**GET /platforms/[platformId]/follow_tags => {id, platformId, tagId, createdAt, updatedAt, title, isFiction} 
+ * 
+ * GET ALL TAGS FOLLOWED BY PLATFORM
+ * 
+ * Auth: correct platform or admin
+*/
+
 router.get("/:platform_id/followed_tags", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
         const tags = await Platform.getFollows(req.params.platform_id, "tag");
@@ -65,6 +110,13 @@ router.get("/:platform_id/followed_tags", ensureCorrectPlatformOrAdmin, async fu
         return next(error);
     }
 });
+
+/**POST /platforms/[platformId]/followed_tags/[tagId] => {platformId, tagId} 
+ * 
+ * PLATFORM FOLLOWS NEW TAG
+ * 
+ * Auth: correct platform or admin
+*/
 
 router.post("/:platform_id/followed_tags/:tag_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
@@ -75,6 +127,13 @@ router.post("/:platform_id/followed_tags/:tag_id", ensureCorrectPlatformOrAdmin,
     }
 });
 
+/**DELETE /platforms/[platformId]/followed_tags/[tagId] => {platformId, tagId} 
+ * 
+ * PLATFORM UNFOLLOWS TAG
+ * 
+ * Auth: correct platform or admin
+*/
+
 router.delete("/:platform_id/followed_tags/:tag_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
         const unfollowed = await Platform.unfollowItem(req.params.platform_id, req.params.tag_id, "tag");
@@ -84,7 +143,12 @@ router.delete("/:platform_id/followed_tags/:tag_id", ensureCorrectPlatformOrAdmi
     }
 });
 
-//FOLLOWED WRITERS
+/**GET /platforms/[platformId]/follow_writers => {id, platformId, writerId, createdAt, updatedAt, firstName, lastName, age, bio} 
+ * 
+ * GET ALL TAGS FOLLOWED BY PLATFORM
+ * 
+ * Auth: correct platform or admin
+*/
 
 router.get("/:platform_id/followed_writers", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
@@ -95,6 +159,13 @@ router.get("/:platform_id/followed_writers", ensureCorrectPlatformOrAdmin, async
     };
 });
 
+/**POST /platforms/[platformId]/followed_writers/[writerId] => {platformId, writerId} 
+ * 
+ * PLATFORM FOLLOWS NEW WRITER
+ * 
+ * Auth: correct platform or admin
+*/
+
 router.post("/:platform_id/followed_writers/:writer_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
         const followed = await Platform.followItem(req.params.platform_id, req.params.writer_id, "writer");
@@ -103,6 +174,13 @@ router.post("/:platform_id/followed_writers/:writer_id", ensureCorrectPlatformOr
         return next(error);
     }
 });
+
+/**DELETE /platforms/[platformId]/followed_writers/[writerId] => {platformId, tagId} 
+ * 
+ * PLATFORM UNFOLLOWS WRITER
+ * 
+ * Auth: correct platform or admin
+*/
 
 router.delete("/:platform_id/followed_writers/:writer_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
@@ -115,16 +193,14 @@ router.delete("/:platform_id/followed_writers/:writer_id", ensureCorrectPlatform
 
 //GIG STUFF
 
-router.get("/:platform_id/gigs", ensureLoggedIn, async function(req, res, next) {
-    try {
-        const gigs = await Gig.getByPlatformId(req.params.platform_id);
-        return res.json({ gigs });
-    } catch (error) {
-        return next(error);
-    }
-})
-
-//POST NEW GIG
+/**POST /platforms/[platformId]/gigs/new, {title, description, compensation, isRemote, wordCount}
+ * 
+ * CREATE NEW GIG
+ * 
+ * Returns: {title, description, compensation, isRemote, wordCount}
+ * 
+ * Auth: Correct platform or admin
+ */
 
 router.post("/:platform_id/gigs/new", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
@@ -140,6 +216,15 @@ router.post("/:platform_id/gigs/new", ensureCorrectPlatformOrAdmin, async functi
     }
 });
 
+/**PATCH /platforms/[platformId]/gigs, {title, description, compensation, isRemote, wordCount}
+ * 
+ * UPDATES GIG
+ * 
+ * Returns: {title, description, compensation, isRemote, wordCount}
+ * 
+ * Auth: Correct platform or admin
+ */
+
 router.patch("/:platform_id/gigs/:gig_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
         const validator = jsonschema.validate(req.body, updateGig);
@@ -152,8 +237,16 @@ router.patch("/:platform_id/gigs/:gig_id", ensureCorrectPlatformOrAdmin, async f
     } catch (error) {
         return next(error);
     }
-})
+});
 
+/**DELETE /platforms/[platformId]/gigs
+ * 
+ * DELETE GIG
+ * 
+ * Returns: {"deleted"}
+ * 
+ * Auth: Correct platform or admin
+ */
 
 router.delete("/:platform_id/gigs/:gig_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
@@ -164,6 +257,15 @@ router.delete("/:platform_id/gigs/:gig_id", ensureCorrectPlatformOrAdmin, async 
     }
 });
 
+//GIG TAGGING//
+
+/**POST /platforms/[platformId]/gigs/[gigId]/tags/[tagId] => {gigId, tagId} 
+ * 
+ * NEW TAG ADDED TO GIG
+ * 
+ * Auth: correct platform or admin
+*/
+
 router.post("/:platform_id/gigs/:gig_id/tags/:tag_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
         const newTag = await Gig.addTagToGig(req.params.platform_id, req.params.gig_id, req.params.tag_id);
@@ -172,6 +274,13 @@ router.post("/:platform_id/gigs/:gig_id/tags/:tag_id", ensureCorrectPlatformOrAd
         return next(error);
     }
 });
+
+/**DELETE /platforms/[platformId]/gigs/[gigId]/tags/[tagId] => {gigId, tagId} 
+ * 
+ * TAG REMOVED FROM GIG
+ * 
+ * Auth: correct platform or admin
+*/
 
 router.delete("/:platform_id/gigs/:gig_id/tags/:tag_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
@@ -182,7 +291,14 @@ router.delete("/:platform_id/gigs/:gig_id/tags/:tag_id", ensureCorrectPlatformOr
     }
 });
 
-//Application Stuff
+//APPLICATION STUFF//
+
+/**GET /platforms/[platformId]/gigs/[gigId]/applications => {gigId, writerId, portfolioId, status, createdAt, updatedAt}
+ * 
+ * GET ALL APPLICATIONS BY GIG ID
+ * 
+ * Auth: correct platform or admin
+*/
 
 router.get("/:platform_id/gigs/:gig_id/applications", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
@@ -193,7 +309,12 @@ router.get("/:platform_id/gigs/:gig_id/applications", ensureCorrectPlatformOrAdm
     }
 });
 
-//UPDATE APPLICATION STATUS
+/**PATCH /platforms/[platformId]/gigs/[gigId]/applications/[applicationId], {status} => {gigId, writerId, portfolioId, status, createdAt, updatedAt}
+ * 
+ * UPDATE STATUS OF APPLICATION SPECIFIED BY ID
+ * 
+ * Auth: correct platform or admin
+*/
 
 router.patch("/:platform_id/gigs/:gig_id/applications/:application_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {

@@ -15,8 +15,7 @@ class Platform {
 
     static async getAll() {
         const result = await db.query(
-          `SELECT p.handle AS handle,
-            p.display_name AS displayName,
+          `SELECT p.display_name AS displayName,
             p.description,
             u.image_url AS imageURL,
             u.city,
@@ -26,7 +25,7 @@ class Platform {
             u.youtube_username AS youtubeUsername
           FROM platforms AS p
           JOIN users AS u ON p.id=u.platform_id
-          ORDER BY handle`
+          ORDER BY displayName`
         );
         return result.rows;
       };
