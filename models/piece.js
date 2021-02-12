@@ -54,6 +54,30 @@ class Piece {
         return piece;
     };
 
+    static async update(writerId, pieceId, data) {
+        const authCheck = await db.query(
+          `SELECT * FROM pieces WHERE id=$1`,
+          [pieceId]
+        );
+    
+        if(authCheck.rows[0].writer_id !== writerId) throw new UnauthorizedError();
+    
+        let { setCols, values } = sqlForPartialUpdate(data, {});
+        const pieceIdVarIdx = "$" + (values.length + 1);
+    
+        const querySql = `UPDATE writers 
+                          SET ${setCols} 
+                          WHERE id = ${pieceIdVarIdx} 
+                          RETURNING *`;
+    
+        const result = await db.query(querySql, [...values, pieceId]);
+        const writer = result.rows[0];
+    
+        if (!writer) throw new NotFoundError(`No writer: ${writerId}`);
+       
+        return user;
+    };
+    
     static async remove(writerId, pieceId) {
         const authCheck = await db.query(
             `SELECT * FROM pieces WHERE id=$1`,

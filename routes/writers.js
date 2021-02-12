@@ -12,6 +12,7 @@ const Portfolio = require("../models/portfolio");
 const Piece = require("../models/piece");
 const jsonschema = require("jsonschema");
 const createPiece = require("../schemas/createPiece.json");
+const updatePiece = require("../schemas/updatePiece.json");
 const updateWriter = require("../schemas/updateWriter.json");
 const { BadRequestError } = require("../expressError");
 
@@ -266,6 +267,20 @@ router.post("/:writer_id/pieces/new", ensureCorrectWriterOrAdmin, async function
         }
         const { title, text } = req.body;
         const newPiece = await Piece.create(req.params.writer_id, title, text);
+        return res.json({ newPiece });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+router.patch("/:writer_id/pieces/:piece_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
+    try {
+        const validator = jsonschema.validate(req.body, updatePiece);
+        if(!validator.valid) {
+            const errs = validator.errors.map(e => e.stack);
+            throw new BadRequestError(errs);
+        }
+        const newPiece = await Piece.update(req.params.writer_id, req.params.piece_id, req.body);
         return res.json({ newPiece });
     } catch (error) {
         return next(error);

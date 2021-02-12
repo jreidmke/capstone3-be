@@ -154,7 +154,7 @@ class Writer {
     user.writerData = writer;
 
     return user;
-  };
+  }
 
      static async getFollows(writerId, itemType) {
       if(itemType === "tag" || itemType === "platform") {
