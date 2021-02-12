@@ -7,11 +7,9 @@
     "default": {},
     "examples": [
         {
-            "writerData": {
-                "firstName": "Ted",
-                "lastName": "Williams",
-                "age": 99,
-                "bio": "Lorem ipsum."
+            "platformData": {
+                "displayName": "The New Platform",
+                "description": "We make the best things around."
             },
             "userData": {
                 "password": "xyz",
@@ -29,64 +27,42 @@
         }
     ],
     "required": [
-        "writerData",
+        "platformData",
         "userData"
     ],
     "properties": {
-        "writerData": {
-            "$id": "#/properties/writerData",
+        "platformData": {
+            "$id": "#/properties/platformData",
             "type": "object",
-            "title": "The writerData schema",
+            "title": "The platformData schema",
             "description": "An explanation about the purpose of this instance.",
             "default": {},
             "examples": [
                 {
-                    "firstName": "Ted",
-                    "lastName": "Williams",
-                    "age": 99,
-                    "bio": "Lorem ipsum."
+                    "displayName": "The New Platform",
+                    "description": "We make the best things around."
                 }
             ],
             "required": [],
             "properties": {
-                "firstName": {
-                    "$id": "#/properties/writerData/properties/firstName",
+                "displayName": {
+                    "$id": "#/properties/platformData/properties/displayName",
                     "type": "string",
-                    "title": "The firstName schema",
+                    "title": "The displayName schema",
                     "description": "An explanation about the purpose of this instance.",
                     "default": "",
                     "examples": [
-                        "Ted"
+                        "The New Platform"
                     ]
                 },
-                "lastName": {
-                    "$id": "#/properties/writerData/properties/lastName",
+                "description": {
+                    "$id": "#/properties/platformData/properties/description",
                     "type": "string",
-                    "title": "The lastName schema",
+                    "title": "The description schema",
                     "description": "An explanation about the purpose of this instance.",
                     "default": "",
                     "examples": [
-                        "Williams"
-                    ]
-                },
-                "age": {
-                    "$id": "#/properties/writerData/properties/age",
-                    "type": "integer",
-                    "title": "The age schema",
-                    "description": "An explanation about the purpose of this instance.",
-                    "default": 0,
-                    "examples": [
-                        99
-                    ]
-                },
-                "bio": {
-                    "$id": "#/properties/writerData/properties/bio",
-                    "type": "string",
-                    "title": "The bio schema",
-                    "description": "An explanation about the purpose of this instance.",
-                    "default": "",
-                    "examples": [
-                        "Lorem ipsum."
+                        "We make the best things around."
                     ]
                 }
             },

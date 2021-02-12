@@ -111,7 +111,6 @@ class Writer {
                       RETURNING first_name AS "firstName",
                                 last_name AS "lastName",
                                 age, bio`;
-    console.log(writerQuerySql);
 
     const wResult = await db.query(writerQuerySql, [...values, writerId]);
     const writer = wResult.rows[0];
@@ -132,7 +131,6 @@ class Writer {
         });
   
         const userIdVarIdx = "$" + (values.length + 1);
-        console.log("HEY")
       const userQuerySql = `UPDATE users
                         SET ${setCols}
                         WHERE writer_id = ${userIdVarIdx}
@@ -148,7 +146,6 @@ class Writer {
                                   facebookUsername,
                                   youtube_username AS
                                   youtubeUsername`;
-                              console.log(userQuerySql);
       const uResult = await db.query(userQuerySql, [...values, writerId]);
       const user = uResult.rows[0];
       return user;
@@ -157,7 +154,7 @@ class Writer {
     user.writerData = writer;
 
     return user;
-  }
+  };
 
      static async getFollows(writerId, itemType) {
       if(itemType === "tag" || itemType === "platform") {

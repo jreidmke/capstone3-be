@@ -10,7 +10,6 @@ CREATE TABLE writers(
 
 CREATE TABLE platforms(
     id BIGSERIAL PRIMARY KEY,
-    handle VARCHAR UNIQUE NOT NULL CHECK (handle = lower(handle)),
     display_name VARCHAR UNIQUE NOT NULL,
     description VARCHAR NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

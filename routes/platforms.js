@@ -7,6 +7,7 @@ const Gig = require("../models/gig");
 const Application = require("../models/application");
 const jsonschema = require("jsonschema");
 const createGig = require("./../schemas/createGig.json");
+const updatePlatform = require("./../schemas/updatePlatform.json");
 const { ensureLoggedIn, ensureCorrectPlatformOrAdmin } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
 
@@ -25,6 +26,21 @@ router.get("/:platform_id", ensureLoggedIn, async function(req, res, next) {
     try {
         const platform = await User.getById(req.params.platform_id, "platform");
         return res.json({ platform });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+router.patch("/:platform_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
+    try {
+        const validator = jsonschema.validate(req.body, updatePlatform);
+        if(!validator.valid) {
+            const errs = validator.errors.map(e => e.stack);
+            throw new BadRequestError(errs);
+        }
+        const { platformData, userData } = req.body;
+        const updatedPlatform = await Platform.update(req.params.platform_id, platformData, userData);
+        return res.json({ updatedPlatform });
     } catch (error) {
         return next(error);
     }

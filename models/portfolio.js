@@ -54,6 +54,18 @@ class Portfolio {
         return result.rows[0];
     };
 
+    static async update(portfolioId, title) {
+        const result = await db.query(
+            `UPDATE portfolios
+            SET title=$1
+            WHERE id=$2
+            RETURNING *`,
+            [title, portfolioId]
+        );
+        if(!result.rows[0]) throw new NotFoundError(`Portfolio: ${portfolioId} Not Found!`);
+        return result.rows[0];
+    }
+
     static async remove(writerId, portfolioId) {
         const authCheck = await db.query(
             `SELECT * FROM portfolios WHERE id=$1`,

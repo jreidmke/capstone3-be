@@ -14,7 +14,6 @@ class Tag {
     };
 
     static async getBySearch(searchTerm) {
-      console.log(searchTerm);
       const results = await db.query(`SELECT * FROM tags WHERE title LIKE '%${searchTerm}%'`);
       return results.rows;
     }

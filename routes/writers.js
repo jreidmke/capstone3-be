@@ -184,6 +184,16 @@ router.get("/:writer_id/portfolios/:portfolio_id", ensureLoggedIn, async functio
     }
 });
 
+router.patch("/:writer_id/portfolios/:portfolio_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
+    try {
+        if(!req.body.title) throw new BadRequestError('Must change title!');
+        const updatedPortfolio = await Portfolio.update(req.params.portfolio_id, req.body.title);
+        return res.json({ updatedPortfolio });
+    } catch (error) {
+        return next(error);
+    }
+});
+
 router.post("/:writer_id/portfolios/new", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
         if(!req.body.title) throw new BadRequestError('Must inlude property Title');

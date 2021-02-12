@@ -7,6 +7,9 @@ const {
   NotFoundError,
   BadRequestError
 } = require("../expressError");
+const bcrypt = require("bcrypt");
+const { BCRYPT_WORK_FACTOR } = require("../config.js");
+const { sqlForPartialUpdate } = require("../helpers/sql");
 
 class Platform {
 
@@ -55,6 +58,67 @@ class Platform {
         user.gigs = gigRes.rows.map(g => ({title: g.title, description: g.description, compensation: g.compensation, isRemote: g.is_remote, wordCount: g.word_count, isActive: g.is_active, createdAt: g.created_at}));
 
         return user;
+    };
+
+    static async update(platformId, platformData, userData) {
+      if (userData.password) {
+        userData.password = await bcrypt.hash(userData.password, BCRYPT_WORK_FACTOR);
+      };
+      let { setCols, values } = sqlForPartialUpdate(
+        platformData,
+          {
+            displayName: "display_name"
+          });
+      const platformIdVarIdx = "$" + (values.length + 1);
+  
+      const platformQuerySql = `UPDATE platforms 
+                        SET ${setCols} 
+                        WHERE id = ${platformIdVarIdx} 
+                        RETURNING display_name as displayName,
+                                  description`;
+  
+      const pResult = await db.query(platformQuerySql, [...values, platformId]);
+      const platform = pResult.rows[0];
+  
+      if (!platform) throw new NotFoundError(`No platform: ${platformId}`);
+  
+      async function updateUser() {
+        let { setCols, values } = sqlForPartialUpdate(
+          userData,
+          {
+            imageUrl: "image_url",
+            address1: "address_1",
+            address2: "address_2",
+            postalCode: "postal_code",
+            twitterUsername: "twitter_username",
+            facebookUsername: "facebook_username",
+            youtubeUsername: "youtube_username"
+          });
+    
+          const userIdVarIdx = "$" + (values.length + 1);
+        const userQuerySql = `UPDATE users
+                          SET ${setCols}
+                          WHERE platform_id = ${userIdVarIdx}
+                          RETURNING email,
+                                    image_url AS imageUrl,
+                                    address_1 AS address1,
+                                    address_2 AS address2,
+                                    city, state, 
+                                    postal_code AS postalCode,
+                                    phone,
+                                    twitter_username AS twitterUsername,
+                                    facebook_username AS
+                                    facebookUsername,
+                                    youtube_username AS
+                                    youtubeUsername`;
+        const uResult = await db.query(userQuerySql, [...values, platformId]);
+        const user = uResult.rows[0];
+        return user;
+      }
+      const user = await updateUser();
+      user.platformData = platform;
+  
+      return user;
     };
 
     static async remove(platformId) {
