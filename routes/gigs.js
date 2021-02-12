@@ -1,7 +1,8 @@
 // GIGS ROUTES
 const express = require("express");
 const Gig = require("../models/gig");
-const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
+const { ensureLoggedIn, ensureCorrectUserOrAdmin, ensureCorrectWriterOrAdmin } = require("../middleware/auth");
+const Application = require("../models/application");
 
 const router = express.Router();
 
@@ -48,5 +49,25 @@ router.get("/platforms/:platform_id", ensureLoggedIn, async(req, res, next) => {
         return next(error);
     }
 });
+
+//Apply to gig
+router.post("/:gig_id/apply/writers/:writer_id/new", ensureCorrectWriterOrAdmin, async function(req, res, next) {
+    try {
+        const { portfolioId } = req.body;
+        const app = await Application.submitApplication(req.params.writer_id, req.params.gig_id, portfolioId);
+        return res.json({ app });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+router.delete("/:gig_id/apply/writers/:writer_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
+    try {
+        const app = await Application.withdrawlApplication(req.params.gig_id, req.params.writer_id);
+        return res.json({ app });
+    } catch (error) {
+        return next(error);
+    }
+})
 
 module.exports = router;

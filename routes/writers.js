@@ -270,15 +270,13 @@ router.delete("/:writer_id/pieces/:piece_id/tags/:tag_id", ensureCorrectWriterOr
 
 //Applications
 
-router.get("/:id/applications", ensureCorrectWriterOrAdmin, async(req, res, next) => {
+router.get("/:writer_id/applications", ensureCorrectWriterOrAdmin, async(req, res, next) => {
     try {
-        const apps = await Application.getByUserId(req.params.id);
+        const apps = await Application.getByUserId(req.params.writer_id, "writer");
         return res.json({ apps });
     } catch (error) {
         return next(error);
     };
 });
-
-router.post("/:id/applications/")
 
 module.exports = router;

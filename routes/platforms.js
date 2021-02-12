@@ -5,6 +5,7 @@ const User = require("../models/user");
 const Platform = require("../models/platform");
 const Gig = require("../models/gig");
 const { ensureLoggedIn, ensureCorrectUserOrAdmin, ensureCorrectPlatformOrAdmin } = require("../middleware/auth");
+const Application = require("../models/application");
 
 const router = express.Router();
 
@@ -138,5 +139,28 @@ router.delete("/:platform_id/gigs/:gig_id/tags/:tag_id", ensureCorrectPlatformOr
         return next(error);
     }
 });
+
+//Application Stuff
+
+router.get("/:platform_id/gigs/:gig_id/applications", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
+    try {
+        const apps = await Application.getByUserId(req.params.gig_id, 'gig');
+        return res.json({ apps });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+//UPDATE APPLICATION STATUS
+
+router.patch("/:platform_id/gigs/:gig_id/applications/:application_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
+    try {
+        const { status } = req.body;
+        const app = await Application.setApplicationStatus(req.params.application_id, status);
+        return res.json({ app });
+    } catch (error) {
+        return next(error);
+    }
+})
 
 module.exports = router;
