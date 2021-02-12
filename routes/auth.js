@@ -15,12 +15,13 @@ const writerRegSchema = require("../schemas/writerReg.json");
 const { BadRequestError } = require("../expressError");
 const {  ensureCorrectUserOrAdmin } = require("../middleware/auth");
 
-/**POST /login: {email, password} => {token}
- * 
- * Returns JWT used to auth further reqs.
- * 
- * Auth required: none
+/** POST /auth/login:  { username, password } => { token }
+ *
+ * Returns JWT token which can be used to authenticate further requests.
+ *
+ * Authorization required: none
  */
+
 
 router.post("/login", async function(req, res, next) {
     try {
@@ -39,7 +40,7 @@ router.post("/login", async function(req, res, next) {
     }
 });
 
-// /**POST /register: user must include all properties of 
+// /**POST /auth/register: User must include all properties of 
 
     // USER TABLE (email, password, imageUrl, address1, address2, city, state, postalCode, phone, twitterUsername, facebookUsername, youtubeUsername)
 
@@ -49,7 +50,7 @@ router.post("/login", async function(req, res, next) {
 
     //PLATFORM TABLE (handle, description, display_name)
 
-/* Returns JWT used to auth further reqs.
+/* Returns JWT token which can be used to authenticate further requests.
   * 
   * Auth required: none
 */
@@ -69,20 +70,6 @@ router.post("/register", async function(req, res, next) {
         const newUser = await User.register({...req.body});
         const token = createToken(newUser);
         return res.status(201).json({ token });
-    } catch (error) {
-        return next(error);
-    }
-});
-
-/**DELETE: {id} => undefined
- * 
- *  * Auth: admin or correct user
- */
-
-router.delete("/:id", ensureCorrectUserOrAdmin, async function(req, res, next) {
-    try {
-        await User.remove(req.params.id);
-        return res.json({ deleted: req.params.id });
     } catch (error) {
         return next(error);
     }
