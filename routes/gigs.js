@@ -1,8 +1,14 @@
 // GIGS ROUTES
 const express = require("express");
+
 const Gig = require("../models/gig");
-const { ensureLoggedIn, ensureCorrectUserOrAdmin, ensureCorrectWriterOrAdmin } = require("../middleware/auth");
 const Application = require("../models/application");
+
+const jsonschema = require("jsonschema");
+const applyToGig = require("./../schemas/applyToGig.json");
+
+const { ensureLoggedIn, ensureCorrectWriterOrAdmin } = require("../middleware/auth");
+const { BadRequestError } = require("../expressError");
 
 const router = express.Router();
 
@@ -51,10 +57,14 @@ router.get("/platforms/:platform_id", ensureLoggedIn, async(req, res, next) => {
 });
 
 //Apply to gig
-router.post("/:gig_id/apply/writers/:writer_id/new", ensureCorrectWriterOrAdmin, async function(req, res, next) {
+router.post("/:gig_id/apply/writers/:writer_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
-        const { portfolioId } = req.body;
-        const app = await Application.submitApplication(req.params.writer_id, req.params.gig_id, portfolioId);
+        const validator = jsonschema.validate(req.body, applyToGig);
+        if(!validator.valid) {
+            const errs = validator.errors.map(e => e.stack);
+            throw new BadRequestError(errs);
+        }
+        const app = await Application.submitApplication(req.params.writer_id, req.params.gig_id, req.body.portfolioId);
         return res.json({ app });
     } catch (error) {
         return next(error);
@@ -68,6 +78,6 @@ router.delete("/:gig_id/apply/writers/:writer_id", ensureCorrectWriterOrAdmin, a
     } catch (error) {
         return next(error);
     }
-})
+});
 
 module.exports = router;

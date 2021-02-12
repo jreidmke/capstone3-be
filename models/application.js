@@ -1,6 +1,5 @@
 // APPLICATION MODEL
 const db = require("../db");
-const { getUserHelper, checkForItem, checkForPieceItem } = require("../helpers/checks");
 const {
   NotFoundError,
   UnauthorizedError,
@@ -15,14 +14,24 @@ class Application {
       return results.rows;
     };
 
-    //Returns all applications by user id
+    //Returns all applications by gig or writer id
     static async getByUserId(userId, userType) {
       const results = await db.query(`SELECT * FROM applications WHERE ${userType}_id=$1`, [userId]);
+      if(!results.rows.length) throw new NotFoundError();
       return results.rows[0];
     };
 
     //Posts application and returns relavent data
     static async submitApplication(writerId, gigId, portfolioId) {
+      const dupeCheck = await db.query(
+        `SELECT * FROM applications
+        WHERE writer_id=$1
+        AND gig_id=$2`,
+        [writerId, gigId]
+      );
+
+      if(dupeCheck.rows[0]) throw new BadRequestError("You\'ve already applied to this gig!!");
+
       const result = await db.query(
         `INSERT INTO applications (gig_id, writer_id, portfolio_id)
         VALUES ($1, $2, $3)

@@ -6,11 +6,13 @@
 
 const express = require("express");
 const Writer = require("../models/writer");
-const WriterUpload = require("../models/writerUploads");
 const { ensureLoggedIn, ensureCorrectWriterOrAdmin } = require("../middleware/auth");
 const Application = require("../models/application");
 const Portfolio = require("../models/portfolio");
 const Piece = require("../models/piece");
+const jsonschema = require("jsonschema");
+const createPiece = require("../schemas/createPiece.json");
+const { BadRequestError } = require("../expressError");
 
 const router = express.Router();
 
@@ -166,8 +168,8 @@ router.get("/:writer_id/portfolios/:portfolio_id", ensureLoggedIn, async functio
 
 router.post("/:writer_id/portfolios/new", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
-        const { title } = req.body;
-        const newPortfolio = await Portfolio.create(req.params.writer_id, title);
+        if(!req.body.title) throw new BadRequestError('Must inlude property Title');
+        const newPortfolio = await Portfolio.create(req.params.writer_id, req.body.title);
         return res.json({ newPortfolio });
     } catch (error) {
         return next(error);
@@ -229,6 +231,11 @@ router.get("/:writer_id/pieces/:piece_id", ensureLoggedIn, async function(req, r
 
 router.post("/:writer_id/pieces/new", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
+        const validator = jsonschema.validate(req.body, createPiece);
+        if(!validator.valid) {
+            const errs = validator.errors.map(e => e.stack);
+            throw new BadRequestError(errs);
+        }
         const { title, text } = req.body;
         const newPiece = await Piece.create(req.params.writer_id, title, text);
         return res.json({ newPiece });

@@ -4,8 +4,11 @@ const express = require("express");
 const User = require("../models/user");
 const Platform = require("../models/platform");
 const Gig = require("../models/gig");
-const { ensureLoggedIn, ensureCorrectUserOrAdmin, ensureCorrectPlatformOrAdmin } = require("../middleware/auth");
 const Application = require("../models/application");
+const jsonschema = require("jsonschema");
+const createGig = require("./../schemas/createGig.json");
+const { ensureLoggedIn, ensureCorrectPlatformOrAdmin } = require("../middleware/auth");
+const { BadRequestError } = require("../expressError");
 
 const router = express.Router();
 
@@ -37,7 +40,7 @@ router.delete("/:platform_id", ensureCorrectPlatformOrAdmin, async(req, res, nex
 });
 
 //FOLLOW TAGS
-router.get("/:platform_id/followed_tags", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.get("/:platform_id/followed_tags", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
         const tags = await Platform.getFollows(req.params.platform_id, "tag");
         return res.json({ tags });
@@ -46,7 +49,7 @@ router.get("/:platform_id/followed_tags", ensureCorrectUserOrAdmin, async functi
     }
 });
 
-router.post("/:platform_id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.post("/:platform_id/followed_tags/:tag_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
         const followed = await Platform.followItem(req.params.platform_id, req.params.tag_id, "tag");
         return res.json({ followed });
@@ -55,7 +58,7 @@ router.post("/:platform_id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, asy
     }
 });
 
-router.delete("/:platform_id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.delete("/:platform_id/followed_tags/:tag_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
         const unfollowed = await Platform.unfollowItem(req.params.platform_id, req.params.tag_id, "tag");
         return res.json({ unfollowed });
@@ -66,7 +69,7 @@ router.delete("/:platform_id/followed_tags/:tag_id", ensureCorrectUserOrAdmin, a
 
 //FOLLOWED WRITERS
 
-router.get("/:platform_id/followed_writers", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.get("/:platform_id/followed_writers", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
         const writers = await Platform.getFollows(req.params.platform_id, "writer");
         return res.json({ writers });
@@ -75,7 +78,7 @@ router.get("/:platform_id/followed_writers", ensureCorrectUserOrAdmin, async fun
     };
 });
 
-router.post("/:platform_id/followed_writers/:writer_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.post("/:platform_id/followed_writers/:writer_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
         const followed = await Platform.followItem(req.params.platform_id, req.params.writer_id, "writer");
         return res.json({ followed });
@@ -84,7 +87,7 @@ router.post("/:platform_id/followed_writers/:writer_id", ensureCorrectUserOrAdmi
     }
 });
 
-router.delete("/:platform_id/followed_writers/:writer_id", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.delete("/:platform_id/followed_writers/:writer_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
         const unfollowed = await Platform.unfollowItem(req.params.platform_id, req.params.writer_id, "writer");
         return res.json({ unfollowed });
@@ -104,8 +107,15 @@ router.get("/:platform_id/gigs", ensureLoggedIn, async function(req, res, next) 
     }
 })
 
+//POST NEW GIG
+
 router.post("/:platform_id/gigs/new", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
+        const validator = jsonschema.validate(req.body, createGig);
+        if(!validator.valid) {
+            const errs = validator.errors.map(e => e.stack);
+            throw new BadRequestError(errs);
+        }
         const newGig = await Gig.createGig(req.params.platform_id, {...req.body});
         return res.status(201).json({ newGig });
     } catch (error) {
@@ -155,9 +165,11 @@ router.get("/:platform_id/gigs/:gig_id/applications", ensureCorrectPlatformOrAdm
 
 router.patch("/:platform_id/gigs/:gig_id/applications/:application_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
-        const { status } = req.body;
-        const app = await Application.setApplicationStatus(req.params.application_id, status);
-        return res.json({ app });
+        const {status} = req.body;
+        if(status==="Accepted" || status==="Pending" || status==="Rejected") {
+            const app = await Application.setApplicationStatus(req.params.application_id, req.body.status);
+            return res.json({ app });
+        } throw new BadRequestError('Status must be Sting: "Accepted", "Rejected" or "Pending".');
     } catch (error) {
         return next(error);
     }
