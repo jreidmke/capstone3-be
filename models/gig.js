@@ -11,22 +11,27 @@ const {sqlForPartialUpdate} = require("./../helpers/sql");
 class Gig {
 
     /**Returns a list of all gigs. */
-    // static async getAll() {
-    //     const result = await db.query(
-    //         `SELECT *
-    //         FROM gigs`
-    //     );
-    //     return result.rows;
-    // };
 
     static async getAll(searchFilters = {}) {
         let query = `SELECT * FROM gigs`;
         let whereExpressions = [];
         let queryValues = [];
 
-        const { compensation, maxWordCount, minWordCount, isRemote } = searchFilters;
+        const { compensation, maxWordCount, minWordCount, isRemote, platformId, tagTitle } = searchFilters;
 
         if(minWordCount > maxWordCount) throw new BadRequestError("Min word count cannot be greater than max");
+
+        if(tagTitle !== undefined) {
+            const tagRes = await db.query(
+                `SELECT gt.gig_id FROM tags AS t
+                JOIN gig_tags AS gt
+                ON t.id = gt.tag_id
+                WHERE title LIKE '%${tagTitle}%'`
+            );
+            let tags = tagRes.rows.map(t => parseInt(t.gig_id));
+            for(let t of tags) queryValues.push(t);
+            whereExpressions.push(`id = ANY ${queryValues.length}`);
+        };
 
         if(compensation !== undefined) {
             queryValues.push(compensation);
@@ -48,12 +53,21 @@ class Gig {
             whereExpressions.push(`is_remote=$${queryValues.length}`);
         };
 
+        if(platformId !== undefined) {
+            queryValues.push(platformId);
+            whereExpressions.push(`platform_id=$${queryValues.length}`); 
+        };
+
         if(whereExpressions.length > 0) {
             query += " WHERE " + whereExpressions.join(" AND ");
         };
+
+        console.log(query)
         const gigRes = await db.query(query, queryValues);
+
+
         return gigRes.rows;
-    }
+    };
 
     static async getById(id) {
         const gig = await checkForItem(id, 'gigs', 'id');
@@ -70,16 +84,9 @@ class Gig {
         const tag = await checkForItem(title, 'tags', 'title');
         if(!tag) throw new NotFoundError(`Tag: ${title} Not Found!`);
         const gigTags = await checkForItem(tag.id, 'gig_tags', 'tag_id', true);
-        if(!gigTags.length) throw new NotFoundError(`Tag: ${title} Has No Gigs`);
         const gigs = await Promise.all(gigTags.map(gt => (
             checkForItem(gt.gig_id, 'gigs', 'id')
         )));
-        return gigs;
-    };
-
-    static async getByPlatformId(platformId) {
-        const gigs = await checkForItem(platformId, 'gigs', 'platform_id', true);
-        if(!gigs.length) throw new NotFoundError(`Platform: ${platformId} has no gigs currently`);
         return gigs;
     };
 
@@ -147,8 +154,6 @@ class Gig {
 
     static async addTagToGig(platformId, gigId, tagId) {
         const gig = await checkForItem(gigId, 'gigs', 'id');
-        const tag = await checkForItem(tagId, 'tags', 'id');
-        if(!gig || !tag) throw new NotFoundError('Can\'t find resource');
         if(platformId !== gig.platform_id) throw new UnauthorizedError();
         const result = await db.query(
             `INSERT INTO gig_tags (gig_id, tag_id)
@@ -161,8 +166,6 @@ class Gig {
 
     static async removeTagFromGig(platformId, gigId, tagId) {
         const gig = await checkForItem(gigId, 'gigs', 'id');
-        const tag = await checkForItem(tagId, 'tags', 'id');
-        if(!gig || !tag) throw new NotFoundError('Can\'t find resource');
         if(platformId !== gig.platform_id) throw new UnauthorizedError();
         await db.query(
             `DELETE FROM gig_tags
@@ -171,7 +174,7 @@ class Gig {
             [gigId, tagId]
         );
         return 'deleted';
-    }
+    };
 };
 
 //GET ALL GIGS

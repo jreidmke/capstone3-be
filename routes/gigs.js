@@ -26,22 +26,14 @@ router.get("/", ensureLoggedIn, async function(req, res, next) {
     if(q.compensation !== undefined) q.compensation = +q.compensation;
     if(q.maxWordCount !== undefined) q.maxWordCount = + q.maxWordCount;
     if(q.minWordCount !== undefined) q.minWordCount = + q.minWordCount;
+    if(q.platformId !== undefined) q.platformId = +q.platformId;
     try {
         const gigs = await Gig.getAll(q);
         return res.json({ gigs });
     } catch (error) {
         return next(error);
     }
-})
-
-// router.get("/", ensureLoggedIn, async(req, res, next) => {
-//     try {
-//         const gigs = await Gig.getAll();
-//         return res.json({ gigs });
-//     } catch (error) {
-//         return next(error);
-//     }
-// });
+});
 
 /** GET /gigs/[gigId] => { id, title, description, compensation, isRemote, wordCount, isActive, createdAt, updatedAt }
  * 
@@ -69,22 +61,6 @@ router.get("/:id", ensureLoggedIn, async(req, res, next) => {
 router.get("/tags/:tag_title", ensureLoggedIn, async(req, res, next) => {
     try {
         const gigs = await Gig.getByTagTitle(req.params.tag_title);
-        return res.json({ gigs });
-    } catch (error) {
-        return next(error);
-    }
-});
-
-// /** GET /gigs/[platformId] => [{ id, title, description, compensation, isRemote, wordCount, isActive, createdAt, updatedAt }, ...]
-//  * 
-//  * GET GIGS AS SPECIFIED BY PLATFORM ID
-//  * 
-//  * Authorization required: Logged In
-//  */
-
-router.get("/platforms/:platform_id", ensureLoggedIn, async(req, res, next) => {
-    try {
-        const gigs = await Gig.getByPlatformId(req.params.platform_id);
         return res.json({ gigs });
     } catch (error) {
         return next(error);
