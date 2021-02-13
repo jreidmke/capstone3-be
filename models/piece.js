@@ -7,6 +7,11 @@ const {
 const { sqlForPartialUpdate } = require('./../helpers/sql');
 
 class Piece {
+
+    /**Given a writer id, returns all pieces by writer
+     * 
+     * Returns [{id, writer_id, title, text, created_at, updated_at},...]
+     */
     static async getAllByWriterId(writerId) {
         const result = await db.query(
             `SELECT * FROM pieces
@@ -14,13 +19,15 @@ class Piece {
             [writerId]
         );
         const pieces = result.rows;
-
-        //Error Handling
-        if(!pieces.length) throw new NotFoundError(`Writer: ${writerId} Has No Pieces Posted`);
-
         return pieces;
     };
 
+    /**Given a piece id, returns a piece
+     * 
+     * Returns {id, writer_id, title, text, created_at, updated_at}
+     * 
+     * Failure throws not found
+     */
     static async getById(pieceId) {
         const result = await db.query(
             `SELECT * FROM pieces
@@ -44,6 +51,13 @@ class Piece {
         return piece;
     };
 
+   /** Create a piece (from data), update db, return new gig data.
+   *
+   * data should be { writerId, title, text }
+   *
+   * Returns the same
+   * */
+
     static async create(writerId, title, text) {
         const result = await db.query(
             `INSERT INTO pieces (writer_id, title, text)
@@ -54,6 +68,18 @@ class Piece {
         const piece = result.rows[0];
         return piece;
     };
+
+    /** Update piece data with `data`.
+   *
+   * This is a "partial update" --- it's fine if data doesn't contain all the
+   * fields; this only changes provided ones.
+   *
+   * Data can include: { title, text }
+   *
+   * Returns { title, text, created_at, updated_at }
+   *
+   * Throws NotFoundError if not found.
+   */
 
     static async update(writerId, pieceId, data) {
         const authCheck = await db.query(
@@ -78,6 +104,11 @@ class Piece {
        
         return piece;
     };
+
+    /** Delete given piece from database; returns all data on deleted piece.
+    *
+    * Throws NotFoundError if piece not found, UnauthorizedError is piece does not belong to writer.
+    **/
     
     static async remove(writerId, pieceId) {
         const authCheck = await db.query(
@@ -98,18 +129,15 @@ class Piece {
         return result.rows[0];
     };
 
-    static async addPieceToItem(writerId, pieceId, itemId, itemType) {
-        if(itemType === "portfolio" || itemType === "tag") {
+    /**Adds tag to piece OR piece to portfolio (from pieceId and tagId/portfolioId). Uses Writer Id to verify ownership of piece
+     * 
+     * Returns {new: {tagId, pieceId}} OR {new: {pieceId, portfolioId}}
+     * 
+     * Failure throws unauthorized
+     */
 
-            //ERROR HANDLING
-            const dupCheck = await db.query(
-                `SELECT * from piece_${itemType}s
-                WHERE piece_id=$1
-                AND ${itemType}_id=$2`,
-                [pieceId, itemId]
-            );
-            if(dupCheck.rows[0]) throw new NotFoundError(`Piece: ${pieceId} is already added to ${itemType.toUpperCase()}: ${itemId}!`);
-            
+    static async addPieceToItem(writerId, pieceId, itemId, itemType) {
+        if(itemType === "portfolio" || itemType === "tag") {           
             const authCheck = await db.query(
                 `SELECT writer_id 
                 FROM pieces
@@ -131,16 +159,15 @@ class Piece {
        throw new BadRequestError("Item Type must be String: 'tag' or 'portfolio'");
     };
 
+    /**Removes tag from piece OR piece from portfolio (from pieceId and tagId/portfolioId). Uses Writer Id to verify ownership of piece
+     * 
+     * Returns {removed: {tagId, pieceId}} OR {removed: {pieceId, portfolioId}}
+     * 
+     * Failure throws unauthorized
+     */
+
     static async removePieceFromItem(writerId, pieceId, itemId, itemType) {
         if(itemType === "portfolio" || itemType === "tag") {
-            const dupCheck = await db.query(
-                `SELECT * from piece_${itemType}s
-                WHERE piece_id=$1
-                AND ${itemType}_id=$2`,
-                [pieceId, itemId]
-            );
-            if(!dupCheck.rows[0]) throw new NotFoundError(`Piece: ${pieceId} is not added to ${itemType.toUpperCase()}: ${itemId}!`);
-            
             const authCheck = await db.query(
                 `SELECT writer_id 
                 FROM pieces

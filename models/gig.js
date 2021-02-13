@@ -104,7 +104,7 @@ class Gig {
         return gig;
     };
 
-    /** Create a gig (from data), update db, return new gig data.
+   /** Create a gig (from data), update db, return new gig data.
    *
    * data should be { id, platfrom_id, title, description, compensation, is_remote, word_count, is_active, created_at, updated_at }
    *
@@ -175,9 +175,9 @@ class Gig {
         return gig;
     };
 
-    /** Delete given company from database; returns undefined.
+    /** Delete given gig from database; returns all data on deleted gig.
     *
-    * Throws NotFoundError if company not found.
+    * Throws NotFoundError if gig not found, UnauthorizedError is gig does not belong to platform.
     **/
 
     static async removeGig(platformId, gigId) {

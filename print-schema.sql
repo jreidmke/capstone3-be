@@ -64,7 +64,8 @@ CREATE TABLE gigs(
     word_count BIGINT,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL
+    updated_at TIMESTAMP DEFAULT NULL,
+    UNIQUE(platform_id, title)
 );
 
 CREATE TABLE tags(
