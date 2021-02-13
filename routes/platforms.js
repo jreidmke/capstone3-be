@@ -284,8 +284,8 @@ router.post("/:platform_id/gigs/:gig_id/tags/:tag_id", ensureCorrectPlatformOrAd
 
 router.delete("/:platform_id/gigs/:gig_id/tags/:tag_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
-        const newTag = await Gig.removeTagFromGig(req.params.platform_id, req.params.gig_id, req.params.tag_id);
-        return res.json({ newTag });
+        const removedTag = await Gig.removeTagFromGig(req.params.platform_id, req.params.gig_id, req.params.tag_id);
+        return res.json({ removedTag });
     } catch (error) {
         return next(error);
     }

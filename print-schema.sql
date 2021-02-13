@@ -90,7 +90,8 @@ CREATE TABLE piece_portfolios(
     piece_id BIGINT NOT NULL REFERENCES pieces(id) ON DELETE CASCADE,
     portfolio_id BIGINT NOT NULL REFERENCES portfolios(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL
+    updated_at TIMESTAMP DEFAULT NULL,
+    UNIQUE (piece_id, portfolio_id)
 );
 
 CREATE TABLE piece_tags(
@@ -98,7 +99,8 @@ CREATE TABLE piece_tags(
     piece_id BIGINT NOT NULL REFERENCES pieces(id) ON DELETE CASCADE,
     tag_id BIGINT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL
+    updated_at TIMESTAMP DEFAULT NULL,
+    UNIQUE (piece_id, tag_id)
 );
 
 CREATE TABLE gig_tags(
@@ -106,7 +108,8 @@ CREATE TABLE gig_tags(
     gig_id BIGINT NOT NULL REFERENCES gigs(id) ON DELETE CASCADE,
     tag_id BIGINT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL
+    updated_at TIMESTAMP DEFAULT NULL,
+    UNIQUE (gig_id, tag_id)
 );
 
 CREATE TABLE platform_tag_follows(
@@ -114,7 +117,8 @@ CREATE TABLE platform_tag_follows(
     platform_id BIGINT REFERENCES platforms(id) ON DELETE CASCADE,
     tag_id BIGINT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL
+    updated_at TIMESTAMP DEFAULT NULL,
+    UNIQUE (platform_id, tag_id)
 );
 
 CREATE TABLE platform_writer_follows(
@@ -122,7 +126,8 @@ CREATE TABLE platform_writer_follows(
     platform_id BIGINT REFERENCES platforms(id) ON DELETE CASCADE,
     writer_id BIGINT REFERENCES writers(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL
+    updated_at TIMESTAMP DEFAULT NULL,
+    UNIQUE (platform_id, writer_id)
 );
 
 CREATE TABLE writer_platform_follows(
@@ -130,7 +135,8 @@ CREATE TABLE writer_platform_follows(
     writer_id BIGINT REFERENCES writers(id) ON DELETE CASCADE,
     platform_id BIGINT REFERENCES platforms(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL
+    updated_at TIMESTAMP DEFAULT NULL,
+    UNIQUE (writer_id, platform_id)
 );
 
 CREATE TABLE writer_tag_follows(
@@ -138,5 +144,6 @@ CREATE TABLE writer_tag_follows(
     writer_id BIGINT REFERENCES writers(id) ON DELETE CASCADE,
     tag_id BIGINT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL
+    updated_at TIMESTAMP DEFAULT NULL,
+    UNIQUE (writer_id, tag_id)
 );

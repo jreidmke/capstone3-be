@@ -1,8 +1,6 @@
 // APPLICATION MODEL
 const db = require("../db");
-const {
-  BadRequestError
-} = require("../expressError");
+const { BadRequestError } = require("../expressError");
 
 class Application {
 
@@ -18,13 +16,13 @@ class Application {
       return results.rows[0];
     };
 
-
     /**Create an application (from writerId, gigId, portfolioId data)
      * 
      * Returns application object.
      * 
      * Duplicate Application throws BadReq Error
      */
+
     static async submitApplication(writerId, gigId, portfolioId) {
       const dupeCheck = await db.query(
         `SELECT * FROM applications
@@ -48,6 +46,7 @@ class Application {
      * 
      * Returns data on deleted application.
      */
+
     static async withdrawlApplication(gigId, writerId) {
       const result = await db.query(
         `DELETE FROM applications 
@@ -64,6 +63,7 @@ class Application {
      * 
      * Failure throws Not Found.
      */
+    
     static async setApplicationStatus(applicationId, status) {
       const result = await db.query(
         `UPDATE applications

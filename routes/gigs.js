@@ -51,22 +51,6 @@ router.get("/:id", ensureLoggedIn, async(req, res, next) => {
     }
 })
 
-/** GET /gigs/[tagTitle] => [{ id, title, description, compensation, isRemote, wordCount, isActive, createdAt, updatedAt }, ...]
- * 
- * GET GIGS AS SPECIFIED BY TAG TITLE
- * 
- * Authorization required: Logged In
- */
-
-router.get("/tags/:tag_title", ensureLoggedIn, async(req, res, next) => {
-    try {
-        const gigs = await Gig.getByTagTitle(req.params.tag_title);
-        return res.json({ gigs });
-    } catch (error) {
-        return next(error);
-    }
-});
-
 // APPLICATION STUFF//
 
 /** POST /gigs/[gigid]/apply/writers/[writerId], { portfolioId }
