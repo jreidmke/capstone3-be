@@ -21,18 +21,6 @@ class Gig {
 
         if(minWordCount > maxWordCount) throw new BadRequestError("Min word count cannot be greater than max");
 
-        if(tagTitle !== undefined) {
-            const tagRes = await db.query(
-                `SELECT gt.gig_id FROM tags AS t
-                JOIN gig_tags AS gt
-                ON t.id = gt.tag_id
-                WHERE title LIKE '%${tagTitle}%'`
-            );
-            let tags = tagRes.rows.map(t => parseInt(t.gig_id));
-            for(let t of tags) queryValues.push(t);
-            whereExpressions.push(`id = ANY ${queryValues.length}`);
-        };
-
         if(compensation !== undefined) {
             queryValues.push(compensation);
             whereExpressions.push(`compensation >= $${queryValues.length}`);
@@ -60,6 +48,17 @@ class Gig {
 
         if(whereExpressions.length > 0) {
             query += " WHERE " + whereExpressions.join(" AND ");
+        };
+
+        if(tagTitle !== undefined) {
+            const tagRes = await db.query(
+                `SELECT gt.gig_id FROM tags AS t
+                JOIN gig_tags AS gt
+                ON t.id = gt.tag_id
+                WHERE title LIKE '%${tagTitle}%'`
+            );
+            let tags = tagRes.rows.map(t => parseInt(t.gig_id));
+            query += ` id IN (${tags})`
         };
 
         console.log(query)
