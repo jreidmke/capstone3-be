@@ -1,27 +1,30 @@
 // APPLICATION MODEL
 const db = require("../db");
 const {
-  NotFoundError,
-  UnauthorizedError,
   BadRequestError
 } = require("../expressError");
 
 class Application {
 
-    //Returns all Applications. Just for Admin
-    static async getAll() {
-      const results = await db.query(`SELECT * FROM applications`);
-      return results.rows;
-    };
-
-    //Returns all applications by gig or writer id
+    /** Given an userType and id, returns all applications.
+   *
+   * Returns [{ id, gig_id, writer_id, portfolio_id, status, created_at, updated_at },...]
+   *
+   * Throws BadRequestError if incorrect usertype.
+   **/
     static async getByUserId(userId, userType) {
+      if(userType !== 'writer' && userType !== 'platform') throw new BadRequestError("User Type must be string: 'writer' or 'platform'.")
       const results = await db.query(`SELECT * FROM applications WHERE ${userType}_id=$1`, [userId]);
-      if(!results.rows.length) throw new NotFoundError();
       return results.rows[0];
     };
 
-    //Posts application and returns relavent data
+
+    /**Create an application (from writerId, gigId, portfolioId data)
+     * 
+     * Returns application object.
+     * 
+     * Duplicate Application throws BadReq Error
+     */
     static async submitApplication(writerId, gigId, portfolioId) {
       const dupeCheck = await db.query(
         `SELECT * FROM applications
@@ -41,16 +44,26 @@ class Application {
       return result.rows[0];
     };
 
-    //Removes application from table. Only writer can ping
+    /** Deletes application from db
+     * 
+     * Returns data on deleted application.
+     */
     static async withdrawlApplication(gigId, writerId) {
       const result = await db.query(
         `DELETE FROM applications 
-        WHERE gig_id=$1 AND writer_id=$2`, [gigId, writerId]
+        WHERE gig_id=$1 AND writer_id=$2
+        RETURNING gig_id AS gigId,
+        writer_id AS writerId`, [gigId, writerId]
       );
-      return 'Application removed'
+      return result.rows[0];
     };
 
-    //Updates application status. Only platform can ping
+    /** UPDATES application db (form appId and status data)
+     * 
+     * Returns updated application, including status
+     * 
+     * Failure throws Not Found.
+     */
     static async setApplicationStatus(applicationId, status) {
       const result = await db.query(
         `UPDATE applications
@@ -59,6 +72,7 @@ class Application {
         RETURNING *`,
         [status, applicationId]
       );
+      if(!result.rows[0]) throw new NotFoundError(`Application: ${applicationId} not found!`);
       return result.rows[0];
     };
 }

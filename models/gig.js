@@ -62,8 +62,7 @@ class Gig {
                 query += ` WHERE id IN (${tags.join(',')})`;
             } else {
                 query += ` AND id IN (${tags.join(',')})`
-            }
-            
+            };
         };
 
         console.log(query);

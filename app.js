@@ -13,7 +13,6 @@ const writerRoutes = require("./routes/writers");
 const platformRoutes = require("./routes/platforms");
 const gigRoutes = require("./routes/gigs");
 const tagRoutes = require("./routes/tags");
-const adminRoutes = require("./routes/admin");
 const morgan = require("morgan");
 
 const app = express();
@@ -28,7 +27,6 @@ app.use("/writers", writerRoutes);
 app.use("/platforms", platformRoutes);
 app.use("/gigs", gigRoutes);
 app.use("/tags", tagRoutes);
-app.use("/admin", adminRoutes);
 
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {
