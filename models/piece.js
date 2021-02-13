@@ -28,6 +28,7 @@ class Piece {
      * 
      * Failure throws not found
      */
+    
     static async getById(pieceId) {
         const result = await db.query(
             `SELECT * FROM pieces

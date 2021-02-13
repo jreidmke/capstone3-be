@@ -13,6 +13,8 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 
 class Platform {
 
+  /**Returns All Platforms */
+
     static async getAll() {
         const result = await db.query(
           `SELECT p.display_name AS displayName,
@@ -30,7 +32,14 @@ class Platform {
         return result.rows;
       };
 
-
+    /**Given a platform id, returns a user
+     * 
+     * Returns {id,email, writer_id, platformId, imageUrl, address1, address2, city, state, postalcode, phone, facebookUsername, twitterUsername, youtubeUsername, displayName, gigs}
+     *    where gigs = {id, title, description, compensation, is_remote, wordCount, isActive}
+     * 
+     * Failure throws not found
+     */
+ 
     static async getById(user) {
         const platformRes = await db.query(
             `SELECT *
@@ -54,10 +63,22 @@ class Platform {
             [platform.id]
         );
 
-        user.gigs = gigRes.rows.map(g => ({title: g.title, description: g.description, compensation: g.compensation, isRemote: g.is_remote, wordCount: g.word_count, isActive: g.is_active, createdAt: g.created_at}));
+        user.gigs = gigRes.rows;
 
         return user;
     };
+
+    /** Update piece data with `data`.
+   *
+   * This is a "partial update" --- it's fine if data doesn't contain all the
+   * fields; this only changes provided ones.
+   *
+   * Data can include: { imageUrl, address1, address2, city, state, postalcode, phone, facebookUsername, twitterUsername, youtubeUsername, displayName }
+   *
+   * Returns the same plus { created_at, updated_at }
+   *
+   * Throws NotFoundError if not found.
+   */
 
     static async update(platformId, platformData, userData) {
       if (userData.password) {
@@ -120,6 +141,11 @@ class Platform {
       return user;
     };
 
+    /** Delete given platform from database; returns all data on deleted platform.
+    *
+    * Throws NotFoundError if piece not found
+    **/
+
     static async remove(platformId) {
       const result = await db.query(
         `DELETE FROM users
@@ -131,6 +157,11 @@ class Platform {
       if(!platform) throw new NotFoundError(`Platform: ${platformId} Not Found!`);
       return 'deleted';
     };
+
+    /**Given a platformId and itemType, returns all all platform follows
+    *
+    * Returns all data on new follow
+    */
 
     static async getFollows(platformId, itemType) {
       if(itemType === "tag" || itemType === "writer") {
@@ -151,18 +182,13 @@ class Platform {
        throw new BadRequestError("Item Type must be String: 'tag' or 'writer'");
       };
 
+      /**Given a platformId, itemId and itemType, a platform will follow a tag or writer
+       *
+       * Returns all data on new follow
+       */
+
       static async followItem(platformId, itemId, itemType) {
         if(itemType==="tag" || itemType==="writer") {
-
-          //CHECK IF WRITER ALREADY FOLLOWS
-          const duplicateCheck = await db.query(
-            `SELECT * FROM platform_${itemType}_follows
-            WHERE platform_id=$1 AND ${itemType}_id=$2`,
-            [platformId, itemId]
-          );
-          if(duplicateCheck.rows[0]) throw new BadRequestError(`Platform: ${platformId} already follows ${itemType.toUpperCase()}: ${itemId}`); 
-
-
           const result = await db.query(
             `INSERT INTO platform_${itemType}_follows (platform_id, ${itemType}_id)
             VALUES($1, $2)
@@ -176,9 +202,13 @@ class Platform {
        throw new BadRequestError("Item Type must be String: 'tag' or 'writer'");
       };
 
+      /**Given a platformId, itemId and itemType, a platform will unfollow a tag or writer
+       *
+       * Returns all data on new unfollow
+       */
+
       static async unfollowItem(platformId, itemId, itemType) {
         if(itemType==="tag" || itemType==="writer") {
-
           const result = await db.query(
             `DELETE FROM platform_${itemType}_follows
             WHERE ${itemType}_id=$1
@@ -187,9 +217,6 @@ class Platform {
             ${itemType}_id AS ${itemType}Id`,
             [itemId, platformId]
           );
-
-          //CHECK TO SEE IF THEY EVEN FOLLOWED
-          if(!result.rows[0]) throw new NotFoundError(`Platform: ${platformId} does not follow ${itemType.toUpperCase()}: ${itemId}`);
 
           return result.rows[0];
         };
