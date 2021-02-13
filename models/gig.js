@@ -58,7 +58,10 @@ class Gig {
                 WHERE title LIKE '%${tagTitle}%'`
             );
             let tags = tagRes.rows.map(t => parseInt(t.gig_id));
-            query += ` id IN (${tags})`
+            let e = '(';
+            for(let t of tags) e += t;
+            console.log(e); 
+            query += ` WHERE id IN (7, 8)`
         };
 
         console.log(query)
