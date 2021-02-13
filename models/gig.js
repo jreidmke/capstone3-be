@@ -11,13 +11,49 @@ const {sqlForPartialUpdate} = require("./../helpers/sql");
 class Gig {
 
     /**Returns a list of all gigs. */
-    static async getAll() {
-        const result = await db.query(
-            `SELECT *
-            FROM gigs`
-        );
-        return result.rows;
-    };
+    // static async getAll() {
+    //     const result = await db.query(
+    //         `SELECT *
+    //         FROM gigs`
+    //     );
+    //     return result.rows;
+    // };
+
+    static async getAll(searchFilters = {}) {
+        let query = `SELECT * FROM gigs`;
+        let whereExpressions = [];
+        let queryValues = [];
+
+        const { compensation, maxWordCount, minWordCount, isRemote } = searchFilters;
+
+        if(minWordCount > maxWordCount) throw new BadRequestError("Min word count cannot be greater than max");
+
+        if(compensation !== undefined) {
+            queryValues.push(compensation);
+            whereExpressions.push(`compensation >= $${queryValues.length}`);
+        };
+
+        if(maxWordCount !== undefined) {
+            queryValues.push(maxWordCount);
+            whereExpressions.push(`word_count <= $${queryValues.length}`);
+        };
+
+        if(minWordCount !== undefined) {
+            queryValues.push(minWordCount);
+            whereExpressions.push(`word_count >= $${queryValues.length}`);
+        };
+
+        if(isRemote !== undefined) {
+            queryValues.push(isRemote);
+            whereExpressions.push(`is_remote=$${queryValues.length}`);
+        };
+
+        if(whereExpressions.length > 0) {
+            query += " WHERE " + whereExpressions.join(" AND ");
+        };
+        const gigRes = await db.query(query, queryValues);
+        return gigRes.rows;
+    }
 
     static async getById(id) {
         const gig = await checkForItem(id, 'gigs', 'id');

@@ -20,14 +20,28 @@ const { BadRequestError } = require("../expressError");
  * Authorization required: Logged In
  */
 
-router.get("/", ensureLoggedIn, async(req, res, next) => {
+router.get("/", ensureLoggedIn, async function(req, res, next) {
+    const q = req.query;
+    //convert strings to int
+    if(q.compensation !== undefined) q.compensation = +q.compensation;
+    if(q.maxWordCount !== undefined) q.maxWordCount = + q.maxWordCount;
+    if(q.minWordCount !== undefined) q.minWordCount = + q.minWordCount;
     try {
-        const gigs = await Gig.getAll();
+        const gigs = await Gig.getAll(q);
         return res.json({ gigs });
     } catch (error) {
         return next(error);
     }
-});
+})
+
+// router.get("/", ensureLoggedIn, async(req, res, next) => {
+//     try {
+//         const gigs = await Gig.getAll();
+//         return res.json({ gigs });
+//     } catch (error) {
+//         return next(error);
+//     }
+// });
 
 /** GET /gigs/[gigId] => { id, title, description, compensation, isRemote, wordCount, isActive, createdAt, updatedAt }
  * 
@@ -61,12 +75,12 @@ router.get("/tags/:tag_title", ensureLoggedIn, async(req, res, next) => {
     }
 });
 
-/** GET /gigs/[platformId] => [{ id, title, description, compensation, isRemote, wordCount, isActive, createdAt, updatedAt }, ...]
- * 
- * GET GIGS AS SPECIFIED BY PLATFORM ID
- * 
- * Authorization required: Logged In
- */
+// /** GET /gigs/[platformId] => [{ id, title, description, compensation, isRemote, wordCount, isActive, createdAt, updatedAt }, ...]
+//  * 
+//  * GET GIGS AS SPECIFIED BY PLATFORM ID
+//  * 
+//  * Authorization required: Logged In
+//  */
 
 router.get("/platforms/:platform_id", ensureLoggedIn, async(req, res, next) => {
     try {
