@@ -16,7 +16,6 @@
             "twitterUsername": "platform",
             "facebookUsername": "platform",
             "youtubeUsername": "platform",
-            "handle": "newplatform",
             "displayName": "The New Platform",
             "description": "IT's new man."
         }
@@ -31,7 +30,6 @@
         "state",
         "postalCode",
         "phone",
-        "handle",
         "displayName",
         "description"
     ],
@@ -130,14 +128,6 @@
             "title": "The youtubeUsername schema",
             "examples": [
                 "platform"
-            ]
-        },
-        "handle": {
-            "$id": "#/properties/handle",
-            "type": "string",
-            "title": "The handle schema",
-            "examples": [
-                "newplatform"
             ]
         },
         "displayName": {

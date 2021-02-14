@@ -86,7 +86,7 @@
         },
         "address2": {
             "$id": "#/properties/address2",
-            "type": "null",
+            "type": ["null", "string"],
             "title": "The address2 schema",
             "description": "An explanation about the purpose of this instance.",
             "default": null,
@@ -136,7 +136,7 @@
         },
         "twitterUsername": {
             "$id": "#/properties/twitterUsername",
-            "type": "null",
+            "type": ["null", "string"],
             "title": "The twitterUsername schema",
             "description": "An explanation about the purpose of this instance.",
             "default": null,
@@ -146,7 +146,7 @@
         },
         "facebookUsername": {
             "$id": "#/properties/facebookUsername",
-            "type": "null",
+            "type": ["null", "string"],
             "title": "The facebookUsername schema",
             "description": "An explanation about the purpose of this instance.",
             "default": null,
