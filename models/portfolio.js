@@ -6,9 +6,12 @@ const {
 
 class Portfolio {
 
+    /**Given a writer id, returns all portfolios by writer
+     * 
+     * Returns [{id, writer_id, title, created_at, updated_at},...]
+     */
+    
     static async getAllByWriterId(writerId) {
-
-        //Get a list of tags in each portfolio. Boy, that's an sql for sure. Come back to that.
         const result = await db.query(
             `SELECT * FROM portfolios 
             WHERE writer_id=$1`,
@@ -16,7 +19,6 @@ class Portfolio {
         );
         const portfolios = result.rows;
         if(!portfolios.length) throw new NotFoundError(`Writer: ${writerId} has no portfolios.`);
-
         return portfolios;
     };
 
