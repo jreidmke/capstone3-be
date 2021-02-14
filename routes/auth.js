@@ -43,7 +43,7 @@ router.post("/login", async function(req, res, next) {
 
     //OR
 
-    //PLATFORM TABLE (handle, description, display_name)
+    //PLATFORM TABLE (description, display_name)
 
 /* Returns JWT token which can be used to authenticate further requests.
   * 
