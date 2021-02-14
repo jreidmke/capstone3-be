@@ -34,7 +34,7 @@ router.get("/", ensureLoggedIn, async function(req, res, next) {
     }
 });
 
-/**GET /[username] => {user}
+/**GET /[writerId] => {user}
  *
  * Returns { first_name, last_name, image_url, city, state, facebookUsername, twitterUsername, youtubeUesrname, age, bio, createdAt, address1, address2, phone, portfolios}
  *      where portfolios is { id, title }
@@ -135,7 +135,7 @@ router.get("/:writer_id/followed_platforms", ensureCorrectWriterOrAdmin, async f
     };
 });
 
-/**POST /[username]/followed_platforms/:platformHandle
+/**POST /[writerId]/followed_platforms/:platformHandle
  *
  * Auth: admin or correct user
  */
@@ -149,7 +149,7 @@ router.post("/:writer_id/followed_platforms/:platform_id", ensureCorrectWriterOr
     }
 })
 
-/**DELETE /[username]/followed_platforms/:platformHandle
+/**DELETE /[writerId]/followed_platforms/:platformHandle
  *
  * Auth: admin or correct user
  */
@@ -167,6 +167,13 @@ router.delete("/:writer_id/followed_platforms/:platform_id", ensureCorrectWriter
 // // //PORTFOLIOS
 // *
 
+/** GET /writers/[writerId]/portfolios
+ * 
+ * RETURNS A LIST OF ALL PORTFOLIOS BY WRITER
+ * 
+ * Auth: Ensure Logged in
+ */
+
 router.get("/:writer_id/portfolios", ensureLoggedIn, async function(req, res, next) {
     try {
         const portfolios = await Portfolio.getAllByWriterId(req.params.writer_id);
@@ -176,6 +183,13 @@ router.get("/:writer_id/portfolios", ensureLoggedIn, async function(req, res, ne
     }
 });
 
+/** GET /writers/[writerId]/portfolios/[portfolioId]
+ * 
+ * RETURNS A PORTFOLIO SPECIFIED BY ID
+ * 
+ * Auth: Ensure Logged in
+ */
+
 router.get("/:writer_id/portfolios/:portfolio_id", ensureLoggedIn, async function(req, res, next) {
     try {
         const portfolio = await Portfolio.getById(req.params.portfolio_id);
@@ -184,6 +198,15 @@ router.get("/:writer_id/portfolios/:portfolio_id", ensureLoggedIn, async functio
         return next(error);
     }
 });
+
+/** PATCH /writers/[writerId]/portfolios/[portfolioId]
+ * 
+ * Updates portfolio in db
+ * 
+ * RETURNS A PORTFOLIO SPECIFIED BY ID
+ * 
+ * Auth: Ensure Admin or Correct writer
+ */
 
 router.patch("/:writer_id/portfolios/:portfolio_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
@@ -195,6 +218,15 @@ router.patch("/:writer_id/portfolios/:portfolio_id", ensureCorrectWriterOrAdmin,
     }
 });
 
+/** POST /writers/[writerId]/portfolios/new
+ * 
+ * Creates a new portfolio and inserts in db
+ * 
+ * RETURNS A NEW PORTFOLIO
+ * 
+ * Auth: Ensure Admin or Correct writer
+ */
+
 router.post("/:writer_id/portfolios/new", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
         if(!req.body.title) throw new BadRequestError('Must inlude property Title');
@@ -205,6 +237,15 @@ router.post("/:writer_id/portfolios/new", ensureCorrectWriterOrAdmin, async func
     }
 });
 
+/** DELETE /writers/[writerId]/portfolios/[portfolioId]
+ * 
+ * Deletes portfolio in db
+ * 
+ * RETURNS A DELETED PORTFOLIO
+ * 
+ * Auth: Ensure Admin or Correct writer
+ */
+
 router.delete("/:writer_id/portfolios/:portfolio_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
         const deleted = await Portfolio.remove(req.params.writer_id, req.params.portfolio_id);
@@ -214,7 +255,14 @@ router.delete("/:writer_id/portfolios/:portfolio_id", ensureCorrectWriterOrAdmin
     }
 });
 
-//Add Piece to Portfolio
+/** POST /writers/[writerId]/portfolios/pieces/[pieceId]
+ * 
+ * Adds Piece to Portfolio
+ * 
+ * RETURNS Data on newly inserted portfolio piece.
+ * 
+ * Auth: Ensure Admin or Correct writer
+ */
 
 router.post("/:writer_id/portfolios/:portfolio_id/pieces/:piece_id/", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
@@ -225,7 +273,14 @@ router.post("/:writer_id/portfolios/:portfolio_id/pieces/:piece_id/", ensureCorr
     }
 });
 
-//Remove Piece From Portfolio
+/** DELETE /writers/[writerId]/portfolios/pieces/[pieceId]
+ * 
+ * Removes piece from Portfolio
+ * 
+ * RETURNS Data on newly deleted portfolio piece.
+ * 
+ * Auth: Ensure Admin or Correct writer
+ */
 
 router.delete("/:writer_id/portfolios/:portfolio_id/pieces/:piece_id/", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
@@ -240,6 +295,13 @@ router.delete("/:writer_id/portfolios/:portfolio_id/pieces/:piece_id/", ensureCo
 // //PIECES
 //** */
 
+/** GET /writers/[writerId]/pieces
+ * 
+ * RETURNS A LIST OF ALL PIECES BY WRITER
+ * 
+ * Auth: Ensure Logged in
+ */
+
 router.get("/:writer_id/pieces", ensureLoggedIn, async function(req, res, next) {
     try {
         const pieces = await Piece.getAllByWriterId(req.params.writer_id);
@@ -249,6 +311,13 @@ router.get("/:writer_id/pieces", ensureLoggedIn, async function(req, res, next) 
     }
 });
 
+/** GET /writers/[writerId]/pieces/[pieceID]
+ * 
+ * RETURNS A PIECE SPECIFIED BY ID
+ * 
+ * Auth: Ensure Logged in
+ */
+
 router.get("/:writer_id/pieces/:piece_id", ensureLoggedIn, async function(req, res, next) {
     try {
         const piece = await Piece.getById(req.params.piece_id);
@@ -257,6 +326,15 @@ router.get("/:writer_id/pieces/:piece_id", ensureLoggedIn, async function(req, r
         return next(error);
     }
 });
+
+/** POST /writers/[writerId]/pieces/new
+ * 
+ * Creates a new piece and inserts in db
+ * 
+ * RETURNS A NEW PIECE
+ * 
+ * Auth: Ensure Admin or Correct writer
+ */
 
 router.post("/:writer_id/pieces/new", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
@@ -273,6 +351,15 @@ router.post("/:writer_id/pieces/new", ensureCorrectWriterOrAdmin, async function
     }
 });
 
+/** PATCH /writers/[writerId]/pieces/[pieceID]
+ * 
+ * Updates piece in db
+ * 
+ * RETURNS A PIECE SPECIFIED BY ID
+ * 
+ * Auth: Ensure Admin or Correct writer
+ */
+
 router.patch("/:writer_id/pieces/:piece_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
         const validator = jsonschema.validate(req.body, updatePiece);
@@ -287,6 +374,15 @@ router.patch("/:writer_id/pieces/:piece_id", ensureCorrectWriterOrAdmin, async f
     }
 });
 
+/** DELETE /writers/[writerId]/pieces/[pieceID]
+ * 
+ * Deletes  piece in db
+ * 
+ * RETURNS A DELETED PIECE
+ * 
+ * Auth: Ensure Admin or Correct writer
+ */
+
 router.delete("/:writer_id/pieces/:piece_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
         const piece = await Piece.remove(req.params.writer_id, req.params.piece_id);
@@ -300,6 +396,15 @@ router.delete("/:writer_id/pieces/:piece_id", ensureCorrectWriterOrAdmin, async 
 //**PIECE TAGS */
 //
 
+/**POST /writers/[writerId]/pieces/[pieceID]/tags/[tagId]
+ * 
+ * Inserts new piece_tag into db
+ * 
+ * Returns new Piece-tag
+ * 
+ * Auth: Ensure Admin or Correct writer
+ */
+
 router.post("/:writer_id/pieces/:piece_id/tags/:tag_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
         const newPieceTag = await Piece.addPieceToItem(req.params.writer_id, req.params.piece_id, req.params.tag_id, "tag");
@@ -308,6 +413,16 @@ router.post("/:writer_id/pieces/:piece_id/tags/:tag_id", ensureCorrectWriterOrAd
         return next(error);
     }
 });
+
+/**DELETE /writers/[writerId]/pieces/[pieceID]/tags/[tagId]
+ * 
+ * Deletes a piece_tag from db
+ * 
+ * Returns a deleted Piece-tag
+ * 
+ * Auth: Ensure Admin or Correct writer
+ */
+
 
 router.delete("/:writer_id/pieces/:piece_id/tags/:tag_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
@@ -318,7 +433,10 @@ router.delete("/:writer_id/pieces/:piece_id/tags/:tag_id", ensureCorrectWriterOr
     }
 });
 
-//Applications
+/**GET /writers/[writerId]/applications
+ * 
+ * Returns a list of applications by writer ID.
+ */
 
 router.get("/:writer_id/applications", ensureCorrectWriterOrAdmin, async(req, res, next) => {
     try {

@@ -13,7 +13,7 @@ class Gig {
     /** Find all gigs (optional filter on searchFilters).
      *
      * searchFilters (all optional):
-     * - compensation
+     * - minCompensation
      * - maxWordCount
      * - minWordCount
      * - isRemote
@@ -28,12 +28,12 @@ class Gig {
         let whereExpressions = [];
         let queryValues = [];
 
-        const { compensation, maxWordCount, minWordCount, isRemote, platformId, tagTitle } = searchFilters;
+        const { minCompensation, maxWordCount, minWordCount, isRemote, platformId, tagTitle } = searchFilters;
 
         if(minWordCount > maxWordCount) throw new BadRequestError("Min word count cannot be greater than max");
 
         if(compensation !== undefined) {
-            queryValues.push(compensation);
+            queryValues.push(minCompensation);
             whereExpressions.push(`compensation >= $${queryValues.length}`);
         };
 

@@ -1,7 +1,3 @@
-/**
- * STILL NEED TO IMPORT jsonSchema for checks
- */
-
 "use strict";
 
 const jsonschema = require("jsonschema");
@@ -13,7 +9,6 @@ const userAuthSchema = require("../schemas/userAuth.json");
 const platformRegSchema = require("../schemas/platformReg.json");
 const writerRegSchema = require("../schemas/writerReg.json");
 const { BadRequestError } = require("../expressError");
-const {  ensureCorrectUserOrAdmin } = require("../middleware/auth");
 
 /** POST /auth/login:  { username, password } => { token }
  *

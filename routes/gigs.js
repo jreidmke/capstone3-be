@@ -17,6 +17,14 @@ const { BadRequestError } = require("../expressError");
  *
  * GET ALL GIGS
  * 
+ * Can provide search filter in query:
+     * - minCompensation
+     * - maxWordCount
+     * - minWordCount
+     * - isRemote
+     * - platformId
+     * - tagTitle
+     * 
  * Authorization required: Logged In
  */
 
