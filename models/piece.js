@@ -24,7 +24,8 @@ class Piece {
 
     /**Given a piece id, returns a piece
      * 
-     * Returns {id, writer_id, title, text, created_at, updated_at}
+     * Returns {id, writer_id, title, text, created_at, updated_at, tags}
+     *  where tags {id, title}
      * 
      * Failure throws not found
      */

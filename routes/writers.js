@@ -218,7 +218,7 @@ router.delete("/:writer_id/portfolios/:portfolio_id", ensureCorrectWriterOrAdmin
 
 router.post("/:writer_id/portfolios/:portfolio_id/pieces/:piece_id/", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
-        const newPiecePortfolio = await Portfolio.addPieceToItem(req.params.writer_id, req.params.piece_id, req.params.portfolio_id, "portfolio");
+        const newPiecePortfolio = await Piece.addPieceToItem(req.params.writer_id, req.params.piece_id, req.params.portfolio_id, "portfolio");
         return res.json({ newPiecePortfolio });
     } catch (error) {
         return next(error);
@@ -229,7 +229,7 @@ router.post("/:writer_id/portfolios/:portfolio_id/pieces/:piece_id/", ensureCorr
 
 router.delete("/:writer_id/portfolios/:portfolio_id/pieces/:piece_id/", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
-        const removedItem = await Portfolio.removePieceFromItem(req.params.writer_id, req.params.piece_id, req.params.portfolio_id, "portfolio");
+        const removedItem = await Piece.removePieceFromItem(req.params.writer_id, req.params.piece_id, req.params.portfolio_id, "portfolio");
         return res.json({ removedItem });
     } catch (error) {
         return next(error);

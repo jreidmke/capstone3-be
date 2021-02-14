@@ -10,7 +10,7 @@ class Portfolio {
      * 
      * Returns [{id, writer_id, title, created_at, updated_at},...]
      */
-    
+
     static async getAllByWriterId(writerId) {
         const result = await db.query(
             `SELECT * FROM portfolios 
@@ -21,6 +21,15 @@ class Portfolio {
         if(!portfolios.length) throw new NotFoundError(`Writer: ${writerId} has no portfolios.`);
         return portfolios;
     };
+
+    /**Given a piece id, returns a piece
+     * 
+     * Returns {id, writer_id, title, text, created_at, updated_at, pieces, tags}
+     *  where pieces {id, writer_id, title, text, created_at, updated_at} 
+     *  and tags {title}
+     * 
+     * Failure throws not found
+     */
 
     static async getById(portfolioId) {
         const result = await db.query(
@@ -40,10 +49,26 @@ class Portfolio {
             WHERE pp.portfolio_id=$1`,
             [portfolio.id]
         );
+        let pieces = pieceResult.rows;
+        portfolio.pieces = pieces;
 
-        portfolio.pieces = pieceResult.rows;
+        const tagRes = await db.query(
+            `SELECT t.title FROM tags AS t
+            JOIN piece_tags AS pt
+            ON t.id=pt.tag_id
+            WHERE pt.piece_id IN (${pieces.map(p => p.id).join(',')})
+            GROUP BY t.title`
+        );
+        portfolio.tags = tagRes.rows;
         return portfolio
     };
+
+    /** Create a portfolio (from data), update db, return new portfolio data.
+   *
+   * data should be { writerId, title }
+   *
+   * Returns the same
+   * */
 
     static async create(writerId, title) {
         const result = await db.query(
@@ -56,6 +81,11 @@ class Portfolio {
         return result.rows[0];
     };
 
+    /** Updates a portfolios title
+     * 
+     * Failure throws NotFoundError
+     */
+
     static async update(portfolioId, title) {
         const result = await db.query(
             `UPDATE portfolios
@@ -66,7 +96,12 @@ class Portfolio {
         );
         if(!result.rows[0]) throw new NotFoundError(`Portfolio: ${portfolioId} Not Found!`);
         return result.rows[0];
-    }
+    };
+
+    /** Delete given portfolio from database; returns all data on deleted portfolio.
+    *
+    * Throws NotFoundError if portfolio not found, UnauthorizedError is portfolio does not belong to writer.
+    **/
 
     static async remove(writerId, portfolioId) {
         const authCheck = await db.query(
@@ -86,71 +121,6 @@ class Portfolio {
         );
         return result.rows[0];
     };
-
-    static async addPieceToItem(writerId, pieceId, itemId, itemType) {
-        if(itemType === "portfolio" || itemType === "tag") {
-
-            //ERROR HANDLING
-            const dupCheck = await db.query(
-                `SELECT * from piece_${itemType}s
-                WHERE piece_id=$1
-                AND ${itemType}_id=$2`,
-                [pieceId, itemId]
-            );
-            if(dupCheck.rows[0]) throw new NotFoundError(`Piece: ${pieceId} is already added to ${itemType.toUpperCase()}: ${itemId}!`);
-            
-            const authCheck = await db.query(
-                `SELECT writer_id 
-                FROM pieces
-                WHERE id=$1`,
-                [pieceId]
-            );
-            if(authCheck.rows[0].writer_id !== writerId) throw new UnauthorizedError();
-
-            //INSERT STATEMENT
-            const result = await db.query(
-                `INSERT INTO piece_${itemType}s (piece_id, ${itemType}_id)
-                VALUES($1, $2)
-                RETURNING piece_id AS pieceId,
-                ${itemType}_id AS ${itemType}Id`,
-                [pieceId, itemId]
-            ); 
-            return result.rows[0];
-        };
-       throw new BadRequestError("Item Type must be String: 'tag' or 'portfolio'");
-    };
-
-    static async removePieceFromItem(writerId, pieceId, itemId, itemType) {
-        if(itemType === "portfolio" || itemType === "tag") {
-            const dupCheck = await db.query(
-                `SELECT * from piece_${itemType}s
-                WHERE piece_id=$1
-                AND ${itemType}_id=$2`,
-                [pieceId, itemId]
-            );
-            if(!dupCheck.rows[0]) throw new NotFoundError(`Piece: ${pieceId} is not added to ${itemType.toUpperCase()}: ${itemId}!`);
-            
-            const authCheck = await db.query(
-                `SELECT writer_id 
-                FROM pieces
-                WHERE id=$1`,
-                [pieceId]
-            );
-            if(authCheck.rows[0].writer_id !== writerId) throw new UnauthorizedError();
-
-            //DELETE STATEMENT
-            const result = await db.query(
-                `DELETE FROM piece_${itemType}s
-                WHERE piece_id=$1
-                AND ${itemType}_id=$2
-                RETURNING piece_id AS pieceId,
-                ${itemType}_id AS ${itemType}Id`,
-                [pieceId, itemId]
-            );
-            return result.rows[0];
-        };
-    };
-
 };
 
 module.exports = Portfolio;
