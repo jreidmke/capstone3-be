@@ -37,9 +37,9 @@ class Writer {
       return result.rows;
     };
 
-    /**FIND WRITER BY USERNAME
+    /**FIND WRITER BY id
      *
-     * Success: {username} => {username, first_name, last_name, age, location, email, phone, twitterUsername, facebookUsername, youtubeUsername, portfolios}
+     * Success: {id} => {username, first_name, last_name, age, location, email, phone, twitterUsername, facebookUsername, youtubeUsername, portfolios}
      *    where portfolios is { id, title, writer_username }
      *
      * Failure throws NotFoundError
@@ -59,9 +59,19 @@ class Writer {
 
       if(!writer) throw new NotFoundError(`Writer with ID: ${writerId} Not Found!`);
 
+      const portfolioRes = await db.query(
+        `SELECT * FROM portfolios
+        WHERE writer_id=$1`,
+        [writerId]
+      );
+      writer.portfolios = portfolioRes.rows;
       delete writer.password;
       return writer;
      };
+
+     /** Given a writer Id, removes writer from database and returns all data on deleted writer
+      *
+      */
 
      static async remove(writerId) {
        const result = await db.query(
@@ -70,26 +80,21 @@ class Writer {
          RETURNING writer_id AS writerId`,
          [writerId]
        );
-       const writer = result.rows[0];
-       if(!writer) throw new NotFoundError(`Writer with ID: ${writerId} Not Found!`);
-       return 'deleted'
+       return result.rows[0];
      };
 
-       /** Update user data with `data`.
+       /** Update writer data with `data`.
    *
    * This is a "partial update" --- it's fine if data doesn't contain
    * all the fields; this only changes provided ones.
    *
    * Data can include:
-   *   { firstName, lastName, password, email, isAdmin }
+   *   { firstName, lastName, age, bio }
    *
-   * Returns { username, firstName, lastName, email, isAdmin }
+   * Returns { firstName, lastName, age, bio }
    *
    * Throws NotFoundError if not found.
    *
-   * WARNING: this function can set a new password or make a user an admin.
-   * Callers of this function must be certain they have validated inputs to this
-   * or a serious security risks are opened.
    */
 
   static async update(writerId, writerData, userData) {
@@ -154,7 +159,12 @@ class Writer {
     user.writerData = writer;
 
     return user;
-  }
+  }; 
+
+    /**Given a writerId and itemType, returns all all writer follows
+    *
+    * Returns all data on new follow
+    */
 
      static async getFollows(writerId, itemType) {
       if(itemType === "tag" || itemType === "platform") {
@@ -172,18 +182,13 @@ class Writer {
        throw new BadRequestError("Item Type must be String: 'tag' or 'platform'");
       };
 
+      /**Given a writerId, itemId and itemType, a writer will follow a tag or platform
+       *
+       * Returns all data on new follow
+       */
+
       static async followItem(writerId, itemId, itemType) {
         if(itemType==="tag" || itemType==="platform") {
-
-          //CHECK IF WRITER ALREADY FOLLOWS
-          const duplicateCheck = await db.query(
-            `SELECT * FROM writer_${itemType}_follows
-            WHERE writer_id=$1 AND ${itemType}_id=$2`,
-            [writerId, itemId]
-          );
-          if(duplicateCheck.rows[0]) throw new BadRequestError(`Writer: ${writerId} already follows ${itemType.toUpperCase()}: ${itemId}`); 
-
-
           const result = await db.query(
             `INSERT INTO writer_${itemType}_follows (writer_id, ${itemType}_id)
             VALUES($1, $2)
@@ -197,9 +202,13 @@ class Writer {
        throw new BadRequestError("Item Type must be String: 'tag' or 'platform'");
       };
 
+      /**Given a writerId, itemId and itemType, a writer will unfollow a tag or platform
+       *
+       * Returns all data on new unfollow
+       */
+
       static async unfollowItem(writerId, itemId, itemType) {
         if(itemType==="tag" || itemType==="platform") {
-
           const result = await db.query(
             `DELETE FROM writer_${itemType}_follows
             WHERE ${itemType}_id=$1
@@ -208,10 +217,6 @@ class Writer {
             ${itemType}_id AS ${itemType}Id`,
             [itemId, writerId]
           );
-
-          //CHECK TO SEE IF THEY EVEN FOLLOWED
-          if(!result.rows[0]) throw new NotFoundError(`Writer: ${writerId} does not follow ${itemType.toUpperCase()}: ${itemId}`);
-
           return result.rows[0];
         };
       };
