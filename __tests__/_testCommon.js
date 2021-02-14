@@ -12,6 +12,8 @@ const { createToken } = require("../helpers/token");
 
 const testGigs = [];
 const testApplications = [];
+let writerToken;
+let platformToken;
 
 async function commonBeforeAll() {
     await db.query(`DELETE FROM writers`);
@@ -63,6 +65,10 @@ async function commonBeforeAll() {
                         description: "We are a platform",
                         displayName: "The Platform"    
                     });
+
+    writerToken = createToken({writerId: writer.writer_id, platformId: null});
+
+    platformToken = createToken({writerId: null, platformId:platform.platform_id});
     
     //gig
     testGigs[0] = await Gig.createGig(platform.id, 
@@ -86,6 +92,8 @@ async function commonBeforeAll() {
 
     testApplications[0] = await Application.submitApplication(writer.writer_id, testGigs[0].id, portfolio.id);
     testApplications[0] = await Application.submitApplication(writer.writer_id, testGigs[1].id, portfolio.id);
+    
+    
 };
 
 async function commonBeforeEach() {
@@ -100,16 +108,15 @@ async function commonAfterAll() {
     await db.end();
 }
 
-const writerToken = User.authenticate('maria@gmail.com', 'password');
-const platformToken = User.authenticate('platform@gmail.com', 'password');
+console.log(writerToken);
 
 module.exports = {
+    writerToken,
     commonBeforeAll,
     commonBeforeEach,
     commonAfterEach,
     commonAfterAll,
     testApplications,
     testGigs,
-    writerToken,
     platformToken
 };
