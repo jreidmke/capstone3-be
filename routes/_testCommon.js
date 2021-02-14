@@ -30,7 +30,7 @@ async function commonBeforeAll() {
     await db.query(`DELETE FROM writer_tag_follows`);
 
     //writer
-    await User.register({email: "maria@gmail.com", 
+    const writer = await User.register({email: "maria@gmail.com", 
                         password: "password", 
                         imageUrl: "picture", 
                         address1: "1430 Bilarda Ct.", 
@@ -48,7 +48,7 @@ async function commonBeforeAll() {
                         bio: "I am a writer."})
 
     //platform
-    await User.register({email: "platform@gmail.com", 
+    const platform = await User.register({email: "platform@gmail.com", 
                         password: "password", 
                         imageUrl: "platformPic", 
                         address1: "123 Fake Street", 
@@ -65,24 +65,27 @@ async function commonBeforeAll() {
                     });
     
     //gig
-    testGigs[0] = await Gig.createGig(1, {title: 'gig1', 
+    testGigs[0] = await Gig.createGig(platform.id, 
+                            {title: 'gig1', 
                             description: 'gig1', 
                             compensation: 50, 
                             isRemote: true, 
                             wordCount: 500});
-    testGigs[1] = await Gig.createGig(1, {title: 'gig2', 
+    testGigs[1] = await Gig.createGig(platform.id, 
+                            {title: 'gig2', 
                             description: 'gig2', 
                             compensation: 50, 
                             isRemote: false, 
                             wordCount: 100});
+
     //portfolio
-    await Portfolio.create(1, 'Portfolio');
+    const portfolio = await Portfolio.create(writer.writer_id, 'Portfolio');
 
     //piece
-    await Piece.create(1, 'Piece', 'The text of the piece');
+    const piece = await Piece.create(writer.id, 'Piece', 'The text of the piece');
 
-    testApplications[0] = await Application.submitApplication(1, 1, 1);
-    testApplications[0] = await Application.submitApplication(1, 2, 1);
+    testApplications[0] = await Application.submitApplication(writer.writer_id, testGigs[0].id, portfolio.id);
+    testApplications[0] = await Application.submitApplication(writer.writer_id, testGigs[1].id, portfolio.id);
 };
 
 async function commonBeforeEach() {
@@ -110,4 +113,3 @@ module.exports = {
     writerToken,
     platformToken
 };
-  

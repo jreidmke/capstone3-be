@@ -74,7 +74,7 @@ class Portfolio {
         const result = await db.query(
             `INSERT INTO portfolios (writer_id, title)
             VALUES ($1, $2)
-            RETURNING writer_id AS writerId,
+            RETURNING id, writer_id AS writerId,
             title`,
             [writerId, title]
         );

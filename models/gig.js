@@ -126,7 +126,7 @@ class Gig {
         const result = await db.query(
             `INSERT INTO gigs (platform_id, title, description, compensation, is_remote, word_count)
             VALUES($1, $2, $3, $4, $5, $6)
-            RETURNING title, description, compensation, is_remote AS isRemote, word_count AS wordCount, is_active AS isActive`,
+            RETURNING id, title, description, compensation, is_remote AS isRemote, word_count AS wordCount, is_active AS isActive`,
             [platformId, title, description, compensation, isRemote, wordCount]
         );
         

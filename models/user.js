@@ -45,14 +45,14 @@ class User {
 
             // USER TABLE (email, password, imageUrl, address1, address2, city, state, postalCode, phone, twitterUsername, facebookUsername, youtubeUsername)
 
-            //And WRITER TABLE (firstName, lastName, age, bio) OR PLATFORM TABLE (handle, description, display_name)
+            //And WRITER TABLE (firstName, lastName, age, bio) OR PLATFORM TABLE (description, display_name)
 
     /* Returns JWT used to auth further reqs.
     *
     * Auth required: none
     */
 
-    static async register({email, password, imageUrl, address1, address2, city, state, postalCode, phone, twitterUsername, facebookUsername, youtubeUsername, firstName, lastName, age, bio, handle, displayName, description}) {
+    static async register({email, password, imageUrl, address1, address2, city, state, postalCode, phone, twitterUsername, facebookUsername, youtubeUsername, firstName, lastName, age, bio, displayName, description}) {
 
         //duplicate email check
         if(await checkForItem(email, 'users', 'email')) throw new BadRequestError(`Duplicate email: ${email}. Please select another.`);
@@ -69,10 +69,10 @@ class User {
             user = result.rows[0];
         } else {
             const result = await db.query(
-                `INSERT INTO platforms (handle, display_name, description)
-                VALUES ($1, $2, $3)
+                `INSERT INTO platforms (display_name, description)
+                VALUES ($1, $2)
                 RETURNING id`,
-                [handle, displayName, description]
+                [displayName, description]
             );
             user = result.rows[0];
         };
