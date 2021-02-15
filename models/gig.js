@@ -196,7 +196,7 @@ class Gig {
         );
         
         if(!authCheck.rows[0]) throw new NotFoundError(`Gig: ${gigId} Not Found`);
-        if(platformId !== authCheck.rows[0].platform_id) throw new UnauthorizedError();
+        if(parseInt(platformId) !== authCheck.rows[0].platform_id) throw new UnauthorizedError();
 
         const result = await db.query(
             `DELETE FROM gigs
@@ -220,7 +220,7 @@ class Gig {
         );
 
         if(!authCheck.rows[0]) throw new NotFoundError(`Gig: ${gigId} Not Found`);
-        if(platformId !== authCheck.rows[0].platform_id) throw new UnauthorizedError();
+        if(parseInt(platformId) !== authCheck.rows[0].platform_id) throw new UnauthorizedError();
 
         const result = await db.query(
             `INSERT INTO gig_tags (gig_id, tag_id)
@@ -244,7 +244,7 @@ class Gig {
         );
         
         if(!authCheck.rows[0]) throw new NotFoundError(`Gig: ${gigId} Not Found`);
-        if(platformId !== authCheck.rows[0].platform_id) throw new UnauthorizedError();
+        if(parseInt(platformId) !== authCheck.rows[0].platform_id) throw new UnauthorizedError();
 
         const result = await db.query(
             `DELETE FROM gig_tags
@@ -258,6 +258,5 @@ class Gig {
     };
 };
 
-//GET ALL GIGS
 
 module.exports = Gig;

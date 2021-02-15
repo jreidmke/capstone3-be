@@ -94,7 +94,7 @@ describe("GET /gigs", function() {
     });
   });
 
-  describe("PATCH /gigs", function() {
+  describe("PATCH /platforms/[platformId]/gigs/[gigId]", function() {
 
 
     test("updates a gig", async function() {
@@ -131,7 +131,7 @@ describe("GET /gigs", function() {
     });
 });
 
-describe("POST /gigs", function() {
+describe("POST /platforms/[platformId]/gigs/new", function() {
     test("create a gig", async function() {
       const resp = await request(app).post(`/platforms/${testGigs[0].platformid}/gigs/new`).send({
         "title": "The New Gig",
@@ -183,3 +183,46 @@ describe("POST /gigs", function() {
       }
   )});
 });
+
+describe("POST/DELETE /platforms/[platformId]/gigs/[gigId]/tags", function() {
+  test("add gig to tag", async function() {
+    const resp = await request(app).post(`/platforms/${testGigs[0].platformid}/gigs/${testGigs[0].id}/tags/3`).set("authorization", tokens[1]);
+    expect(resp.body.newTag).toEqual({ gigid: expect.any(Number), tagid: 3 });
+  });
+
+  test("rejects add gig tag with bad auth", async function() {
+    const resp = await request(app).post(`/platforms/${testGigs[0].platformid}/gigs/${testGigs[0].id}/tags/3`).set("authorization", tokens[0]);
+    expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
+  });
+
+  test("delete gig tag", async function() {
+    const resp = await request(app).delete(`/platforms/${testGigs[0].platformid}/gigs/${testGigs[0].id}/tags/2`).set("authorization", tokens[1]);
+    expect(resp.body.removedTag).toEqual({ gigid: expect.any(Number), tagid: 2 });
+  });
+
+  test("rejects delete gig tag with bad auth", async function() {
+    const resp = await request(app).delete(`/platforms/${testGigs[0].platformid}/gigs/${testGigs[0].id}/tags/2`).set("authorization", tokens[0]);
+    expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
+  });
+});
+
+describe("DELETE /platforms/[platformId]/gigs/[gigId]", function() {
+  test("deletes gig", async function() {
+    const resp = await request(app).delete(`/platforms/${testGigs[0].platformid}/gigs/${testGigs[0].id}`).set("authorization", tokens[1]);
+    console.log(resp.body);
+    expect(resp.body.deletedGig).toEqual({compensation: "50.00",
+                                          created_at: expect.any(String), 
+                                          description: "gig1",
+                                          id: expect.any(Number),  
+                                          is_active: true, 
+                                          is_remote: true, 
+                                          platform_id: expect.any(Number),
+                                          title: "gig1", 
+                                          updated_at: null, 
+                                          word_count: 500})
+  });
+  test("rejects delete gig with bad auth", async function() {
+    const resp = await request(app).delete(`/platforms/${testGigs[0].platformid}/gigs/${testGigs[0].id}`).set("authorization", tokens[0]);
+    expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
+  })
+})
