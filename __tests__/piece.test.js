@@ -12,7 +12,6 @@ const {
   commonAfterEach,
   commonAfterAll,
   tokens,
-  testGigs,
   piecePortfolio
 } = require("../_testCommon");
 
@@ -58,6 +57,100 @@ describe("GET /writers/[writerId]/pieces", function() {
     });
 });
 
+describe("PATCH /writers/[writerId]/piece/[pieceId]", function() {
+    test("updates piece", async function() {
+        const resp = await request(app).patch(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}`)
+                                            .send({title: "New Title", text: "New Text"})
+                                            .set("authorization", tokens[0]);
+        expect(resp.body.updatedPiece).toEqual({
+            id: expect.any(Number),
+            writer_id: expect.any(Number),
+            title: 'New Title',
+            text: 'New Text',
+            created_at: expect.any(String),
+            updated_at: null
+          })
+    });
+
+    test("rejects update with bad auth", async function() {
+        const resp = await request(app).patch(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}`)
+                                        .send({title: "New Title", text: "New Text"})
+                                        .set("authorization", tokens[1]);
+        expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
+    });
+
+    test("rejects update with bad json", async function() {
+        const resp = await request(app).patch(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}`)
+                                        .send({blah: "New Title", blech: "New Text"})
+                                        .set("authorization", tokens[0]);
+        expect(resp.body.error).toEqual({
+            message: [
+              'instance is not allowed to have the additional property "blah"',
+              'instance is not allowed to have the additional property "blech"'
+            ],
+            status: 400
+          })
+    })                                  
+})
+//create piece
+describe("POST /writers/[writerId]/pieces", function() {
+    test("can post new piece", async function() {
+        const resp = await request(app).post(`/writers/${piecePortfolio[0].writer_id}/pieces/new`)
+                                            .send({title: "New Title", text: "New Text"})
+                                            .set("authorization", tokens[0]);
+        expect(resp.body.newPiece).toEqual({
+            id: expect.any(Number),
+            writer_id: expect.any(Number),
+            title: 'New Title',
+            text: 'New Text',
+            created_at: expect.any(String),
+            updated_at: null
+        });
+    });
+    test("rejects post new piece with bad auth", async function() {
+        const resp = await request(app).post(`/writers/${piecePortfolio[0].writer_id}/pieces/new`)
+                                            .send({title: "New Title", text: "New Text"})
+                                            .set("authorization", tokens[1]);
+        expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
+    });
+    
+    test("rejects post new piece with bad json", async function() {
+        const resp = await request(app).post(`/writers/${piecePortfolio[0].writer_id}/pieces/new`)
+                                            .send({blah: "New Title", blech: "New Text"})
+                                            .set("authorization", tokens[0]);
+        console.log(resp.body.error);
+        expect(resp.body.error).toEqual({
+            message: [
+              'instance requires property "title"',
+              'instance requires property "text"',
+              'instance is not allowed to have the additional property "blah"',
+              'instance is not allowed to have the additional property "blech"'
+            ],
+            status: 400
+          }
+      )
+    });
+});
+
+describe("DELETE /writers/[writerId]/pieces/[pieceId]", function() {
+    test("delete piece", async function() {
+        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}`).set("authorization", tokens[0]);
+        expect(resp.body.deletedPiece).toEqual({
+            id: expect.any(Number),
+            writer_id: expect.any(Number),
+            title: 'Piece',
+            text: 'The text of the piece',
+            created_at: expect.any(String),
+            updated_at: null
+        });
+    });
+
+    test("rejects delete piece on bad auth", async function() {
+        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}`).set("authorization", tokens[1]);
+        expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
+    });
+});
+
 describe("POST/DELETE /writers/[writerId]/pieces/[pieceId]/tags/[tagId]", function() {
     test("add piece to tag", async function() {
       const resp = await request(app).post(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}/tags/3`).set("authorization", tokens[0]);
@@ -79,7 +172,7 @@ describe("POST/DELETE /writers/[writerId]/pieces/[pieceId]/tags/[tagId]", functi
         expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
   
-  });
+});
 
 
   

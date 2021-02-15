@@ -90,7 +90,7 @@ class Piece {
           [pieceId]
         );
     
-        if(authCheck.rows[0].writer_id !== writerId) throw new UnauthorizedError();
+        if(authCheck.rows[0].writer_id !== parseInt(writerId)) throw new UnauthorizedError();
     
         let { setCols, values } = sqlForPartialUpdate(data, {});
         const pieceIdVarIdx = "$" + (values.length + 1);

@@ -367,8 +367,8 @@ router.patch("/:writer_id/pieces/:piece_id", ensureCorrectWriterOrAdmin, async f
             const errs = validator.errors.map(e => e.stack);
             throw new BadRequestError(errs);
         }
-        const newPiece = await Piece.update(req.params.writer_id, req.params.piece_id, req.body);
-        return res.json({ newPiece });
+        const updatedPiece = await Piece.update(req.params.writer_id, req.params.piece_id, req.body);
+        return res.json({ updatedPiece });
     } catch (error) {
         return next(error);
     }
@@ -385,8 +385,8 @@ router.patch("/:writer_id/pieces/:piece_id", ensureCorrectWriterOrAdmin, async f
 
 router.delete("/:writer_id/pieces/:piece_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
-        const piece = await Piece.remove(req.params.writer_id, req.params.piece_id);
-        return res.json({ piece });
+        const deletedPiece = await Piece.remove(req.params.writer_id, req.params.piece_id);
+        return res.json({ deletedPiece });
     } catch (error) {
         return next(error);
     }

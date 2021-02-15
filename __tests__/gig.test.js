@@ -95,8 +95,6 @@ describe("GET /gigs", function() {
   });
 
   describe("PATCH /platforms/[platformId]/gigs/[gigId]", function() {
-
-
     test("updates a gig", async function() {
       const resp = await request(app).patch(`/platforms/${testGigs[0].platformid}/gigs/${testGigs[0].id}`).send({title: 'gig3'}).set("authorization", tokens[1]);
       expect(resp.body.updatedGig).toEqual({
