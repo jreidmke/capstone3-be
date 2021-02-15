@@ -14,7 +14,7 @@ const {
   tokens,
   testGigs,
   piecePortfolio
-} = require("./_testCommon");
+} = require("../_testCommon");
 
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
@@ -51,5 +51,11 @@ describe("GET /writers/[writerId]/pieces", function() {
             updated_at: null,
             tags: []
           });
-    })
+    });
+
+    test("throws unauth with no token", async function() {
+        const resp = await request(app).get(`/writers/${piecePortfolio[0].writer_id}/pieces`);
+        expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
+    });
+
 })

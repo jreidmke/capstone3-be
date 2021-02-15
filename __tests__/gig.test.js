@@ -13,7 +13,7 @@ const {
   commonAfterAll,
   tokens,
   testGigs
-} = require("./_testCommon");
+} = require("../_testCommon");
 
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);

@@ -1,14 +1,14 @@
 "use strict";
 
-const db = require("../db.js");
-const Application = require("../models/application");
-const Gig = require("../models/gig");
-const Piece = require("../models/piece");
-const Platform = require("../models/platform");
-const Portfolio = require("../models/portfolio");
-const User = require("../models/user");
-const Writer = require("../models/writer");
-const { createToken } = require("../helpers/token");
+const db = require("./db.js");
+const Application = require("./models/application");
+const Gig = require("./models/gig");
+const Piece = require("./models/piece");
+const Platform = require("./models/platform");
+const Portfolio = require("./models/portfolio");
+const User = require("./models/user");
+const Writer = require("./models/writer");
+const { createToken } = require("./helpers/token");
 
 const testGigs = [];
 const testApplications = [];
