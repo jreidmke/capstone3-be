@@ -65,8 +65,8 @@ async function commonBeforeAll() {
                         displayName: "The Platform"    
                     });
 
-    tokens[0] = createToken({writerId: writer.writer_id, platformId: null});
-    tokens[1] = createToken({writerId: null, platformId:platform.platform_id});
+    tokens[0] = createToken(writer);
+    tokens[1] = createToken(platform);
 
     //gig
     testGigs[0] = await Gig.createGig(platform.platform_id, 
