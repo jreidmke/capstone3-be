@@ -407,8 +407,8 @@ router.delete("/:writer_id/pieces/:piece_id", ensureCorrectWriterOrAdmin, async 
 
 router.post("/:writer_id/pieces/:piece_id/tags/:tag_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
-        const newPieceTag = await Piece.addPieceToItem(req.params.writer_id, req.params.piece_id, req.params.tag_id, "tag");
-        return res.json({ newPieceTag });
+        const newTag = await Piece.addPieceToItem(req.params.writer_id, req.params.piece_id, req.params.tag_id, "tag");
+        return res.json({ newTag });
     } catch (error) {
         return next(error);
     }
@@ -426,8 +426,8 @@ router.post("/:writer_id/pieces/:piece_id/tags/:tag_id", ensureCorrectWriterOrAd
 
 router.delete("/:writer_id/pieces/:piece_id/tags/:tag_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
-        const removedItem = await Piece.removePieceFromItem(req.params.writer_id, req.params.piece_id, req.params.tag_id, "tag");
-        return res.json({ removedItem });
+        const removedTag = await Piece.removePieceFromItem(req.params.writer_id, req.params.piece_id, req.params.tag_id, "tag");
+        return res.json({ removedTag });
     } catch (error) {
         return next(error);
     }

@@ -209,7 +209,6 @@ describe("POST/DELETE /platforms/[platformId]/gigs/[gigId]/tags", function() {
 describe("DELETE /platforms/[platformId]/gigs/[gigId]", function() {
   test("deletes gig", async function() {
     const resp = await request(app).delete(`/platforms/${testGigs[0].platformid}/gigs/${testGigs[0].id}`).set("authorization", tokens[1]);
-    console.log(resp.body);
     expect(resp.body.deletedGig).toEqual({compensation: "50.00",
                                           created_at: expect.any(String), 
                                           description: "gig1",

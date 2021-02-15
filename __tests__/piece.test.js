@@ -40,9 +40,7 @@ describe("GET /writers/[writerId]/pieces", function() {
     });
 
     test("get piece by id", async function() {
-        console.log(piecePortfolio[0].id)
         const resp = await request(app).get(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}`).set("authorization", tokens[0]);
-        console.log(resp.body.piece.tags);
         expect(resp.body.piece).toEqual({
             id: expect.any(Number),
             writer_id: expect.any(Number),
@@ -58,4 +56,30 @@ describe("GET /writers/[writerId]/pieces", function() {
         const resp = await request(app).get(`/writers/${piecePortfolio[0].writer_id}/pieces`);
         expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
-})
+});
+
+describe("POST/DELETE /writers/[writerId]/pieces/[pieceId]/tags/[tagId]", function() {
+    test("add piece to tag", async function() {
+      const resp = await request(app).post(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}/tags/3`).set("authorization", tokens[0]);
+      expect(resp.body.newTag).toEqual({ pieceid: expect.any(Number), tagid: 3 });
+    });
+
+    test("rejects add piece tag with bad auth", async function() {
+        const resp = await request(app).post(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}/tags/2`).set("authorization", tokens[1]);
+        expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
+    });
+    
+      test("delete piece tag", async function() {
+        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}/tags/2`).set("authorization", tokens[0]);
+        expect(resp.body.removedTag).toEqual({ pieceid: expect.any(Number), tagid: 2 });
+    });
+    
+      test("rejects delete piece tag with bad auth", async function() {
+        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}/tags/2`).set("authorization", tokens[1]);
+        expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
+    });
+  
+  });
+
+
+  

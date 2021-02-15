@@ -121,7 +121,7 @@ class Piece {
 
         //Error Handling
         if(!authCheck.rows[0]) throw new NotFoundError(`Piece: ${pieceId} Not Found!`);
-        if(authCheck.rows[0].writer_id !== writerId) throw new UnauthorizedError();
+        if(authCheck.rows[0].writer_id !== parseInt(writerId)) throw new UnauthorizedError();
 
         const result = await db.query(
             `DELETE FROM pieces
@@ -147,7 +147,7 @@ class Piece {
                 WHERE id=$1`,
                 [pieceId]
             );
-            if(authCheck.rows[0].writer_id !== writerId) throw new UnauthorizedError();
+            if(authCheck.rows[0].writer_id !== parseInt(writerId)) throw new UnauthorizedError();
 
             //INSERT STATEMENT
             const result = await db.query(
@@ -177,7 +177,7 @@ class Piece {
                 WHERE id=$1`,
                 [pieceId]
             );
-            if(authCheck.rows[0].writer_id !== writerId) throw new UnauthorizedError();
+            if(authCheck.rows[0].writer_id !== parseInt(writerId)) throw new UnauthorizedError();
 
             //DELETE STATEMENT
             const result = await db.query(
