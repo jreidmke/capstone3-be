@@ -11,8 +11,7 @@ const {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
-  writerToken,
-  platformToken,
+  tokens,
   testGigs
 } = require("./_testCommon");
 
@@ -22,10 +21,30 @@ beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
-
 describe("GET /gigs", function() {
     test("works for logged in user", async function() {
-        const resp = await request(app).get("/gigs").set("authorization", writerToken);
-        expect(resp.body).toEqual(testGigs)
+        const resp = await request(app).get("/gigs").set("authorization", tokens[0]);
+        expect(resp.body.gigs).toEqual([
+          {
+            id: testGigs[0].id,
+            platformid: testGigs[0].platformid,
+            title: 'gig1',
+            description: 'gig1',
+            compensation: '50.00',
+            isremote: true,
+            wordcount: '500',
+            isactive: true
+          },
+          {
+            id: testGigs[1].id,
+            platformid: testGigs[0].platformid,
+            title: 'gig2',
+            description: 'gig2',
+            compensation: '500.00',
+            isremote: false,
+            wordcount: '100',
+            isactive: true
+          }
+  ])
     })
-})
+});

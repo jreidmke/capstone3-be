@@ -12,8 +12,7 @@ const { createToken } = require("../helpers/token");
 
 const testGigs = [];
 const testApplications = [];
-let writerToken;
-let platformToken;
+const tokens = []; //writer token idx[0], platform token idx[1]
 
 async function commonBeforeAll() {
     await db.query(`DELETE FROM writers`);
@@ -66,21 +65,20 @@ async function commonBeforeAll() {
                         displayName: "The Platform"    
                     });
 
-    writerToken = createToken({writerId: writer.writer_id, platformId: null});
+    tokens[0] = createToken({writerId: writer.writer_id, platformId: null});
+    tokens[1] = createToken({writerId: null, platformId:platform.platform_id});
 
-    platformToken = createToken({writerId: null, platformId:platform.platform_id});
-    
     //gig
-    testGigs[0] = await Gig.createGig(platform.id, 
+    testGigs[0] = await Gig.createGig(platform.platform_id, 
                             {title: 'gig1', 
                             description: 'gig1', 
                             compensation: 50, 
                             isRemote: true, 
                             wordCount: 500});
-    testGigs[1] = await Gig.createGig(platform.id, 
+    testGigs[1] = await Gig.createGig(platform.platform_id, 
                             {title: 'gig2', 
                             description: 'gig2', 
-                            compensation: 50, 
+                            compensation: 500, 
                             isRemote: false, 
                             wordCount: 100});
 
@@ -91,9 +89,7 @@ async function commonBeforeAll() {
     const piece = await Piece.create(writer.id, 'Piece', 'The text of the piece');
 
     testApplications[0] = await Application.submitApplication(writer.writer_id, testGigs[0].id, portfolio.id);
-    testApplications[0] = await Application.submitApplication(writer.writer_id, testGigs[1].id, portfolio.id);
-    
-    
+    testApplications[1] = await Application.submitApplication(writer.writer_id, testGigs[1].id, portfolio.id);
 };
 
 async function commonBeforeEach() {
@@ -108,15 +104,13 @@ async function commonAfterAll() {
     await db.end();
 }
 
-console.log(writerToken);
 
 module.exports = {
-    writerToken,
     commonBeforeAll,
     commonBeforeEach,
     commonAfterEach,
     commonAfterAll,
     testApplications,
     testGigs,
-    platformToken
+    tokens
 };
