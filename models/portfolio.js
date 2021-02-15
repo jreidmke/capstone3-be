@@ -89,7 +89,13 @@ class Portfolio {
      * Failure throws NotFoundError
      */
 
-    static async update(portfolioId, title) {
+    static async update(writerId, portfolioId, title) {
+        const authCheck = await db.query(
+            `SELECT * FROM portfolios WHERE id=$1`,
+            [portfolioId]
+        );
+
+        if(authCheck.rows[0].writer_id !== parseInt(writerId)) throw new UnauthorizedError();
         const result = await db.query(
             `UPDATE portfolios
             SET title=$1
@@ -114,7 +120,7 @@ class Portfolio {
 
         //Error Handling
         if(!authCheck.rows[0]) throw new NotFoundError(`Portfolio: ${portfolioId} Not Found!`);
-        if(authCheck.rows[0].writer_id !== writerId) throw new UnauthorizedError();
+        if(authCheck.rows[0].writer_id !== parseInt(writerId)) throw new UnauthorizedError();
 
         const result = await db.query(
             `DELETE FROM portfolios
