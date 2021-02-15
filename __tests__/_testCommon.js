@@ -88,7 +88,7 @@ async function commonBeforeAll() {
     piecePortfolio[1] = portfolio;
 
     //piece
-    const piece = await Piece.create(writer.id, 'Piece', 'The text of the piece');
+    const piece = await Piece.create(writer.writer_id, 'Piece', 'The text of the piece');
     piecePortfolio[0] = piece;
 
     testApplications[0] = await Application.submitApplication(writer.writer_id, testGigs[0].id, portfolio.id);

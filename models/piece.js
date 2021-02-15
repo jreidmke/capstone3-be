@@ -19,6 +19,7 @@ class Piece {
             [writerId]
         );
         const pieces = result.rows;
+        if(!pieces.length) throw new NotFoundError(`Writer: ${writerId} Not Found!`);
         return pieces;
     };
 
