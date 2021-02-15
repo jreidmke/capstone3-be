@@ -40,7 +40,7 @@ class Portfolio {
         const portfolio = result.rows[0];
 
         //Error Handlers
-        if(!portfolio) throw new NotFoundError(`Portfolio:${portfolioId} Not Found!`);
+        if(!portfolio) throw new NotFoundError(`Portfolio: ${portfolioId} Not Found!`);
 
         const pieceResult = await db.query(
             `SELECT * FROM pieces AS p
@@ -51,15 +51,18 @@ class Portfolio {
         );
         let pieces = pieceResult.rows;
         portfolio.pieces = pieces;
-
-        const tagRes = await db.query(
-            `SELECT t.title FROM tags AS t
-            JOIN piece_tags AS pt
-            ON t.id=pt.tag_id
-            WHERE pt.piece_id IN (${pieces.map(p => p.id).join(',')})
-            GROUP BY t.title`
-        );
-        portfolio.tags = tagRes.rows;
+            
+        if(pieces.length) {
+            const tagRes = await db.query(
+                `SELECT t.title FROM tags AS t
+                JOIN piece_tags AS pt
+                ON t.id=pt.tag_id
+                WHERE pt.piece_id IN (${pieces.map(p => p.id).join(',')})
+                GROUP BY t.title`
+            );
+            portfolio.tags = tagRes.rows;
+        }
+        
         return portfolio
     };
 
