@@ -93,7 +93,7 @@ class Gig {
         if(!gig) throw new NotFoundError(`Gig: ${id} Not Found!`);
 
         const tagRes = await db.query(
-            `SELECT t.*
+            `SELECT t.title
             FROM tags AS t
             JOIN gig_tags AS gt
             ON gt.tag_id=t.id

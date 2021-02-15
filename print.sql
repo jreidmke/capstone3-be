@@ -16,4 +16,4 @@ CREATE DATABASE print_test;
 \connect print_test;
 
 \i print-schema.sql
-\i print-seed.sql
+\i print-test-seed.sql

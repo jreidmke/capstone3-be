@@ -42,6 +42,7 @@ describe("GET /writers/[writerId]/pieces", function() {
     test("get piece by id", async function() {
         console.log(piecePortfolio[0].id)
         const resp = await request(app).get(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}`).set("authorization", tokens[0]);
+        console.log(resp.body.piece.tags);
         expect(resp.body.piece).toEqual({
             id: expect.any(Number),
             writer_id: expect.any(Number),
@@ -49,7 +50,7 @@ describe("GET /writers/[writerId]/pieces", function() {
             text: 'The text of the piece',
             created_at: expect.any(String),
             updated_at: null,
-            tags: []
+            tags: [{ title: 'cooking', id: 1 }, { title: 'food', id: 2 }]
           });
     });
 
@@ -57,5 +58,4 @@ describe("GET /writers/[writerId]/pieces", function() {
         const resp = await request(app).get(`/writers/${piecePortfolio[0].writer_id}/pieces`);
         expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
-
 })

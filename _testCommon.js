@@ -14,6 +14,8 @@ const testGigs = [];
 const testApplications = [];
 const tokens = []; //writer token idx[0], platform token idx[1]
 const piecePortfolio = []//piece idx[0], portfolio idx[1]
+const pieceTags = [];
+const gigTags = [];
 
 async function commonBeforeAll() {
     await db.query(`DELETE FROM writers`);
@@ -22,7 +24,6 @@ async function commonBeforeAll() {
     await db.query(`DELETE FROM gigs`);
     await db.query(`DELETE FROM pieces`);
     await db.query(`DELETE FROM portfolios`);
-    await db.query(`DELETE FROM tags`);
     await db.query(`DELETE FROM piece_portfolios`);
     await db.query(`DELETE FROM piece_tags`);
     await db.query(`DELETE FROM gig_tags`);
@@ -93,6 +94,12 @@ async function commonBeforeAll() {
 
     testApplications[0] = await Application.submitApplication(writer.writer_id, testGigs[0].id, portfolio.id);
     testApplications[1] = await Application.submitApplication(writer.writer_id, testGigs[1].id, portfolio.id);
+
+    pieceTags[0] = await Piece.addPieceToItem(writer.writer_id, piece.id, 1, 'tag');
+    pieceTags[0] = await Piece.addPieceToItem(writer.writer_id, piece.id, 2, 'tag');
+
+    gigTags[0] = await Gig.addTagToGig(platform.platform_id, testGigs[0].id, 1);
+    gigTags[1] = await Gig.addTagToGig(platform.platform_id, testGigs[0].id, 2);
 };
 
 async function commonBeforeEach() {
@@ -116,5 +123,7 @@ module.exports = {
     testApplications,
     testGigs,
     tokens,
-    piecePortfolio
+    piecePortfolio,
+    gigTags,
+    pieceTags
 };

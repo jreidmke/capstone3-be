@@ -1,0 +1,2 @@
+INSERT INTO tags (title, is_fiction)
+VALUES('cooking', FALSE), ('food', FALSE), ('recipes', FALSE), ('political comedy', FALSE), ('political history', FALSE), ('politics', FALSE), ('sitcom', TRUE), ('stand up comedy', FALSE), ('humor', TRUE), ('true crime', TRUE), ('monsters', FALSE), ('slashers', TRUE), ('space tech', FALSE), ('sci-fi', TRUE), ('gaming', FALSE), ('automobiles', FALSE), ('trucks', FALSE), ('parenting', FALSE), ('religion studies', FALSE), ('sports', FALSE);

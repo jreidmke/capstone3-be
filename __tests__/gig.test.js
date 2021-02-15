@@ -84,7 +84,7 @@ describe("GET /gigs", function() {
         is_active: true,
         created_at: expect.any(String),
         updated_at: null,
-        tags: []
+        tags: [{title: "cooking"}, {title: "food"}]
       })
     });
 
