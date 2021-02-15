@@ -93,6 +93,10 @@ describe("GET /gigs", function() {
       const resp = await request(app).get("/gigs/0").set("authorization", tokens[0]);
       expect(resp.body).toEqual({ error: { message: 'Gig: 0 Not Found!', status: 404 } });
     });
+  });
+
+  describe("PATCH /gigs", function() {
+
 
     test("updates a gig", async function() {
       const resp = await request(app).patch(`/platforms/${testGigs[0].platformid}/gigs/${testGigs[0].id}`).send({title: 'gig3'}).set("authorization", tokens[1]);
@@ -126,7 +130,9 @@ describe("GET /gigs", function() {
         }
       });
     });
+});
 
+describe("POST /gigs", function() {
     test("create a gig", async function() {
       const resp = await request(app).post(`/platforms/${testGigs[0].platformid}/gigs/new`).send({
         "title": "The New Gig",
@@ -176,6 +182,5 @@ describe("GET /gigs", function() {
           status: 400
         }
       }
-  )
-    })
+  )});
 });

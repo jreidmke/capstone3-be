@@ -13,6 +13,7 @@ const { createToken } = require("../helpers/token");
 const testGigs = [];
 const testApplications = [];
 const tokens = []; //writer token idx[0], platform token idx[1]
+const piecePortfolio = []//piece idx[0], portfolio idx[1]
 
 async function commonBeforeAll() {
     await db.query(`DELETE FROM writers`);
@@ -84,9 +85,11 @@ async function commonBeforeAll() {
 
     //portfolio
     const portfolio = await Portfolio.create(writer.writer_id, 'Portfolio');
+    piecePortfolio[1] = portfolio;
 
     //piece
     const piece = await Piece.create(writer.id, 'Piece', 'The text of the piece');
+    piecePortfolio[0] = piece;
 
     testApplications[0] = await Application.submitApplication(writer.writer_id, testGigs[0].id, portfolio.id);
     testApplications[1] = await Application.submitApplication(writer.writer_id, testGigs[1].id, portfolio.id);
@@ -112,5 +115,6 @@ module.exports = {
     commonAfterAll,
     testApplications,
     testGigs,
-    tokens
+    tokens,
+    piecePortfolio
 };
