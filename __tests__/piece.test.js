@@ -12,7 +12,8 @@ const {
   commonAfterEach,
   commonAfterAll,
   tokens,
-  piecePortfolio
+  piecePortfolio,
+  piecePortfolioAuthCheck
 } = require("../_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -79,6 +80,13 @@ describe("PATCH /writers/[writerId]/piece/[pieceId]", function() {
         expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
 
+    test("rejects update if piece does not belong to writer", async function() {
+        const resp = await request(app).patch(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolioAuthCheck[0].id}`)
+                                        .send({title: "New Title", text: "New Text"})
+                                        .set("authorization", tokens[1]);
+        expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
+    });
+
     test("rejects update with bad json", async function() {
         const resp = await request(app).patch(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}`)
                                         .send({blah: "New Title", blech: "New Text"})
@@ -118,7 +126,6 @@ describe("POST /writers/[writerId]/pieces", function() {
         const resp = await request(app).post(`/writers/${piecePortfolio[0].writer_id}/pieces/new`)
                                             .send({blah: "New Title", blech: "New Text"})
                                             .set("authorization", tokens[0]);
-        console.log(resp.body.error);
         expect(resp.body.error).toEqual({
             message: [
               'instance requires property "title"',
@@ -149,6 +156,11 @@ describe("DELETE /writers/[writerId]/pieces/[pieceId]", function() {
         const resp = await request(app).delete(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}`).set("authorization", tokens[1]);
         expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
+
+    test("rejects delete if piece doesn't belong to author", async function() {
+        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolioAuthCheck[0].id}`).set("authorization", tokens[1]);
+        expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
+    });
 });
 
 describe("POST/DELETE /writers/[writerId]/pieces/[pieceId]/tags/[tagId]", function() {
@@ -161,14 +173,24 @@ describe("POST/DELETE /writers/[writerId]/pieces/[pieceId]/tags/[tagId]", functi
         const resp = await request(app).post(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}/tags/2`).set("authorization", tokens[1]);
         expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
+
+    test("rejects add piece tag if piece doesn't belong to writer", async function() {
+        const resp = await request(app).post(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolioAuthCheck[0].id}/tags/2`).set("authorization", tokens[1]);
+        expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
+    });
     
-      test("delete piece tag", async function() {
+    test("delete piece tag", async function() {
         const resp = await request(app).delete(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}/tags/2`).set("authorization", tokens[0]);
         expect(resp.body.removedTag).toEqual({ pieceid: expect.any(Number), tagid: 2 });
     });
     
-      test("rejects delete piece tag with bad auth", async function() {
+    test("rejects delete piece tag with bad auth", async function() {
         const resp = await request(app).delete(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}/tags/2`).set("authorization", tokens[1]);
+        expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
+    });
+
+    test("rejects delete piece tag if piece doesn't belong to writer", async function() {
+        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolioAuthCheck[0].id}/tags/2`).set("authorization", tokens[1]);
         expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
   

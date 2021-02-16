@@ -127,4 +127,6 @@ describe("POST /writers/[writerId]/portfolios/", function() {
     });
 });
 
-//add piece to portfolio
+describe("POST/DELETE /writers/[writerId]/portfolios/[portfolioId]/pieces/[pieceId]/", function() {
+    test("adds piece to portfolio", )
+})
