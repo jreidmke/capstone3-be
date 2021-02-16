@@ -12,7 +12,8 @@ const {
   commonAfterEach,
   commonAfterAll,
   tokens,
-  piecePortfolio
+  piecePortfolio,
+  piecePortfolioAuthCheck
 } = require("../_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -76,6 +77,11 @@ describe("PATCH /writers/[writerId]/portfolios/[portfolioId]", function() {
         const resp = await request(app).patch(`/writers/${piecePortfolio[0].writer_id}/portfolios/${piecePortfolio[1].id}`).send({blech: 'Updated Title'}).set("authorization", tokens[0]);
         expect(resp.body).toEqual({ error: { message: 'Must change title!', status: 400 } });
     });
+
+    test("rejects update portfolio if portfolio does not belong to writer", async function() {
+        const resp = await request(app).patch(`/writers/${piecePortfolio[0].writer_id}/portfolios/${piecePortfolioAuthCheck[1].id}`).send({title: 'Updated Title'}).set("authorization", tokens[0]);
+        expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
+    })
 });
 
 describe("DELETE /writers/[writerId]/portfolios/[portfolioId]", function() {

@@ -14,6 +14,7 @@ const testGigs = [];
 const testApplications = [];
 const tokens = []; //writer token idx[0], platform token idx[1]
 const piecePortfolio = []//piece idx[0], portfolio idx[1]
+const piecePortfolioAuthCheck = []; //piece idx[0], portfolio idx[1]
 const pieceTags = [];
 const gigTags = [];
 
@@ -34,6 +35,22 @@ async function commonBeforeAll() {
 
     //writer
     const writer = await User.register({email: "maria@gmail.com", 
+                        password: "password", 
+                        imageUrl: "picture", 
+                        address1: "1430 Bilarda Ct.", 
+                        address2: null, 
+                        city: "Geneva", 
+                        state: "Illinois", 
+                        postalCode: 60134, 
+                        phone: "630-338-5693", 
+                        twitterUsername: "tessa",
+                        facebookUsername: "tessa",
+                        youtubeUsername: "tessa", 
+                        firstName: "Maria", 
+                        lastName: "Aldapa", 
+                        age: 24, 
+                        bio: "I am a writer."});
+    const writer2 = await User.register({email: "authcheck@gmail.com", 
                         password: "password", 
                         imageUrl: "picture", 
                         address1: "1430 Bilarda Ct.", 
@@ -92,6 +109,12 @@ async function commonBeforeAll() {
     const piece = await Piece.create(writer.writer_id, 'Piece', 'The text of the piece');
     piecePortfolio[0] = piece;
 
+    const portfolioAuthCheck = await Portfolio.create(writer2.writer_id, 'Auth Portfolio');
+    piecePortfolioAuthCheck[1] = portfolioAuthCheck;
+
+    const pieceAuthCheck = await Piece.create(writer2.writer_id, 'Auth Piece', 'This is to check authorization.');
+    piecePortfolioAuthCheck[0] = pieceAuthCheck;
+
     testApplications[0] = await Application.submitApplication(writer.writer_id, testGigs[0].id, portfolio.id);
     testApplications[1] = await Application.submitApplication(writer.writer_id, testGigs[1].id, portfolio.id);
 
@@ -125,5 +148,6 @@ module.exports = {
     tokens,
     piecePortfolio,
     gigTags,
-    pieceTags
+    pieceTags,
+    piecePortfolioAuthCheck
 };
