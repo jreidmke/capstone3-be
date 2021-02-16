@@ -99,6 +99,11 @@ describe("DELETE /writers/[writerId]/portfolios/[portfolioId]", function() {
         const resp = await request(app).delete(`/writers/${piecePortfolio[0].writer_id}/portfolios/${piecePortfolio[1].id}`).set("authorization", tokens[1]);
         expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
+
+    test("rejects delete on if piece does not belong to writer", async function() {
+        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writer_id}/portfolios/${piecePortfolioAuthCheck[1].id}`).set("authorization", tokens[1]);
+        expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
+    });
 });
 
 describe("POST /writers/[writerId]/portfolios/", function() {
