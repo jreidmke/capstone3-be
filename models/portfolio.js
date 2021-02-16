@@ -13,7 +13,7 @@ class Portfolio {
 
     static async getAllByWriterId(writerId) {
         const result = await db.query(
-            `SELECT * FROM portfolios 
+            `SELECT id, title, writer_id AS writerId FROM portfolios 
             WHERE writer_id=$1`,
             [writerId]
         );

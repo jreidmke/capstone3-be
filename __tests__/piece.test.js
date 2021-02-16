@@ -23,7 +23,7 @@ afterAll(commonAfterAll);
 
 describe("GET /writers/[writerId]/pieces", function() {
     test("get by writer id", async function() {
-        const resp = await request(app).get(`/writers/${piecePortfolio[0].writer_id}/pieces`).set("authorization", tokens[0]);
+        const resp = await request(app).get(`/writers/${piecePortfolio[0].writerid}/pieces`).set("authorization", tokens[0]);
         expect(resp.body.pieces).toEqual([{
               id: expect.any(Number),
               writer_id: expect.any(Number),
@@ -60,7 +60,7 @@ describe("GET /writers/[writerId]/pieces", function() {
 
 describe("PATCH /writers/[writerId]/piece/[pieceId]", function() {
     test("updates piece", async function() {
-        const resp = await request(app).patch(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}`)
+        const resp = await request(app).patch(`/writers/${piecePortfolio[0].writerid}/pieces/${piecePortfolio[0].id}`)
                                             .send({title: "New Title", text: "New Text"})
                                             .set("authorization", tokens[0]);
         expect(resp.body.updatedPiece).toEqual({
@@ -74,21 +74,21 @@ describe("PATCH /writers/[writerId]/piece/[pieceId]", function() {
     });
 
     test("rejects update with bad auth", async function() {
-        const resp = await request(app).patch(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}`)
+        const resp = await request(app).patch(`/writers/${piecePortfolio[0].writerid}/pieces/${piecePortfolio[0].id}`)
                                         .send({title: "New Title", text: "New Text"})
                                         .set("authorization", tokens[1]);
         expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
 
     test("rejects update if piece does not belong to writer", async function() {
-        const resp = await request(app).patch(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolioAuthCheck[0].id}`)
+        const resp = await request(app).patch(`/writers/${piecePortfolio[0].writerid}/pieces/${piecePortfolioAuthCheck[0].id}`)
                                         .send({title: "New Title", text: "New Text"})
                                         .set("authorization", tokens[1]);
         expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
 
     test("rejects update with bad json", async function() {
-        const resp = await request(app).patch(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}`)
+        const resp = await request(app).patch(`/writers/${piecePortfolio[0].writerid}/pieces/${piecePortfolio[0].id}`)
                                         .send({blah: "New Title", blech: "New Text"})
                                         .set("authorization", tokens[0]);
         expect(resp.body.error).toEqual({
@@ -103,16 +103,14 @@ describe("PATCH /writers/[writerId]/piece/[pieceId]", function() {
 //create piece
 describe("POST /writers/[writerId]/pieces", function() {
     test("can post new piece", async function() {
-        const resp = await request(app).post(`/writers/${piecePortfolio[0].writer_id}/pieces/new`)
+        const resp = await request(app).post(`/writers/${piecePortfolio[0].writerid}/pieces/new`)
                                             .send({title: "New Title", text: "New Text"})
                                             .set("authorization", tokens[0]);
         expect(resp.body.newPiece).toEqual({
             id: expect.any(Number),
-            writer_id: expect.any(Number),
+            writerid: expect.any(Number),
             title: 'New Title',
-            text: 'New Text',
-            created_at: expect.any(String),
-            updated_at: null
+            text: 'New Text'
         });
     });
     test("rejects post new piece with bad auth", async function() {
@@ -123,7 +121,7 @@ describe("POST /writers/[writerId]/pieces", function() {
     });
     
     test("rejects post new piece with bad json", async function() {
-        const resp = await request(app).post(`/writers/${piecePortfolio[0].writer_id}/pieces/new`)
+        const resp = await request(app).post(`/writers/${piecePortfolio[0].writerid}/pieces/new`)
                                             .send({blah: "New Title", blech: "New Text"})
                                             .set("authorization", tokens[0]);
         expect(resp.body.error).toEqual({
@@ -141,7 +139,7 @@ describe("POST /writers/[writerId]/pieces", function() {
 
 describe("DELETE /writers/[writerId]/pieces/[pieceId]", function() {
     test("delete piece", async function() {
-        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}`).set("authorization", tokens[0]);
+        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writerid}/pieces/${piecePortfolio[0].id}`).set("authorization", tokens[0]);
         expect(resp.body.deletedPiece).toEqual({
             id: expect.any(Number),
             writer_id: expect.any(Number),
@@ -153,44 +151,44 @@ describe("DELETE /writers/[writerId]/pieces/[pieceId]", function() {
     });
 
     test("rejects delete piece on bad auth", async function() {
-        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}`).set("authorization", tokens[1]);
+        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writerid}/pieces/${piecePortfolio[0].id}`).set("authorization", tokens[1]);
         expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
 
     test("rejects delete if piece doesn't belong to author", async function() {
-        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolioAuthCheck[0].id}`).set("authorization", tokens[1]);
+        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writerid}/pieces/${piecePortfolioAuthCheck[0].id}`).set("authorization", tokens[1]);
         expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
 });
 
 describe("POST/DELETE /writers/[writerId]/pieces/[pieceId]/tags/[tagId]", function() {
     test("add piece to tag", async function() {
-      const resp = await request(app).post(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}/tags/3`).set("authorization", tokens[0]);
+      const resp = await request(app).post(`/writers/${piecePortfolio[0].writerid}/pieces/${piecePortfolio[0].id}/tags/3`).set("authorization", tokens[0]);
       expect(resp.body.newTag).toEqual({ pieceid: expect.any(Number), tagid: 3 });
     });
 
     test("rejects add piece tag with bad auth", async function() {
-        const resp = await request(app).post(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}/tags/2`).set("authorization", tokens[1]);
+        const resp = await request(app).post(`/writers/${piecePortfolio[0].writerid}/pieces/${piecePortfolio[0].id}/tags/2`).set("authorization", tokens[1]);
         expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
 
     test("rejects add piece tag if piece doesn't belong to writer", async function() {
-        const resp = await request(app).post(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolioAuthCheck[0].id}/tags/2`).set("authorization", tokens[1]);
+        const resp = await request(app).post(`/writers/${piecePortfolio[0].writerid}/pieces/${piecePortfolioAuthCheck[0].id}/tags/2`).set("authorization", tokens[1]);
         expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
     
     test("delete piece tag", async function() {
-        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}/tags/2`).set("authorization", tokens[0]);
+        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writerid}/pieces/${piecePortfolio[0].id}/tags/2`).set("authorization", tokens[0]);
         expect(resp.body.removedTag).toEqual({ pieceid: expect.any(Number), tagid: 2 });
     });
     
     test("rejects delete piece tag with bad auth", async function() {
-        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolio[0].id}/tags/2`).set("authorization", tokens[1]);
+        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writerid}/pieces/${piecePortfolio[0].id}/tags/2`).set("authorization", tokens[1]);
         expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
 
     test("rejects delete piece tag if piece doesn't belong to writer", async function() {
-        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writer_id}/pieces/${piecePortfolioAuthCheck[0].id}/tags/2`).set("authorization", tokens[1]);
+        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writerid}/pieces/${piecePortfolioAuthCheck[0].id}/tags/2`).set("authorization", tokens[1]);
         expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
   

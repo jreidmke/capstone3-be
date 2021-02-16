@@ -65,7 +65,7 @@ class Piece {
         const result = await db.query(
             `INSERT INTO pieces (writer_id, title, text)
             VALUES ($1, $2, $3)
-            RETURNING *`,
+            RETURNING id, writer_id AS writerId, title, text`,
             [writerId, title, text]
         );
         const piece = result.rows[0];
@@ -147,6 +147,7 @@ class Piece {
                 WHERE id=$1`,
                 [pieceId]
             );
+
             if(authCheck.rows[0].writer_id !== parseInt(writerId)) throw new UnauthorizedError();
 
             //INSERT STATEMENT
