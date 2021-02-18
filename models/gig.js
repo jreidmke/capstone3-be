@@ -24,7 +24,7 @@ class Gig {
      * */
 
      static async getAll(searchFilters = {}) {
-        let query = `SELECT id, platform_id AS platformId, title, description, compensation, is_remote AS isRemote, word_count AS wordCount, is_active AS isActive FROM gigs`;
+        let query = `SELECT id, platform_id AS "platformId", title, description, compensation, is_remote AS "isRemote", word_count AS "wordCount", is_active AS "isActive" FROM gigs`;
         let whereExpressions = [];
         let queryValues = [];
 
@@ -69,6 +69,7 @@ class Gig {
                 WHERE title LIKE '%${tagTitle}%'`
             );
             let tags = tagRes.rows.map(t => parseInt(t.gig_id));
+            if(!tags.length) throw new NotFoundError(`No Tags Match Tag: ${tagTitle}`)
             if(!whereExpressions.length) {
                 query += ` WHERE id IN (${tags.join(',')})`;
             } else {
@@ -89,7 +90,13 @@ class Gig {
      */
 
     static async getById(id) {
-        const gig = await checkForItem(id, 'gigs', 'id');
+        const result = await db.query(
+            `SELECT id, platform_id AS "platformId", title, description, compensation, is_remote AS "isRemote", word_count AS "wordCount", is_active AS "isActive"
+            FROM gigs
+            WHERE id=$1`,
+            [id]
+        );
+        const gig = result.rows[0];
         if(!gig) throw new NotFoundError(`Gig: ${id} Not Found!`);
 
         const tagRes = await db.query(
@@ -127,7 +134,7 @@ class Gig {
         const result = await db.query(
             `INSERT INTO gigs (platform_id, title, description, compensation, is_remote, word_count)
             VALUES($1, $2, $3, $4, $5, $6)
-            RETURNING id, title, description, compensation, platform_id AS platformId, is_remote AS isRemote, word_count AS wordCount, is_active AS isActive`,
+            RETURNING id, platform_id AS "platformId", title, description, compensation, is_remote AS "isRemote", word_count AS "wordCount", is_active AS "isActive"`,
             [platformId, title, description, compensation, isRemote, wordCount]
         );
         const newGig = result.rows[0];
@@ -152,8 +159,8 @@ class Gig {
           [gigId]
         );
 
-        
-        if(authCheck.rows[0].platform_id.toString() !== platformId) throw new UnauthorizedError();
+        if(!authCheck.rows[0]) throw new NotFoundError(`Gig: ${gigId} Not Found!`);
+        if(authCheck.rows[0].platform_id != platformId) throw new UnauthorizedError();
     
         let { setCols, values } = sqlForPartialUpdate(data, {
             isRemote: "is_remote",
@@ -167,15 +174,15 @@ class Gig {
                           SET ${setCols} 
                           WHERE id = ${gigIdVarIdx} 
                           RETURNING compensation, 
-                                    created_at AS createdAt,
+                                    created_at AS "createdAt",
                                     description,
                                     id,
-                                    is_active AS isActive,
-                                    is_remote AS isRemote,
-                                    platform_id AS platformId,
+                                    is_active AS "isActive",
+                                    is_remote AS "isRemote",
+                                    platform_id AS "platformId",
                                     title,
-                                    updated_at AS updatedAt,
-                                    word_count AS wordCount`;
+                                    updated_at AS "updatedAt",
+                                    word_count AS "wordCount"`;
     
         const result = await db.query(querySql, [...values, gigId]);
         const gig = result.rows[0];

@@ -13,6 +13,8 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   const cols = keys.map((colName, idx) =>
       `"${jsToSql[colName] || colName}"=$${idx + 1}`,
   );
+  
+  cols.push(`updated_at=CURRENT_TIMESTAMP`);
 
   return {
     setCols: cols.join(", "),
