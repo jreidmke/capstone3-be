@@ -21,18 +21,18 @@ class Writer {
 
     static async getAll() {
       const result = await db.query(
-        `SELECT w.first_name AS firstName,
-          w.last_name AS lastName,
+        `SELECT w.first_name AS "firstName",
+          w.last_name AS "lastName",
           w.bio,
-          u.image_url AS imageURL,
+          u.image_url AS "imageURL",
           u.city,
           u.state,
-          u.facebook_username AS facebookUsername,
-          u.twitter_username AS twitterUsername,
-          u.youtube_username AS youtubeUsername
+          u.facebook_username AS "facebookUsername",
+          u.twitter_username AS "twitterUsername",
+          u.youtube_username AS "youtubeUsername"
         FROM writers AS w
         JOIN users AS u ON w.id=u.writer_id
-        ORDER BY lastName`
+        ORDER BY "lastName"`
       );
       return result.rows;
     };
@@ -49,9 +49,17 @@ class Writer {
 
      static async getById(writerId) {
       const result = await db.query(
-        `SELECT * FROM users AS u
-        JOIN writers AS w
-        ON u.writer_id=w.id
+        `SELECT w.first_name AS "firstName",
+          w.last_name AS "lastName",
+          w.bio,
+          u.image_url AS "imageURL",
+          u.city,
+          u.state,
+          u.facebook_username AS "facebookUsername",
+          u.twitter_username AS "twitterUsername",
+          u.youtube_username AS "youtubeUsername"
+        FROM writers AS w
+        JOIN users AS u ON w.id=u.writer_id
         WHERE u.writer_id=$1`,
         [writerId]
       );
@@ -60,7 +68,8 @@ class Writer {
       if(!writer) throw new NotFoundError(`Writer with ID: ${writerId} Not Found!`);
 
       const portfolioRes = await db.query(
-        `SELECT * FROM portfolios
+        `SELECT id, title, writer_id AS "writerId", created_at AS "createdAt", updated_at AS "updatedAt"
+        FROM portfolios
         WHERE writer_id=$1`,
         [writerId]
       );
@@ -77,7 +86,7 @@ class Writer {
        const result = await db.query(
          `DELETE FROM users
          WHERE writer_id=$1
-         RETURNING writer_id AS writerId`,
+         RETURNING *`,
          [writerId]
        );
        return result.rows[0];
@@ -140,17 +149,15 @@ class Writer {
                         SET ${setCols}
                         WHERE writer_id = ${userIdVarIdx}
                         RETURNING email,
-                                  image_url AS imageUrl,
+                                  image_url AS "imageUrl",
                                   address_1 AS address1,
                                   address_2 AS address2,
                                   city, state, 
-                                  postal_code AS postalCode,
+                                  postal_code AS "postalCode",
                                   phone,
-                                  twitter_username AS twitterUsername,
-                                  facebook_username AS
-                                  facebookUsername,
-                                  youtube_username AS
-                                  youtubeUsername`;
+                                  twitter_username AS "twitterUsername",
+                                  facebook_username AS "facebookUsername",
+                                  youtube_username AS "youtubeUsername"`;
       const uResult = await db.query(userQuerySql, [...values, writerId]);
       const user = uResult.rows[0];
       return user;
