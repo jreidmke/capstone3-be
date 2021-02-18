@@ -232,7 +232,7 @@ class Gig {
         const result = await db.query(
             `INSERT INTO gig_tags (gig_id, tag_id)
             VALUES ($1, $2)
-            RETURNING gig_id AS gigId, tag_id AS tagId`,
+            RETURNING gig_id AS "gigId", tag_id AS "tagId"`,
             [gigId, tagId]
         ); 
         return result.rows[0];
@@ -251,7 +251,7 @@ class Gig {
         );
         
         if(!authCheck.rows[0]) throw new NotFoundError(`Gig: ${gigId} Not Found`);
-        if(parseInt(platformId) !== authCheck.rows[0].platform_id) throw new UnauthorizedError();
+        if(platformId != authCheck.rows[0].platform_id) throw new UnauthorizedError();
 
         const result = await db.query(
             `DELETE FROM gig_tags
