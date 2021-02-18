@@ -9,20 +9,28 @@ const { sqlForPartialUpdate } = require('./../helpers/sql');
 class Piece {
 
     static async getAll(searchFilters = {}) {
-        let query = `SELECT p.*
+        let query = `SELECT p.id, p.writer_id AS "writerId", p.title, text, p.created_at AS "createdAt"
                         FROM pieces AS p 
                         JOIN piece_tags AS pt 
                         ON p.id=pt.piece_id 
                         JOIN tags AS t 
                         ON pt.tag_id=t.id`;
 
-        const {tagTitle} = searchFilters;
+        const {tagTitle, text} = searchFilters;
 
         if(tagTitle !== undefined) {
-            query += ` WHERE t.title LIKE '%${tagTitle}%'
-                       GROUP BY p.id, p.title`;
+            query += ` WHERE t.title LIKE '%${tagTitle}%'`;
         };
 
+        if(text !== undefined) {
+            if(query.indexOf("WHERE") !== -1) {
+                query += ` AND title LIKE '%${text}%'`
+            } else {
+                ` WHERE title LIKE '%${text}%'`
+            }
+        };
+
+        query += ` GROUP BY p.id, p.title`;
 
         const results = await db.query(query);
         return results.rows;  

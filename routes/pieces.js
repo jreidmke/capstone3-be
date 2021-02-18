@@ -1,12 +1,23 @@
 const express = require("express");
 const router = express.Router();
-const { ensureLoggedIn, ensureCorrectPlatformOrAdmin } = require("../middleware/auth");
+const { ensureLoggedIn } = require("../middleware/auth");
 const Piece = require("../models/piece");
 
-router.get("/", async function(req, res, next) {
+/** GET /pieces =>
+ *   { jobs: [ { id, writerId, title, text, createdAt }, ...] }
+ *
+ * GET ALL GIGS
+ * 
+ * Can provide search filter in query:
+     * - tagTitle
+     * - text
+     * 
+ * Authorization required: Logged In
+ */
+
+
+router.get("/", ensureLoggedIn, async function(req, res, next) {
     const q = req.query;
-    if(q.maxWordCount !== undefined) q.maxWordCount = +q.maxWordCount;
-    if(q.minWordCount !== undefined) q.minWordCount = +q.minWordCount;
     try {
         const pieces = await Piece.getAll(q);
         return res.json({ pieces });
