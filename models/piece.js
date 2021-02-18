@@ -8,6 +8,49 @@ const { sqlForPartialUpdate } = require('./../helpers/sql');
 
 class Piece {
 
+    static async getAll(searchFilters = {}) {
+        let query = `SELECT p.id, p.title
+                        FROM pieces AS p 
+                        JOIN piece_tags AS pt 
+                        ON p.id=pt.piece_id 
+                        JOIN tags AS t 
+                        ON pt.tag_id=t.id`;
+        let whereExpressions = [];
+        let queryValues = [];
+                
+        const { minWordCount, maxWordCount, tagTitle } = searchFilters;
+
+        if(minWordCount > maxWordCount) throw new BadRequestError("Min word count cannot be greater than max");
+
+        if(minWordCount !== undefined) {
+            queryValues.push(minWordCount);
+            whereExpressions.push(`word_count >= $${queryValues.length}`);
+        };
+
+        if(maxWordCount !== undefined) {
+            queryValues.push(maxWordCount);
+            whereExpressions.push(`word_count <= ${queryValues.length}`);
+        };
+
+        if(whereExpressions.length > 0) {
+            query += " WHERE " + whereExpressions.join(" AND ");
+        };
+
+        if(tagTitle !== undefined) {
+            if(!whereExpressions.length) {
+                query += ` WHERE t.title LIKE '%${tagTitle}%'`;
+              } else {
+                query += ` AND t.title LIKE '%${tagTitle}%'`;
+              };
+        };
+
+        query += ` GROUP BY p.id, p.title`;
+        console.log(query);
+        const results = await db.query(query, queryValues);
+        return results.rows;  
+    }
+
+
     /**Given a writer id, returns all pieces by writer
      * 
      * Returns [{id, writer_id, title, text, created_at, updated_at},...]
