@@ -13,7 +13,8 @@ class Portfolio {
 
     static async getAllByWriterId(writerId) {
         const result = await db.query(
-            `SELECT id, title, writer_id AS writerId FROM portfolios 
+            `SELECT id, title, writer_id AS "writerId" 
+            FROM portfolios 
             WHERE writer_id=$1`,
             [writerId]
         );
@@ -33,7 +34,8 @@ class Portfolio {
 
     static async getById(portfolioId) {
         const result = await db.query(
-            `SELECT * FROM portfolios
+            `SELECT id, title, writer_id AS "writerId" 
+            FROM portfolios
             WHERE id=$1`,
             [portfolioId]
         );
@@ -43,7 +45,8 @@ class Portfolio {
         if(!portfolio) throw new NotFoundError(`Portfolio: ${portfolioId} Not Found!`);
 
         const pieceResult = await db.query(
-            `SELECT * FROM pieces AS p
+            `SELECT p.id, p.writer_id AS "writerId", title, text, p.created_at AS "createdAt", p.updated_at AS "updatedAt" 
+            FROM pieces AS p
             JOIN piece_portfolios AS pp
             ON p.id=pp.piece_id
             WHERE pp.portfolio_id=$1`,
@@ -77,7 +80,7 @@ class Portfolio {
         const result = await db.query(
             `INSERT INTO portfolios (writer_id, title)
             VALUES ($1, $2)
-            RETURNING id, writer_id AS writerId,
+            RETURNING id, writer_id AS "writerId",
             title`,
             [writerId, title]
         );
@@ -98,9 +101,10 @@ class Portfolio {
         if(authCheck.rows[0].writer_id !== parseInt(writerId)) throw new UnauthorizedError();
         const result = await db.query(
             `UPDATE portfolios
-            SET title=$1
+            SET title=$1,
+            updated_at=CURRENT_TIMESTAMP
             WHERE id=$2
-            RETURNING *`,
+            RETURNING id, title, writer_id AS "writerId", created_at AS "createdAt", updated_at AS "updatedAt"`,
             [title, portfolioId]
         );
         if(!result.rows[0]) throw new NotFoundError(`Portfolio: ${portfolioId} Not Found!`);
