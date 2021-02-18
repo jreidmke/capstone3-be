@@ -131,52 +131,6 @@ class User {
             )
         };
     };
-
-    /**GET USER BY ID
-     *
-     * Success: {id, userType(string: either "writer" OR "platform")} => RETURNS:
-     *
-     * ALL DATA on selected WRITER, including PORTOLIOS OR ALL DATA on selected PLATFORM, including GIGS
-     *
-     * FAILURE throws NotFoundError or BadRequest
-     *
-     * Works in tandem with either Writer.getById method OR Platform.getById method
-     */
-
-    static async getById(id, userType) {
-        const result = await db.query(
-            `SELECT id,
-                email,
-                writer_id AS writerId,
-                platform_id AS platformId,
-                image_url AS imageUrl,
-                address_1 AS address1,
-                address_2 AS address2,
-                city,
-                state,
-                postal_code AS postalCode,
-                phone,
-                facebook_username AS facebookUsername,
-                twitter_username AS twitterUsername,
-                youtube_username AS youtubeUsername
-                FROM users
-                WHERE id=$1`,
-                [id]
-        );
-
-        let user = result.rows[0];
-
-        if(!user) throw new NotFoundError(`No User With Id: ${id}`);
-
-        if(userType==="writer") {
-            user = Writer.getById(user);
-        } else if(userType==="platform") {
-            user = Platform.getById(user);
-        } else {
-            throw new BadRequestError('User Type must be string: "writer" OR "platform"');
-        }
-         return user;
-    };
 };
 
 module.exports = User;

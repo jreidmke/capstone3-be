@@ -17,17 +17,17 @@ class Platform {
 
     static async getAll() {
         const result = await db.query(
-          `SELECT p.display_name AS displayName,
+          `SELECT p.display_name AS "displayName",
             p.description,
-            u.image_url AS imageURL,
+            u.image_url AS "imageURL",
             u.city,
             u.state,
-            u.facebook_username AS facebookUsername,
-            u.twitter_username AS twitterUsername,
-            u.youtube_username AS youtubeUsername
+            u.facebook_username AS "facebookUsername",
+            u.twitter_username AS "twitterUsername",
+            u.youtube_username AS "youtubeUsername"
           FROM platforms AS p
           JOIN users AS u ON p.id=u.platform_id
-          ORDER BY displayName`
+          ORDER BY "displayName"`
         );
         return result.rows;
       };
@@ -40,21 +40,26 @@ class Platform {
      * Failure throws not found
      */
  
-    static async getById(user) {
+    static async getById(platformId) {
         const platformRes = await db.query(
-            `SELECT *
-            FROM platforms
-            WHERE id=$1`,
-            [user.platformid]
+          `SELECT p.id, 
+              p.display_name AS "displayName",
+              p.description,
+              u.image_url AS "imageURL",
+              u.city,
+              u.state,
+              u.facebook_username AS "facebookUsername",
+              u.twitter_username AS "twitterUsername",
+              u.youtube_username AS "youtubeUsername"
+          FROM platforms AS p
+          JOIN users AS u ON p.id=u.platform_id
+          WHERE p.id=$1`,
+          [platformId]
         );
 
         const platform = platformRes.rows[0];
 
-        if(!platform) throw new NotFoundError(`No Platform With ID: ${user.id}`);
-
-        user.handle = platform.handle;
-        user.displayName = platform.display_name;
-        user.description = platform.description;
+        if(!platform) throw new NotFoundError(`No Platform With ID: ${platformId}`);
 
         const gigRes = await db.query(
             `SELECT *
@@ -63,9 +68,9 @@ class Platform {
             [platform.id]
         );
 
-        user.gigs = gigRes.rows;
+        platform.gigs = gigRes.rows;
 
-        return user;
+        return platform;
     };
 
     /** Update piece data with `data`.

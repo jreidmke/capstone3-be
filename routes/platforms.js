@@ -45,7 +45,7 @@ router.get("/", ensureLoggedIn, async function(req, res, next) {
 
 router.get("/:platform_id", ensureLoggedIn, async function(req, res, next) {
     try {
-        const platform = await User.getById(req.params.platform_id, "platform");
+        const platform = await Platform.getById(req.params.platform_id, "platform");
         return res.json({ platform });
     } catch (error) {
         return next(error);
