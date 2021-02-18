@@ -26,7 +26,7 @@ CREATE TABLE users(
     address_1 VARCHAR NOT NULL,
     address_2 VARCHAR,
     city VARCHAR NOT NULL,
-    state VARCHAR NOT NULL,
+    state VARCHAR(2) NOT NULL,
     postal_code INTEGER NOT NULL,
     phone TEXT,
     twitter_username VARCHAR,
