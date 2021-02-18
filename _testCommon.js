@@ -116,7 +116,6 @@ async function commonBeforeAll() {
     piecePortfolioAuthCheck[0] = pieceAuthCheck;
 
     testApplications[0] = await Application.submitApplication(writer.writer_id, testGigs[0].id, portfolio.id);
-    testApplications[1] = await Application.submitApplication(writer.writer_id, testGigs[1].id, portfolio.id);
 
     pieceTags[0] = await Piece.addPieceToItem(writer.writer_id, piece.id, 1, 'tag');
     pieceTags[0] = await Piece.addPieceToItem(writer.writer_id, piece.id, 2, 'tag');

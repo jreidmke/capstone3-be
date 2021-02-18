@@ -94,8 +94,8 @@ router.post("/:gig_id/apply/writers/:writer_id", ensureCorrectWriterOrAdmin, asy
 
 router.delete("/:gig_id/apply/writers/:writer_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
-        const app = await Application.withdrawlApplication(req.params.gig_id, req.params.writer_id);
-        return res.json({ app });
+        const withdrawnApp = await Application.withdrawlApplication(req.params.gig_id, req.params.writer_id);
+        return res.json({ withdrawnApp });
     } catch (error) {
         return next(error);
     }

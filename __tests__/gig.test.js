@@ -220,4 +220,4 @@ describe("DELETE /platforms/[platformId]/gigs/[gigId]", function() {
     const resp = await request(app).delete(`/platforms/${testGigs[0].platformId}/gigs/${testGigs[0].id}`).set("authorization", tokens[0]);
     expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
   })
-})
+});
