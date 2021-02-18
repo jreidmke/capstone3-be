@@ -11,9 +11,10 @@ class Application {
    * Throws BadRequestError if incorrect usertype.
    **/
     static async getByUserId(userId, userType) {
-      console.log("PIZZAA")
-      if(userType !== 'writer' && userType !== 'platform') throw new BadRequestError("User Type must be string: 'writer' or 'platform'.")
-      const results = await db.query(`SELECT * FROM applications WHERE ${userType}_id=$1`, [userId]);
+      if(userType !== 'writer' && userType !== 'gig') throw new BadRequestError("User Type must be string: 'writer' or 'gig'.")
+      const results = await db.query(`SELECT id, gig_id AS "gigId", writer_id AS "writerId", portfolio_ID AS "portfolioId", status, created_at AS "createdAt" 
+                                      FROM applications 
+                                      WHERE ${userType}_id=$1`, [userId]);
       return results.rows[0];
     };
 
@@ -37,7 +38,7 @@ class Application {
       const result = await db.query(
         `INSERT INTO applications (gig_id, writer_id, portfolio_id)
         VALUES ($1, $2, $3)
-        RETURNING gig_id AS gigId, writer_id AS writerId, portfolio_id AS portfolioId`,
+        RETURNING gig_id AS "gigId", writer_id AS "writerId", portfolio_id AS "portfolioId"`,
         [gigId, writerId, portfolioId]
       );
       return result.rows[0];
@@ -52,8 +53,8 @@ class Application {
       const result = await db.query(
         `DELETE FROM applications 
         WHERE gig_id=$1 AND writer_id=$2
-        RETURNING gig_id AS gigId,
-        writer_id AS writerId`, [gigId, writerId]
+        RETURNING gig_id AS "gigId",
+        writer_id AS "writerId"`, [gigId, writerId]
       );
       return result.rows[0];
     };
@@ -68,9 +69,10 @@ class Application {
     static async setApplicationStatus(applicationId, status) {
       const result = await db.query(
         `UPDATE applications
-        SET status=$1
+        SET status=$1,
+        updated_at=CURRENT_TIMESTAMP
         WHERE id=$2
-        RETURNING *`,
+        RETURNING id, gig_id AS "gigId", writer_id AS "writerId", portfolio_ID AS "portfolioId", status, created_at AS "createdAt", updated_at AS "updatedAt"`,
         [status, applicationId]
       );
       if(!result.rows[0]) throw new NotFoundError(`Application: ${applicationId} not found!`);
