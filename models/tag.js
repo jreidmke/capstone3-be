@@ -11,9 +11,9 @@ class Tag {
      *
      * Returns [{ id, title, isFiction, created_at, updated_at }, ...]
      * */
-    
+
     static async getAll(searchFilters = {}) {
-      let query = `SELECT * FROM tags`;
+      let query = `SELECT id, title, is_fiction AS "isFiction", created_at AS "createdAt", updated_at AS "updatedAt" FROM tags`;
       let whereExpressions = [];
       let queryValues = [];
       const { search, isFiction }= searchFilters;
