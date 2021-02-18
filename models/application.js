@@ -11,6 +11,7 @@ class Application {
    * Throws BadRequestError if incorrect usertype.
    **/
     static async getByUserId(userId, userType) {
+      console.log("PIZZAA")
       if(userType !== 'writer' && userType !== 'platform') throw new BadRequestError("User Type must be string: 'writer' or 'platform'.")
       const results = await db.query(`SELECT * FROM applications WHERE ${userType}_id=$1`, [userId]);
       return results.rows[0];
