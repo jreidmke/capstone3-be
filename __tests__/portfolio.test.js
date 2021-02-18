@@ -97,7 +97,7 @@ describe("DELETE /writers/[writerId]/portfolios/[portfolioId]", function() {
         expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
 
-    test("rejects delete on if piece does not belong to writer", async function() {
+    test("rejects delete on if portfolio does not belong to writer", async function() {
         const resp = await request(app).delete(`/writers/${piecePortfolio[0].writerId}/portfolios/${piecePortfolioAuthCheck[1].id}`).set("authorization", tokens[1]);
         expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
@@ -124,3 +124,28 @@ describe("POST /writers/[writerId]/portfolios/", function() {
     });
 });
 
+//add remove piece from portfolio
+
+describe("POST/DELETE /writers/[writerId]/portfolios/[portfolioId]/pieces/[pieceId]", function() {
+    test("adds piece to portoflio", async function() {
+        const resp = await request(app).post(`/writers/${piecePortfolio[0].writerId}/portfolios/${piecePortfolio[1].id}/pieces/${piecePortfolio[0].id}`).set("authorization", tokens[0]);
+        expect(resp.body.newPiecePortfolio).toEqual({"pieceId": expect.any(Number), "portfolioId": expect.any(Number)});
+    });
+
+    test("rejects add piece on bad auth", async function() {
+        const resp = await request(app).post(`/writers/${piecePortfolio[0].writerId}/portfolios/${piecePortfolio[1].id}/pieces/${piecePortfolio[0].id}`).set("authorization", tokens[1]);
+        expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
+    });
+
+    test("deletes piece from portfolio", async function() {
+        await request(app).post(`/writers/${piecePortfolio[0].writerId}/portfolios/${piecePortfolio[1].id}/pieces/${piecePortfolio[0].id}`).set("authorization", tokens[0])
+        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writerId}/portfolios/${piecePortfolio[1].id}/pieces/${piecePortfolio[0].id}`).set("authorization", tokens[0]);
+        expect(resp.body.removedItem).toEqual({ pieceId: expect.any(Number), portfolioId: expect.any(Number) } );
+    });
+
+    test("rejects deletes piece from portfolio on bad auth", async function() {
+        await request(app).post(`/writers/${piecePortfolio[0].writerId}/portfolios/${piecePortfolio[1].id}/pieces/${piecePortfolio[0].id}`).set("authorization", tokens[0])
+        const resp = await request(app).delete(`/writers/${piecePortfolio[0].writerId}/portfolios/${piecePortfolio[1].id}/pieces/${piecePortfolio[0].id}`).set("authorization", tokens[1]);
+        expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
+    });
+});
