@@ -62,7 +62,7 @@ class Platform {
         if(!platform) throw new NotFoundError(`No Platform With ID: ${platformId}`);
 
         const gigRes = await db.query(
-            `SELECT *
+            `SELECT id, platform_id AS "platformId", title, description, compensation, is_remote AS "isRemote", word_count AS "wordCount", is_active AS "isActive"
             FROM gigs
             WHERE platform_id=$1`,
             [platform.id]
@@ -125,17 +125,17 @@ class Platform {
                           SET ${setCols}
                           WHERE platform_id = ${userIdVarIdx}
                           RETURNING email,
-                                    image_url AS imageUrl,
+                                    image_url AS "imageUrl",
                                     address_1 AS address1,
                                     address_2 AS address2,
                                     city, state, 
-                                    postal_code AS postalCode,
+                                    postal_code AS "postalCode",
                                     phone,
-                                    twitter_username AS twitterUsername,
-                                    facebook_username AS
-                                    facebookUsername,
-                                    youtube_username AS
-                                    youtubeUsername`;
+                                    twitter_username AS "twitterUsername",
+                                    facebook_username AS "facebookUsername",
+                                    youtube_username AS "youtubeUsername",
+                                    created_at AS "createdAt",
+                                    updated_at AS "updatedAt"`;
         const uResult = await db.query(userQuerySql, [...values, platformId]);
         const user = uResult.rows[0];
         return user;
@@ -155,12 +155,12 @@ class Platform {
       const result = await db.query(
         `DELETE FROM users
         WHERE platform_id=$1
-        RETURNING platform_id`,
+        RETURNING *`,
         [platformId]
       );
       const platform = result.rows[0];
       if(!platform) throw new NotFoundError(`Platform: ${platformId} Not Found!`);
-      return 'deleted';
+      return platform;
     };
 
     /**Given a platformId and itemType, returns all all platform follows
@@ -170,8 +170,13 @@ class Platform {
 
     static async getFollows(platformId, itemType) {
       if(itemType === "tag" || itemType === "writer") {
+        const select = itemType==="tag" ?
+        `title, is_fiction AS "isFiction"` :
+        `first_name AS "firstName", last_name AS lastName, age, bio`
+        
         const result = await db.query(
-          `SELECT * FROM platform_${itemType}_follows AS f
+          `SELECT f.id, f.platform_id AS "platformId", ${itemType}_id AS "${itemType}Id", f.created_at AS "createdAt", f.updated_at AS "updatedAt", ${select} 
+          FROM platform_${itemType}_follows AS f
           JOIN ${itemType}s AS t
           ON t.id = f.${itemType}_id
           WHERE f.platform_id=$1`,
@@ -197,8 +202,8 @@ class Platform {
           const result = await db.query(
             `INSERT INTO platform_${itemType}_follows (platform_id, ${itemType}_id)
             VALUES($1, $2)
-            RETURNING platform_id AS platformId,
-            ${itemType}_id AS ${itemType}Id`,
+            RETURNING platform_id AS "platformId",
+            ${itemType}_id AS "${itemType}Id"`,
             [platformId, itemId]
           );
           return result.rows[0];
@@ -218,8 +223,8 @@ class Platform {
             `DELETE FROM platform_${itemType}_follows
             WHERE ${itemType}_id=$1
             AND platform_id=$2
-            RETURNING platform_id AS platformId,
-            ${itemType}_id AS ${itemType}Id`,
+            RETURNING platform_id AS "platformId",
+            ${itemType}_id AS "${itemType}Id"`,
             [itemId, platformId]
           );
 
