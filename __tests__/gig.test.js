@@ -26,23 +26,23 @@ describe("GET /gigs", function() {
         expect(resp.body.gigs).toEqual([
           {
             id: expect.any(Number),
-            platformid: expect.any(Number),
+            platformId: expect.any(Number),
             title: 'gig1',
             description: 'gig1',
             compensation: '50.00',
-            isremote: true,
-            wordcount: 500,
-            isactive: true
+            isRemote: true,
+            wordCount: 500,
+            isActive: true
           },
           {
             id: expect.any(Number),
-            platformid: expect.any(Number),
+            platformId: expect.any(Number),
             title: 'gig2',
             description: 'gig2',
             compensation: '500.00',
-            isremote: false,
-            wordcount: 100,
-            isactive: true
+            isRemote: false,
+            wordCount: 100,
+            isActive: true
           }])
     });
 
@@ -56,13 +56,13 @@ describe("GET /gigs", function() {
       expect(resp.body.gigs).toEqual([
         {
           id: expect.any(Number),
-          platformid: expect.any(Number),
+          platformId: expect.any(Number),
           title: 'gig1',
           description: 'gig1',
           compensation: '50.00',
-          isremote: true,
-          wordcount: 500,
-          isactive: true
+          isRemote: true,
+          wordCount: 500,
+          isActive: true
         }]);
     });
 
@@ -73,18 +73,16 @@ describe("GET /gigs", function() {
 
     test("gets gig by id", async function() {
       const resp = await request(app).get(`/gigs/${testGigs[0].id}`).set("authorization", tokens[0]);
-      expect(resp.body.gig).toEqual({
+      expect(resp.body.gig).toEqual(    {
         id: expect.any(Number),
-        platform_id: expect.any(Number),
+        platformId: expect.any(Number),
         title: 'gig1',
         description: 'gig1',
         compensation: '50.00',
-        is_remote: true,
-        word_count: 500,
-        is_active: true,
-        created_at: expect.any(String),
-        updated_at: null,
-        tags: [{title: "cooking"}, {title: "food"}]
+        isRemote: true,
+        wordCount: 500,
+        isActive: true,
+        tags: [ { title: 'cooking', id: 1 }, { title: 'food', id: 2 } ]
       })
     });
 
@@ -96,28 +94,28 @@ describe("GET /gigs", function() {
 
   describe("PATCH /platforms/[platformId]/gigs/[gigId]", function() {
     test("updates a gig", async function() {
-      const resp = await request(app).patch(`/platforms/${testGigs[0].platformid}/gigs/${testGigs[0].id}`).send({title: 'gig3'}).set("authorization", tokens[1]);
+      const resp = await request(app).patch(`/platforms/${testGigs[0].platformId}/gigs/${testGigs[0].id}`).send({title: 'gig3'}).set("authorization", tokens[1]);
       expect(resp.body.updatedGig).toEqual({
         id: expect.any(Number),
-        platformid: expect.any(Number),
+        platformId: expect.any(Number),
         title: 'gig3',
         description: 'gig1',
         compensation: '50.00',
-        isremote: true,
-        wordcount: 500,
-        isactive: true,
-        createdat: expect.any(String),
-        updatedat: null
+        isRemote: true,
+        wordCount: 500,
+        isActive: true,
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String)
       });
     });
 
     test("rejects update if not auth", async function() {
-      const resp = await request(app).patch(`/platforms/${testGigs[0].platformid}/gigs/${testGigs[0].id}`).send({title: 'gig3'}).set("authorization", tokens[0]);
+      const resp = await request(app).patch(`/platforms/${testGigs[0].platformId}/gigs/${testGigs[0].id}`).send({title: 'gig3'}).set("authorization", tokens[0]);
       expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
 
     test("rejects update gig with bad json", async function() {
-      const resp = await request(app).patch(`/platforms/${testGigs[0].platformid}/gigs/${testGigs[0].id}`).send({blah: null}).set("authorization", tokens[1]);
+      const resp = await request(app).patch(`/platforms/${testGigs[0].platformId}/gigs/${testGigs[0].id}`).send({blah: null}).set("authorization", tokens[1]);
       expect(resp.body).toEqual({
         error: {
           message: [
@@ -131,7 +129,7 @@ describe("GET /gigs", function() {
 
 describe("POST /platforms/[platformId]/gigs/new", function() {
     test("create a gig", async function() {
-      const resp = await request(app).post(`/platforms/${testGigs[0].platformid}/gigs/new`).send({
+      const resp = await request(app).post(`/platforms/${testGigs[0].platformId}/gigs/new`).send({
         "title": "The New Gig",
         "description": "You gotta clean our tables. They are filthy.",
         "compensation": 25.00,
@@ -144,15 +142,15 @@ describe("POST /platforms/[platformId]/gigs/new", function() {
         title: 'The New Gig',
         description: 'You gotta clean our tables. They are filthy.',
         compensation: '25.00',
-        platformid: expect.any(Number),
-        isremote: true,
-        wordcount: 1000,
-        isactive: true
+        platformId: expect.any(Number),
+        isRemote: true,
+        wordCount: 1000,
+        isActive: true
       })
     });
 
     test("rejects new gig if not auth", async function() {
-      const resp = await request(app).post(`/platforms/${testGigs[0].platformid}/gigs/new`).send({
+      const resp = await request(app).post(`/platforms/${testGigs[0].platformId}/gigs/new`).send({
         "title": "The New Gig",
         "description": "You gotta clean our tables. They are filthy.",
         "compensation": 25.00,
@@ -164,7 +162,7 @@ describe("POST /platforms/[platformId]/gigs/new", function() {
     });
 
     test("rejects new gig with bad json", async function() {
-      const resp = await request(app).post(`/platforms/${testGigs[0].platformid}/gigs/new`).send({blah: null}).set("authorization", tokens[1]);
+      const resp = await request(app).post(`/platforms/${testGigs[0].platformId}/gigs/new`).send({blah: null}).set("authorization", tokens[1]);
       expect(resp.body).toEqual({
         error: {
           message: [
@@ -184,29 +182,29 @@ describe("POST /platforms/[platformId]/gigs/new", function() {
 
 describe("POST/DELETE /platforms/[platformId]/gigs/[gigId]/tags", function() {
   test("add gig to tag", async function() {
-    const resp = await request(app).post(`/platforms/${testGigs[0].platformid}/gigs/${testGigs[0].id}/tags/3`).set("authorization", tokens[1]);
-    expect(resp.body.newTag).toEqual({ gigid: expect.any(Number), tagid: 3 });
+    const resp = await request(app).post(`/platforms/${testGigs[0].platformId}/gigs/${testGigs[0].id}/tags/3`).set("authorization", tokens[1]);
+    expect(resp.body.newTag).toEqual({ gigId: expect.any(Number), tagId: expect.any(Number) });
   });
 
   test("rejects add gig tag with bad auth", async function() {
-    const resp = await request(app).post(`/platforms/${testGigs[0].platformid}/gigs/${testGigs[0].id}/tags/3`).set("authorization", tokens[0]);
+    const resp = await request(app).post(`/platforms/${testGigs[0].platformId}/gigs/${testGigs[0].id}/tags/3`).set("authorization", tokens[0]);
     expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
   });
 
   test("delete gig tag", async function() {
-    const resp = await request(app).delete(`/platforms/${testGigs[0].platformid}/gigs/${testGigs[0].id}/tags/2`).set("authorization", tokens[1]);
-    expect(resp.body.removedTag).toEqual({ gigid: expect.any(Number), tagid: 2 });
+    const resp = await request(app).delete(`/platforms/${testGigs[0].platformId}/gigs/${testGigs[0].id}/tags/2`).set("authorization", tokens[1]);
+    expect(resp.body.removedTag).toEqual({ gigId: expect.any(Number), tagId: expect.any(Number) });
   });
 
   test("rejects delete gig tag with bad auth", async function() {
-    const resp = await request(app).delete(`/platforms/${testGigs[0].platformid}/gigs/${testGigs[0].id}/tags/2`).set("authorization", tokens[0]);
+    const resp = await request(app).delete(`/platforms/${testGigs[0].platformId}/gigs/${testGigs[0].id}/tags/2`).set("authorization", tokens[0]);
     expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
   });
 });
 
 describe("DELETE /platforms/[platformId]/gigs/[gigId]", function() {
   test("deletes gig", async function() {
-    const resp = await request(app).delete(`/platforms/${testGigs[0].platformid}/gigs/${testGigs[0].id}`).set("authorization", tokens[1]);
+    const resp = await request(app).delete(`/platforms/${testGigs[0].platformId}/gigs/${testGigs[0].id}`).set("authorization", tokens[1]);
     expect(resp.body.deletedGig).toEqual({compensation: "50.00",
                                           created_at: expect.any(String), 
                                           description: "gig1",
@@ -219,7 +217,7 @@ describe("DELETE /platforms/[platformId]/gigs/[gigId]", function() {
                                           word_count: 500})
   });
   test("rejects delete gig with bad auth", async function() {
-    const resp = await request(app).delete(`/platforms/${testGigs[0].platformid}/gigs/${testGigs[0].id}`).set("authorization", tokens[0]);
+    const resp = await request(app).delete(`/platforms/${testGigs[0].platformId}/gigs/${testGigs[0].id}`).set("authorization", tokens[0]);
     expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
   })
 })

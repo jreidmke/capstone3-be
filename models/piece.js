@@ -187,8 +187,8 @@ class Piece {
                 `DELETE FROM piece_${itemType}s
                 WHERE piece_id=$1
                 AND ${itemType}_id=$2
-                RETURNING piece_id AS pieceId,
-                ${itemType}_id AS ${itemType}Id`,
+                RETURNING piece_id AS "pieceId",
+                ${itemType}_id AS "${itemType}Id"`,
                 [pieceId, itemId]
             );
             return result.rows[0];

@@ -257,8 +257,8 @@ class Gig {
             `DELETE FROM gig_tags
             WHERE gig_id=$1
             AND tag_id=$2
-            RETURNING gig_id AS gigId,
-            tag_id AS tagId`,
+            RETURNING gig_id AS "gigId",
+            tag_id AS "tagId"`,
             [gigId, tagId]
         );
         return result.rows[0];

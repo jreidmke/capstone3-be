@@ -34,7 +34,7 @@ class Portfolio {
 
     static async getById(portfolioId) {
         const result = await db.query(
-            `SELECT id, title, writer_id AS "writerId" 
+            `SELECT id, title, writer_id AS "writerId", created_at AS "createdAt"
             FROM portfolios
             WHERE id=$1`,
             [portfolioId]
