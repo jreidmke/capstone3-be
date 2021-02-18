@@ -14,7 +14,8 @@ class Piece {
      */
     static async getAllByWriterId(writerId) {
         const result = await db.query(
-            `SELECT * FROM pieces
+            `SELECT id, writer_id AS "writerId", title, text, created_at AS "createdAt", updated_at AS "updatedAt"
+            FROM pieces
             WHERE writer_id=$1`,
             [writerId]
         );
@@ -33,7 +34,8 @@ class Piece {
     
     static async getById(pieceId) {
         const result = await db.query(
-            `SELECT * FROM pieces
+            `SELECT id, writer_id AS "writerId", title, text, created_at AS "createdAt", updated_at AS "updatedAt" 
+            FROM pieces
             WHERE id=$1`,
             [pieceId]
         );
@@ -65,7 +67,7 @@ class Piece {
         const result = await db.query(
             `INSERT INTO pieces (writer_id, title, text)
             VALUES ($1, $2, $3)
-            RETURNING id, writer_id AS writerId, title, text`,
+            RETURNING id, writer_id AS "writerId", title, text, created_at AS "createdAt"`,
             [writerId, title, text]
         );
         const piece = result.rows[0];
@@ -98,7 +100,7 @@ class Piece {
         const querySql = `UPDATE pieces 
                           SET ${setCols} 
                           WHERE id = ${pieceIdVarIdx} 
-                          RETURNING *`;
+                          RETURNING  id, writer_id AS "writerId", title, text, created_at AS "createdAt", updated_at AS "updatedAt"`;
     
         const result = await db.query(querySql, [...values, pieceId]);
         const piece = result.rows[0];
@@ -148,14 +150,14 @@ class Piece {
                 [pieceId]
             );
 
-            if(authCheck.rows[0].writer_id !== parseInt(writerId)) throw new UnauthorizedError();
+            if(authCheck.rows[0].writer_id != writerId) throw new UnauthorizedError();
 
             //INSERT STATEMENT
             const result = await db.query(
                 `INSERT INTO piece_${itemType}s (piece_id, ${itemType}_id)
                 VALUES($1, $2)
-                RETURNING piece_id AS pieceId,
-                ${itemType}_id AS ${itemType}Id`,
+                RETURNING piece_id AS "pieceId",
+                ${itemType}_id AS "${itemType}Id"`,
                 [pieceId, itemId]
             ); 
             return result.rows[0];
