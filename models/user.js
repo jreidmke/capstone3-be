@@ -103,34 +103,56 @@ class User {
         return result.rows[0];
     }
 
-    /**REMOVE USER
-     *
-     * Success: {id} => undefined
-     *
-     * Failure throws NotFoundError
-     */
-
-    static async remove(id) {
-
-        let result = await db.query(
-            `DELETE FROM users WHERE id=$1 RETURNING writer_id AS writerId, platform_id AS platformId`,
-            [id]
+   static async getById(userId) {
+        const userResult = await db.query(
+            `SELECT email, 
+                    writer_id AS "writerId", 
+                    platform_id AS "platformId", 
+                    password, 
+                    image_url AS "imageUrl", 
+                    address_1 AS address1, 
+                    address_2 AS address2, 
+                    city, 
+                    state, 
+                    postal_code AS "postalCode", 
+                    phone, 
+                    twitter_username AS "twitterUsername", 
+                    facebook_username AS "facebookUsername", 
+                    youtube_username AS "youtubeUsername"
+                FROM users
+                WHERE id=$1`,
+                [userId]
         );
-        let user = result.rows[0];
-        if(!user) throw new NotFoundError(`No User With ID: ${id}`);
-
+        const user = userResult.rows[0];
+        if(!user) throw new NotFoundError(`User: ${userId} not Found!`);
         if(user.writerId) {
-            await db.query(
-                `DELETE FROM writers WHERE id=$1`,
+            const writerRes = await db.query(
+                `SELECT first_name AS "firstName",
+                        last_name AS "lastName",
+                        age, bio
+                FROM writers
+                WHERE id=$1`,
                 [user.writerId]
-            )
+            );
+            const writer = writerRes.rows[0];
+            user.firstName = writer.firstName;
+            user.lastName = writer.lastName;
+            user.age = writer.age;
+            user.bio = writer.bio;
         } else {
-            await db.query(
-                `DELETE FROM platforms WHERE id=$1`,
+            const platformRes = await db.query(
+                `SELECT display_name AS "displayName",
+                        description
+                FROM platforms
+                WHERE id=$1`,
                 [user.platformId]
-            )
+            );
+            const platform = platformRes.rows[0];
+            user.displayName = platform.displayName;
+            user.description = platform.description;
         };
-    };
+        return user;
+   }
 };
 
 module.exports = User;
