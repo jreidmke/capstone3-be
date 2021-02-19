@@ -15,7 +15,6 @@ const Piece = require("../models/piece");
  * Authorization required: Logged In
  */
 
-
 router.get("/", ensureLoggedIn, async function(req, res, next) {
     const q = req.query;
     try {

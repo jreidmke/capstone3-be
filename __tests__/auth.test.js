@@ -20,6 +20,7 @@ afterAll(commonAfterAll);
 
 describe("POST /auth/login", function () {
     test("works", async function () {
+      console.log(process.env.NODE_ENV);
       const resp = await request(app)
           .post("/auth/login")
           .send({
@@ -72,7 +73,7 @@ describe("POST /auth/register", function() {
                             address1: "1430 Bilarda Ct.", 
                             address2: null, 
                             city: "Geneva", 
-                            state: "Illinois", 
+                            state: "IL", 
                             postalCode: 60134, 
                             phone: "630-338-5693", 
                             twitterUsername: "tessa",
@@ -97,7 +98,7 @@ describe("POST /auth/register", function() {
                             address1: "1430 Bilarda Ct.", 
                             address2: null, 
                             city: "Geneva", 
-                            state: "Illinois", 
+                            state: "IL", 
                             postalCode: 60134, 
                             phone: "630-338-5693", 
                             twitterUsername: "platform",
@@ -120,7 +121,7 @@ describe("POST /auth/register", function() {
                             address1: "1430 Bilarda Ct.", 
                             address2: null, 
                             city: "Geneva", 
-                            state: "Illinois", 
+                            state: "IL", 
                             postalCode: 60134, 
                             phone: "630-338-5693", 
                             twitterUsername: "platform",
@@ -140,7 +141,7 @@ describe("POST /auth/register", function() {
                             address1: null, 
                             address2: null, 
                             city: "Geneva", 
-                            state: "Illinois", 
+                            state: "IL", 
                             postalCode: 60134, 
                             phone: "630-338-5693", 
                             twitterUsername: "platform",

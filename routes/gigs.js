@@ -31,7 +31,7 @@ const { BadRequestError } = require("../expressError");
 router.get("/", ensureLoggedIn, async function(req, res, next) {
     const q = req.query;
     //convert strings to int
-    if(q.compensation !== undefined) q.compensation = +q.compensation;
+    if(q.minCompensation !== undefined) q.minCompensation = +q.minCompensation;
     if(q.maxWordCount !== undefined) q.maxWordCount = + q.maxWordCount;
     if(q.minWordCount !== undefined) q.minWordCount = + q.minWordCount;
     if(q.platformId !== undefined) q.platformId = +q.platformId;
