@@ -20,7 +20,6 @@ afterAll(commonAfterAll);
 
 describe("POST /auth/login", function () {
     test("works", async function () {
-      console.log(process.env.NODE_ENV);
       const resp = await request(app)
           .post("/auth/login")
           .send({
