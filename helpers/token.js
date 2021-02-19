@@ -5,6 +5,7 @@ const { SECRET_KEY } = require("../config");
 
 function createToken(user) {
   let payload = {
+    userId: user.id,
     writerId: user.writer_id,
     platformId: user.platform_id,
     isAdmin: user.is_admin || false

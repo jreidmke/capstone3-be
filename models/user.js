@@ -82,7 +82,7 @@ class User {
         const result = await db.query(
             `INSERT INTO users (email, writer_id, platform_id, password, image_url, address_1, address_2, city, state, postal_code, phone, twitter_username, facebook_username, youtube_username)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
-            RETURNING email, is_admin, writer_id, platform_id`,
+            RETURNING id, email, is_admin, writer_id, platform_id`,
             [
                 email,
                 firstName ? user.id : null,
@@ -102,6 +102,11 @@ class User {
         );
         return result.rows[0];
     }
+
+    /**GET USER BY ID
+     * 
+     * Used for frontend auth purposes. Returns all data on user to store in REACT CONTEXT. 
+     */
 
    static async getById(userId) {
         const userResult = await db.query(

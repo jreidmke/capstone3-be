@@ -53,6 +53,8 @@ router.post("/login", async function(req, res, next) {
 router.post("/register", async function(req, res, next) {
     try {
         let validator;
+        req.body.postalCode = +req.body.postalCode;
+        if("age" in req.body) req.body.age = +req.body.age; 
         if("displayName" in req.body) {
             validator = jsonschema.validate(req.body, platformRegSchema);
         } else {
