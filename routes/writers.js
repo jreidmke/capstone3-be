@@ -189,22 +189,6 @@ router.get("/:writer_id/portfolios", ensureLoggedIn, async function(req, res, ne
     }
 });
 
-/** GET /writers/[writerId]/portfolios/[portfolioId]
- * 
- * RETURNS A PORTFOLIO SPECIFIED BY ID
- * 
- * Auth: Ensure Logged in
- */
-
-router.get("/:writer_id/portfolios/:portfolio_id", ensureLoggedIn, async function(req, res, next) {
-    try {
-        const portfolio = await Portfolio.getById(req.params.portfolio_id);
-        return res.json({ portfolio });
-    } catch (error) {
-        return next(error);
-    }
-});
-
 /** PATCH /writers/[writerId]/portfolios/[portfolioId]
  * 
  * Updates portfolio in db

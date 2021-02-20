@@ -37,12 +37,12 @@ class Writer {
       let queryValues = [];
       const { city, state } = searchFilters;
       console.log(city);
-      if(city !== undefined) {
+      if(city !== undefined && city !== "") {
         queryValues.push(city);
         whereExpressions.push(`city=$${queryValues.length}`);
       };
 
-      if(state !== undefined) {
+      if(state !== undefined && state !== "") {
         queryValues.push(state);
         whereExpressions.push(`state=$${queryValues.length}`);
       };

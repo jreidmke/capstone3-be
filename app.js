@@ -14,6 +14,7 @@ const platformRoutes = require("./routes/platforms");
 const gigRoutes = require("./routes/gigs");
 const tagRoutes = require("./routes/tags");
 const pieceRoute = require("./routes/pieces");
+const portfolioRoute = require("./routes/portfolios");
 const morgan = require("morgan");
 
 const app = express();
@@ -29,6 +30,7 @@ app.use("/platforms", platformRoutes);
 app.use("/gigs", gigRoutes);
 app.use("/tags", tagRoutes);
 app.use("/pieces", pieceRoute);
+app.use("/portfolios", portfolioRoute);
 
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {
