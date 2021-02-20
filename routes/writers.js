@@ -301,22 +301,6 @@ router.get("/:writer_id/pieces", ensureLoggedIn, async function(req, res, next) 
     }
 });
 
-/** GET /writers/[writerId]/pieces/[pieceID]
- * 
- * RETURNS A PIECE SPECIFIED BY ID
- * 
- * Auth: Ensure Logged in
- */
-
-router.get("/:writer_id/pieces/:piece_id", ensureLoggedIn, async function(req, res, next) {
-    try {
-        const piece = await Piece.getById(req.params.piece_id);
-        return res.json({ piece });
-    } catch (error) {
-        return next(error);
-    }
-});
-
 /** POST /writers/[writerId]/pieces/new
  * 
  * Creates a new piece and inserts in db
