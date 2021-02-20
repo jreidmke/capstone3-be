@@ -112,8 +112,7 @@ class User {
         const userResult = await db.query(
             `SELECT email, 
                     writer_id AS "writerId", 
-                    platform_id AS "platformId", 
-                    password, 
+                    platform_id AS "platformId",  
                     image_url AS "imageUrl", 
                     address_1 AS address1, 
                     address_2 AS address2, 
