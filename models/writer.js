@@ -19,22 +19,44 @@ class Writer {
      * Returns [{username, first_name, last_name, image_url, location}, ...]
      */
 
-    static async getAll() {
-      const result = await db.query(
-        `SELECT w.first_name AS "firstName",
+    static async getAll(searchFilters = {}) {
+      let query = `SELECT w.id,
+          w.first_name AS "firstName",
           w.last_name AS "lastName",
           w.bio,
-          u.image_url AS "imageURL",
+          u.image_url AS "imageUrl",
           u.city,
           u.state,
           u.facebook_username AS "facebookUsername",
           u.twitter_username AS "twitterUsername",
           u.youtube_username AS "youtubeUsername"
         FROM writers AS w
-        JOIN users AS u ON w.id=u.writer_id
-        ORDER BY "lastName"`
-      );
-      return result.rows;
+        JOIN users AS u ON w.id=u.writer_id`;
+
+      let whereExpressions = [];
+      let queryValues = [];
+      const { city, state } = searchFilters;
+      console.log(city);
+      if(city !== undefined) {
+        queryValues.push(city);
+        whereExpressions.push(`city=$${queryValues.length}`);
+      };
+
+      if(state !== undefined) {
+        queryValues.push(state);
+        whereExpressions.push(`state=$${queryValues.length}`);
+      };
+
+      if(whereExpressions.length > 0) {
+        query += " WHERE " + whereExpressions.join(" AND ");
+      };
+      
+      query += ` ORDER BY "lastName"`
+      console.log(query);
+      console.log(queryValues);
+
+      const results = await db.query(query, queryValues);
+      return results.rows;
     };
 
     /**FIND WRITER BY id
@@ -52,7 +74,7 @@ class Writer {
         `SELECT w.first_name AS "firstName",
           w.last_name AS "lastName",
           w.bio,
-          u.image_url AS "imageURL",
+          u.image_url AS "imageUrl",
           u.city,
           u.state,
           u.facebook_username AS "facebookUsername",

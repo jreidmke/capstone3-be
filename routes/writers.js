@@ -14,6 +14,7 @@ const jsonschema = require("jsonschema");
 const createPiece = require("../schemas/createPiece.json");
 const updatePiece = require("../schemas/updatePiece.json");
 const updateWriter = require("../schemas/updateWriter.json");
+const writerQP = require("../schemas/writerQP.json");
 const { BadRequestError } = require("../expressError");
 
 const router = express.Router();
@@ -27,7 +28,12 @@ const router = express.Router();
 
 router.get("/", ensureLoggedIn, async function(req, res, next) {
     try {
-        const writers = await Writer.getAll();
+        const validator = jsonschema.validate(req.query, writerQP);
+        if (!validator.valid) {
+        const errs = validator.errors.map(e => e.stack);
+        throw new BadRequestError(errs);
+        }
+        const writers = await Writer.getAll(req.query);
         return res.json({ writers });
     } catch (error) {
         return next(error);

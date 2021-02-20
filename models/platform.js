@@ -19,7 +19,7 @@ class Platform {
         const result = await db.query(
           `SELECT p.display_name AS "displayName",
             p.description,
-            u.image_url AS "imageURL",
+            u.image_url AS "imageUrl",
             u.city,
             u.state,
             u.facebook_username AS "facebookUsername",
@@ -45,7 +45,7 @@ class Platform {
           `SELECT p.id, 
               p.display_name AS "displayName",
               p.description,
-              u.image_url AS "imageURL",
+              u.image_url AS "imageUrl",
               u.city,
               u.state,
               u.facebook_username AS "facebookUsername",
