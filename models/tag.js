@@ -35,6 +35,8 @@ class Tag {
         };
       };
 
+      query += ` ORDER BY title`
+
       const results = await db.query(query, queryValues);
       return results.rows;
     };

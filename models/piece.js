@@ -18,11 +18,11 @@ class Piece {
 
         const {tagTitle, text} = searchFilters;
 
-        if(tagTitle !== undefined) {
+        if(tagTitle !== undefined && tagTitle !== "") {
             query += ` WHERE t.title LIKE '%${tagTitle}%'`;
         };
 
-        if(text !== undefined) {
+        if(text !== undefined && text !== "") {
             if(query.indexOf("WHERE") !== -1) {
                 query += ` AND title LIKE '%${text}%'`
             } else {
@@ -30,7 +30,7 @@ class Piece {
             }
         };
 
-        query += ` GROUP BY p.id, p.title`;
+        query += ` GROUP BY p.id, p.title ORDER BY "createdAt"`;
 
         const results = await db.query(query);
         return results.rows;  
