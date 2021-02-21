@@ -15,9 +15,8 @@ class Platform {
 
   /**Returns All Platforms */
 
-    static async getAll() {
-        const result = await db.query(
-          `SELECT p.display_name AS "displayName",
+    static async getAll(searchFilters = {}) {
+        let query = `SELECT p.display_name AS "displayName",
             p.description,
             u.image_url AS "imageUrl",
             u.city,
@@ -26,10 +25,31 @@ class Platform {
             u.twitter_username AS "twitterUsername",
             u.youtube_username AS "youtubeUsername"
           FROM platforms AS p
-          JOIN users AS u ON p.id=u.platform_id
-          ORDER BY "displayName"`
-        );
-        return result.rows;
+          JOIN users AS u ON p.id=u.platform_id`;
+
+
+        let whereExpressions = [];
+        let queryValues = [];
+        const { city, state } = searchFilters;
+        
+        if(city !== undefined && city !== "") {
+          queryValues.push(city);
+          whereExpressions.push(`u.city=$${queryValues.length}`);
+        };
+  
+        if(state !== undefined && state !== "") {
+          queryValues.push(state);
+          whereExpressions.push(`u.state=$${queryValues.length}`);
+        };
+  
+        if(whereExpressions.length > 0) {
+          query += " WHERE " + whereExpressions.join(" AND ");
+        };
+
+        query += ` ORDER BY "displayName"`;
+        console.log(query)
+        const results = await db.query(query, queryValues);
+        return results.rows;      
       };
 
     /**Given a platform id, returns a user

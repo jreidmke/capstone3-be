@@ -11,6 +11,7 @@ const jsonschema = require("jsonschema");
 const createGig = require("./../schemas/createGig.json");
 const updateGig = require("./../schemas/updateGig.json");
 const updatePlatform = require("./../schemas/updatePlatform.json");
+const platformQP = require("../schemas/writerQP.json");
 
 const { ensureLoggedIn, ensureCorrectPlatformOrAdmin } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
@@ -27,7 +28,12 @@ const { BadRequestError } = require("../expressError");
 
 router.get("/", ensureLoggedIn, async function(req, res, next) {
     try {
-        const platforms = await Platform.getAll();
+        const validator = jsonschema.validate(req.query, platformQP);
+        if (!validator.valid) {
+        const errs = validator.errors.map(e => e.stack);
+        throw new BadRequestError(errs);
+        }
+        const platforms = await Platform.getAll(req.query);
         return res.json({ platforms });
     } catch (error) {
         return next(error);

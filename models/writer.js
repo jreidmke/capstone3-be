@@ -36,6 +36,7 @@ class Writer {
       let whereExpressions = [];
       let queryValues = [];
       const { city, state } = searchFilters;
+      
       if(city !== undefined && city !== "") {
         queryValues.push(city);
         whereExpressions.push(`city=$${queryValues.length}`);
