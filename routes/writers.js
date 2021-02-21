@@ -200,7 +200,6 @@ router.get("/:writer_id/portfolios", ensureLoggedIn, async function(req, res, ne
 
 router.patch("/:writer_id/portfolios/:portfolio_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
-        console.log(req.body);
         if(!req.body.title) throw new BadRequestError('Must change title!');
         const updatedPortfolio = await Portfolio.update(req.params.writer_id, req.params.portfolio_id, req.body.title);
         return res.json({ updatedPortfolio });

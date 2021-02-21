@@ -171,9 +171,10 @@ class Piece {
      */
 
     static async addPieceToItem(writerId, pieceId, itemId, itemType) {
-        if(itemType === "portfolio" || itemType === "tag") {           
+        if(itemType === "portfolio" || itemType === "tag") {
+        
             const authCheck = await db.query(
-                `SELECT writer_id 
+                `SELECT *
                 FROM pieces
                 WHERE id=$1`,
                 [pieceId]

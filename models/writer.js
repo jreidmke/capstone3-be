@@ -36,7 +36,6 @@ class Writer {
       let whereExpressions = [];
       let queryValues = [];
       const { city, state } = searchFilters;
-      console.log(city);
       if(city !== undefined && city !== "") {
         queryValues.push(city);
         whereExpressions.push(`city=$${queryValues.length}`);
@@ -52,8 +51,6 @@ class Writer {
       };
       
       query += ` ORDER BY "lastName"`
-      console.log(query);
-      console.log(queryValues);
 
       const results = await db.query(query, queryValues);
       return results.rows;
