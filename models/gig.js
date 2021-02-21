@@ -32,17 +32,17 @@ class Gig {
 
         if(minWordCount > maxWordCount) throw new BadRequestError("Min word count cannot be greater than max");
 
-        if(minCompensation !== undefined) {
+        if(minCompensation !== undefined && minCompensation !== "") {
             queryValues.push(minCompensation);
             whereExpressions.push(`compensation >= $${queryValues.length}`);
         };
 
-        if(maxWordCount !== undefined) {
+        if(maxWordCount !== undefined && maxWordCount !== "") {
             queryValues.push(maxWordCount);
             whereExpressions.push(`word_count <= $${queryValues.length}`);
         };
 
-        if(minWordCount !== undefined) {
+        if(minWordCount !== undefined && minWordCount !== "") {
             queryValues.push(minWordCount);
             whereExpressions.push(`word_count >= $${queryValues.length}`);
         };

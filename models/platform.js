@@ -16,7 +16,8 @@ class Platform {
   /**Returns All Platforms */
 
     static async getAll(searchFilters = {}) {
-        let query = `SELECT p.display_name AS "displayName",
+        let query = `SELECT p.id, 
+            p.display_name AS "displayName",
             p.description,
             u.image_url AS "imageUrl",
             u.city,

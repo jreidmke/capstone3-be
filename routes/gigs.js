@@ -36,6 +36,7 @@ router.get("/", ensureLoggedIn, async function(req, res, next) {
     if(q.minWordCount !== undefined) q.minWordCount = + q.minWordCount;
     if(q.platformId !== undefined) q.platformId = +q.platformId;
     try {
+        console.log(q);
         const gigs = await Gig.getAll(q);
         return res.json({ gigs });
     } catch (error) {

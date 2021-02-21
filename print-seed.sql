@@ -53,7 +53,7 @@ VALUES(1, 'Chickend Soup', 'Lorem ipsum dolor sit amet, consectetur adipiscing e
 INSERT INTO gigs (platform_id, title, description, compensation, is_remote, word_count, is_active)
 VALUES(1, 'Political Interview', 'Interview this Politician and write us a story', 50.00, TRUE, 2000, TRUE),
 (1, 'Political Ideas', 'Tell us how to solve taxes', 100, TRUE, 5000, TRUE),
-(2, 'Star Wars Sequel', 'Write a new Star Wars', 200, TRUE, 10000, FALSE),
+(2, 'Star Wars Sequel', 'Write a new Star Wars', 200, FALSE, 10000, FALSE),
 (2, 'Stargate Reboot', 'Finally, a SG Reboot Returns!', 600, TRUE, 50000, FALSE),
 (3, 'Freddy Krueger', 'Interview Robert Englund', 700, TRUE, 100000, TRUE),
 (3, 'Spider Movie', 'Write a scary movie about spiders.', 234, TRUE, 2432, TRUE),
