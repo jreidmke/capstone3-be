@@ -15,7 +15,7 @@ class Application {
       const results = await db.query(`SELECT id, gig_id AS "gigId", writer_id AS "writerId", portfolio_ID AS "portfolioId", status, created_at AS "createdAt" 
                                       FROM applications 
                                       WHERE ${userType}_id=$1`, [userId]);
-      return results.rows[0];
+      return results.rows;
     };
 
     /**Create an application (from writerId, gigId, portfolioId data)
