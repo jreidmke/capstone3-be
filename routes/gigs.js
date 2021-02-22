@@ -73,6 +73,7 @@ router.get("/:id", ensureLoggedIn, async(req, res, next) => {
 
 router.post("/:gig_id/apply/writers/:writer_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
+        req.body.portfolioId = +req.body.portfolioId;
         const validator = jsonschema.validate(req.body, applyToGig);
         if(!validator.valid) {
             const errs = validator.errors.map(e => e.stack);

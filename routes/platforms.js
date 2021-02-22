@@ -209,6 +209,12 @@ router.delete("/:platform_id/followed_writers/:writer_id", ensureCorrectPlatform
 
 router.post("/:platform_id/gigs/new", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
+        const q = req.body;
+        if(q.compensation !== undefined) q.compensation = +q.compensation;
+        if(q.wordCount !== undefined) q.wordCount = +q.wordCount;
+        q.isRemote = q.isRemote === "true";
+        q.isActive = q.isActive === "true";
+
         const validator = jsonschema.validate(req.body, createGig);
         if(!validator.valid) {
             const errs = validator.errors.map(e => e.stack);
@@ -232,17 +238,24 @@ router.post("/:platform_id/gigs/new", ensureCorrectPlatformOrAdmin, async functi
 
 router.patch("/:platform_id/gigs/:gig_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
+        const q = req.body;
+        if(q.compensation !== undefined) q.compensation = +q.compensation;
+        if(q.wordCount !== undefined) q.wordCount = +q.wordCount;
+        q.isRemote = q.isRemote === "true";
+        q.isActive = q.isActive === "true";
+           
         const validator = jsonschema.validate(req.body, updateGig);
         if(!validator.valid) {
             const errs = validator.errors.map(e => e.stack);
             throw new BadRequestError(errs);
         };
-        const updatedGig = await Gig.update(req.params.platform_id, req.params.gig_id, req.body);
+        const updatedGig = await Gig.update(req.params.platform_id, req.params.gig_id, q);
         return res.json({ updatedGig });
     } catch (error) {
         return next(error);
     }
 });
+
 
 /**DELETE /platforms/[platformId]/gigs
  * 
