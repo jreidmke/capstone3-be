@@ -334,13 +334,22 @@ router.get("/:platform_id/gigs/:gig_id/applications", ensureCorrectPlatformOrAdm
  * Auth: correct platform or admin
 */
 
-router.patch("/:platform_id/gigs/:gig_id/applications/:application_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
+router.patch("/:platform_id/applications/:application_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
         const {status} = req.body;
         if(status==="Accepted" || status==="Pending" || status==="Rejected") {
             const app = await Application.setApplicationStatus(req.params.application_id, req.body.status);
             return res.json({ app });
         } throw new BadRequestError('Status must be Sting: "Accepted", "Rejected" or "Pending".');
+    } catch (error) {
+        return next(error);
+    }
+});
+
+router.get("/:platform_id/applications/:application_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
+    try {
+        const app = await Application.getById(req.params.platform_id, req.params.application_id);
+        return res.json({ app });
     } catch (error) {
         return next(error);
     }

@@ -1,6 +1,6 @@
 // APPLICATION MODEL
 const db = require("../db");
-const { BadRequestError } = require("../expressError");
+const { BadRequestError, NotFoundError, UnauthorizedError } = require("../expressError");
 
 class Application {
 
@@ -15,17 +15,50 @@ class Application {
       const results = await db.query(`SELECT a.id, 
                                              a.gig_id AS "gigId", 
                                              a.writer_id AS "writerId", 
-                                             a.portfolio_ID AS "portfolioId", 
+                                             a.portfolio_ID AS "portfolioId",
                                              a.status, 
                                              a.created_at AS "createdAt",
                                              w.first_name AS "firstName",
-                                             w.last_name AS "lastName"
+                                             w.last_name AS "lastName",
+                                             p.title AS "portfolioTitle",
+                                             g.platform_id AS
+                                             "platformId"
                                       FROM applications AS a
                                       JOIN writers AS w
                                       ON a.writer_id=w.id
+                                      JOIN portfolios AS p
+                                      ON a.portfolio_id=p.id
+                                      JOIN gigs AS g
+                                      ON a.gig_id=g.id
                                       WHERE ${userType}_id=$1`, [userId]);
       return results.rows;
     };
+
+    static async getById(platformId, appId) {
+      const results = await db.query(`SELECT a.id, 
+                                             a.gig_id AS "gigId", 
+                                             a.writer_id AS "writerId", 
+                                             a.portfolio_ID AS "portfolioId",
+                                             a.status, 
+                                             a.created_at AS "createdAt",
+                                             w.first_name AS "firstName",
+                                             w.last_name AS "lastName",
+                                             p.title AS "portfolioTitle",
+                                             g.platform_id AS
+                                             "platformId"
+                                      FROM applications AS a
+                                      JOIN writers AS w
+                                      ON a.writer_id=w.id
+                                      JOIN portfolios AS p
+                                      ON a.portfolio_id=p.id
+                                      JOIN gigs AS g
+                                      ON a.gig_id=g.id
+                                      WHERE a.id=$1`, [appId]);
+      const app = results.rows[0];
+      if(!app) throw new NotFoundError(`App: ${appId} not Found!`);
+      if(app.platformId != platformId) throw new UnauthorizedError();
+      return app;
+    }
 
     /**Create an application (from writerId, gigId, portfolioId data)
      * 
