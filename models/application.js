@@ -30,7 +30,7 @@ class Application {
                                       ON a.portfolio_id=p.id
                                       JOIN gigs AS g
                                       ON a.gig_id=g.id
-                                      WHERE ${userType}_id=$1`, [userId]);
+                                      WHERE a.${userType}_id=$1`, [userId]);
       return results.rows;
     };
 

@@ -415,7 +415,6 @@ router.delete("/:writer_id/pieces/:piece_id/tags/:tag_id", ensureCorrectWriterOr
 router.get("/:writer_id/applications", ensureCorrectWriterOrAdmin, async(req, res, next) => {
     try {
         const apps = await Application.getByUserId(req.params.writer_id, "writer");
-        console.log(apps);
         return res.json({ apps });
     } catch (error) {
         return next(error);
