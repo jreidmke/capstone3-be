@@ -67,14 +67,20 @@ class Writer {
      * Works in tandem with Uesr method getById()
      */
 
+
      static async getById(writerId) {
       const result = await db.query(
         `SELECT w.first_name AS "firstName",
           w.last_name AS "lastName",
+          w.age,
           w.bio,
           u.image_url AS "imageUrl",
           u.city,
           u.state,
+          u.address_1 AS "address1",
+          u.address_2 AS "address2",
+          u.postal_code AS "postalCode",
+          u.phone,
           u.facebook_username AS "facebookUsername",
           u.twitter_username AS "twitterUsername",
           u.youtube_username AS "youtubeUsername"
@@ -219,7 +225,7 @@ class Writer {
           const result = await db.query(
             `INSERT INTO writer_${itemType}_follows (writer_id, ${itemType}_id)
             VALUES($1, $2)
-            RETURNING writer_id AS writerId,
+            RETURNING writer_id AS "writerId",
             ${itemType}_id AS ${itemType}Id`,
             [writerId, itemId]
           );
