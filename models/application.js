@@ -12,8 +12,17 @@ class Application {
    **/
     static async getByUserId(userId, userType) {
       if(userType !== 'writer' && userType !== 'gig') throw new BadRequestError("User Type must be string: 'writer' or 'gig'.")
-      const results = await db.query(`SELECT id, gig_id AS "gigId", writer_id AS "writerId", portfolio_ID AS "portfolioId", status, created_at AS "createdAt" 
-                                      FROM applications 
+      const results = await db.query(`SELECT a.id, 
+                                             a.gig_id AS "gigId", 
+                                             a.writer_id AS "writerId", 
+                                             a.portfolio_ID AS "portfolioId", 
+                                             a.status, 
+                                             a.created_at AS "createdAt",
+                                             w.first_name AS "firstName",
+                                             w.last_name AS "lastName"
+                                      FROM applications AS a
+                                      JOIN writers AS w
+                                      ON a.writer_id=w.id
                                       WHERE ${userType}_id=$1`, [userId]);
       return results.rows;
     };
