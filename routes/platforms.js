@@ -353,6 +353,26 @@ router.get("/:platform_id/applications/:application_id", ensureCorrectPlatformOr
     } catch (error) {
         return next(error);
     }
-})
+});
+
+//FEED STUFF
+
+router.get("/:platform_id/feed/tags/", ensureCorrectPlatformOrAdmin, async(req, res, next) => {
+    try {
+        const gigs = await Platform.getPiecesForFeedFromTags(req.query.tag_ids);
+        return res.json({ gigs });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+router.get("/:platform_id/feed/writers/", ensureCorrectPlatformOrAdmin, async(req, res, next) => {
+    try {
+        const gigs = await Platform.getPiecesForFeedFromWriters(req.query.writer_ids);
+        return res.json({ gigs });
+    } catch (error) {
+        return next(error);
+    }
+});
 
 module.exports = router;

@@ -257,6 +257,49 @@ class Platform {
         };
         throw new BadRequestError("Item Type must be String: 'tag' or 'writer'");
       };
+
+
+      static async getPiecesForFeedFromTags(tagIds) {
+        const result = await db.query(
+          `SELECT p.id,
+                  p.title,
+                  p.text,
+                  p.writer_id AS "writerId",
+                  p.created_at AS "createdAt",
+                  w.first_name AS "firstName",
+                  w.last_name AS "lastName",
+                  t.id,
+                  t.title
+            FROM pieces AS p
+            JOIN writers AS w
+            ON p.writer_id=w.id
+            JOIN piece_tags AS pt
+            ON pt.piece_id=p.id
+            JOIN tags AS t
+            ON pt.tag_id=t.id
+            WHERE pt.tag_id IN (${tagIds})`
+        );
+        return result.rows;
+      };
+
+      static async getPiecesForFeedFromWriters(writerIds) {
+
+        const result = await db.query(
+          `SELECT p.id,
+                  p.title,
+                  p.text,
+                  p.writer_id AS "writerId",
+                  p.created_at AS "createdAt",
+                  w.first_name AS "firstName",
+                  w.last_name AS "lastName"
+            FROM pieces AS p
+            JOIN writers AS w
+            ON p.writer_id=w.id
+            WHERE w.id IN (${writerIds})`
+        );
+        console.log(result.rows);
+        return result.rows;
+      };
 };
 
 module.exports = Platform;
