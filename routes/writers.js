@@ -421,4 +421,24 @@ router.get("/:writer_id/applications", ensureCorrectWriterOrAdmin, async(req, re
     };
 });
 
+//FEED STUFF
+
+router.get("/:writer_id/feed/tags/", ensureCorrectWriterOrAdmin, async(req, res, next) => {
+    try {
+        const gigs = await Writer.getGigsForFeedFromTags(req.query.tag_ids);
+        return res.json({ gigs });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+router.get("/:writer_id/feed/platforms/", ensureCorrectWriterOrAdmin, async(req, res, next) => {
+    try {
+        const gigs = await Writer.getGigsForFeedFromPlatforms(req.query.platform_ids);
+        return res.json({ gigs });
+    } catch (error) {
+        return next(error);
+    }
+});
+
 module.exports = router;

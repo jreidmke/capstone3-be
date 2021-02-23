@@ -264,6 +264,47 @@ class Writer {
           return result.rows[0];
         };
       };
+
+      static async getGigsForFeedFromTags(tagIds) {
+        const result = await db.query(
+          `SELECT g.id, 
+                  g.platform_id AS "platformId",
+                  g.title,
+                  g.description,
+                  g.compensation,
+                  g.is_remote AS "isRemote",
+                  g.word_count AS "wordCount",
+                  g.is_active AS "isActive",
+                  t.title
+          FROM gigs AS g
+          JOIN gig_tags AS gt
+          ON g.id=gt.gig_id
+          JOIN tags AS t
+          ON gt.tag_id=t.id
+          WHERE gt.tag_id IN (${tagIds})`
+        );
+        return result.rows;
+      };
+
+      static async getGigsForFeedFromPlatforms(platformIds) {
+        const result = await db.query(
+          `SELECT g.id, 
+                  g.platform_id AS "platformId",
+                  g.title,
+                  g.description,
+                  g.compensation,
+                  g.is_remote AS "isRemote",
+                  g.word_count AS "wordCount",
+                  g.is_active AS "isActive",
+                  p.display_name AS "displayName"
+          FROM gigs AS g
+          JOIN platforms AS p
+          ON p.id=g.platform_id
+          WHERE p.id IN (${platformIds})`
+        );
+        return result.rows;
+      };
+
 };
 
 module.exports = Writer;
