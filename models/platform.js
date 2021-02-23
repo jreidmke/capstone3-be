@@ -69,6 +69,10 @@ class Platform {
               u.image_url AS "imageUrl",
               u.city,
               u.state,
+              u.postal_code AS "postalCode",
+              u.address_1 AS address1,
+              u.address_2 AS address2,
+              u.phone,
               u.facebook_username AS "facebookUsername",
               u.twitter_username AS "twitterUsername",
               u.youtube_username AS "youtubeUsername"

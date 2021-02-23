@@ -201,8 +201,18 @@ class Writer {
 
      static async getFollows(writerId, itemType) {
       if(itemType === "tag" || itemType === "platform") {
+        const select = itemType==="tag" ?
+        `title, is_fiction AS "isFiction"` :
+        `display_name AS "displayName", description`; 
+
         const result = await db.query(
-          `SELECT * FROM writer_${itemType}_follows AS f
+          `SELECT f.id, 
+                  f.writer_id AS "writerId", 
+                  f.${itemType}_id AS "${itemType}Id",
+                  f.created_at AS "createdAt",
+                  f.updated_at AS "updatedAt",
+                  ${select}
+                  FROM writer_${itemType}_follows AS f
           JOIN ${itemType}s AS t
           ON t.id = f.${itemType}_id
           WHERE f.writer_id=$1`,
@@ -214,6 +224,7 @@ class Writer {
        }
        throw new BadRequestError("Item Type must be String: 'tag' or 'platform'");
       };
+
 
       /**Given a writerId, itemId and itemType, a writer will follow a tag or platform
        *
