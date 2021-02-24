@@ -48,7 +48,6 @@ class Platform {
         };
 
         query += ` ORDER BY "displayName"`;
-        console.log(query)
         const results = await db.query(query, queryValues);
         return results.rows;      
       };
@@ -297,7 +296,6 @@ class Platform {
             ON p.writer_id=w.id
             WHERE w.id IN (${writerIds})`
         );
-        console.log(result.rows);
         return result.rows;
       };
 };

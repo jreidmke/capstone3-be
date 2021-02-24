@@ -90,8 +90,6 @@ function ensureCorrectWriterOrAdmin(req, res, next) {
 function ensureCorrectPlatformOrAdmin(req, res, next) {
   try {
     const user = res.locals.user;
-    console.log(user);
-    console.log(req.params.platform_id);
     if(!(user && (user.isAdmin || (user.platformId == req.params.platform_id && user.writerId === null)))) {
       throw new UnauthorizedError();
     };
