@@ -91,9 +91,19 @@ class Gig {
 
     static async getById(id) {
         const result = await db.query(
-            `SELECT id, platform_id AS "platformId", title, description, compensation, is_remote AS "isRemote", word_count AS "wordCount", is_active AS "isActive"
-            FROM gigs
-            WHERE id=$1`,
+            `SELECT g.id, 
+            g.platform_id AS "platformId", 
+            g.title, 
+            g.description, 
+            g.compensation, 
+            g.is_remote AS "isRemote", 
+            g.word_count AS "wordCount", 
+            g.is_active AS "isActive", 
+            p.display_name AS "displayName"
+            FROM gigs AS g
+            JOIN platforms AS p
+            ON p.id=platform_id
+            WHERE g.id=$1`,
             [id]
         );
         const gig = result.rows[0];

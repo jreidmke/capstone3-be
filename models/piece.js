@@ -63,9 +63,18 @@ class Piece {
     
     static async getById(pieceId) {
         const result = await db.query(
-            `SELECT id, writer_id AS "writerId", title, text, created_at AS "createdAt", updated_at AS "updatedAt" 
-            FROM pieces
-            WHERE id=$1`,
+            `SELECT p.id, 
+                    p.writer_id AS "writerId", 
+                    p.title, 
+                    p.text, 
+                    p.created_at AS "createdAt", 
+                    p.updated_at AS "updatedAt",
+                    w.first_name AS "firstName",
+                    w.last_name AS "lastName"
+            FROM pieces AS p
+            JOIN writers AS w
+            ON p.writer_id=w.id
+            WHERE p.id=$1`,
             [pieceId]
         );
         const piece = result.rows[0];

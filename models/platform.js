@@ -196,7 +196,7 @@ class Platform {
       if(itemType === "tag" || itemType === "writer") {
         const select = itemType==="tag" ?
         `title, is_fiction AS "isFiction"` :
-        `first_name AS "firstName", last_name AS lastName, age, bio`
+        `first_name AS "firstName", last_name AS "lastName", age, bio`
         
         const result = await db.query(
           `SELECT f.id, f.platform_id AS "platformId", ${itemType}_id AS "${itemType}Id", f.created_at AS "createdAt", f.updated_at AS "updatedAt", ${select} 

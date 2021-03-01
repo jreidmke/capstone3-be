@@ -70,7 +70,8 @@ class Writer {
 
      static async getById(writerId) {
       const result = await db.query(
-        `SELECT w.first_name AS "firstName",
+        `SELECT w.id, 
+          w.first_name AS "firstName",
           w.last_name AS "lastName",
           w.age,
           w.bio,
