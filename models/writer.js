@@ -203,7 +203,7 @@ class Writer {
       if(itemType === "tag" || itemType === "platform") {
         const select = itemType==="tag" ?
         `title, is_fiction AS "isFiction"` :
-        `display_name AS "displayName", description`; 
+        `display_name AS "displayName", description`;
 
         const result = await db.query(
           `SELECT f.id, 
@@ -257,8 +257,8 @@ class Writer {
             `DELETE FROM writer_${itemType}_follows
             WHERE ${itemType}_id=$1
             AND writer_id=$2
-            RETURNING writer_id AS writerId,
-            ${itemType}_id AS ${itemType}Id`,
+            RETURNING writer_id AS "writerId",
+            ${itemType}_id AS "${itemType}Id"`,
             [itemId, writerId]
           );
           return result.rows[0];

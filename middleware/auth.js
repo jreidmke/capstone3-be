@@ -78,6 +78,7 @@ function ensureCorrectUserOrAdmin(req, res, next) {
 function ensureCorrectWriterOrAdmin(req, res, next) {
   try {
     const user = res.locals.user;
+    user.writerId = +user.writerId;
     if(!(user && (user.isAdmin || (user.writerId == req.params.writer_id && user.platformId === null)))) {
       throw new UnauthorizedError();
     };
@@ -90,6 +91,7 @@ function ensureCorrectWriterOrAdmin(req, res, next) {
 function ensureCorrectPlatformOrAdmin(req, res, next) {
   try {
     const user = res.locals.user;
+    user.platformId = + user.platformId;
     if(!(user && (user.isAdmin || (user.platformId == req.params.platform_id && user.writerId === null)))) {
       throw new UnauthorizedError();
     };

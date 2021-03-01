@@ -22,7 +22,8 @@ class Application {
                                              w.last_name AS "lastName",
                                              p.title AS "portfolioTitle",
                                              g.platform_id AS
-                                             "platformId"
+                                             "platformId",
+                                             g.title AS "gigTitle"
                                       FROM applications AS a
                                       JOIN writers AS w
                                       ON a.writer_id=w.id
