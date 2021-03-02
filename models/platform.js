@@ -86,9 +86,17 @@ class Platform {
         if(!platform) throw new NotFoundError(`No Platform With ID: ${platformId}`);
 
         const gigRes = await db.query(
-            `SELECT id, platform_id AS "platformId", title, description, compensation, is_remote AS "isRemote", word_count AS "wordCount", is_active AS "isActive"
-            FROM gigs
-            WHERE platform_id=$1`,
+            `SELECT g.id, 
+                    g.platform_id AS "platformId", 
+                    g.title, description, compensation, 
+                    g.is_remote AS "isRemote", 
+                    g.word_count AS "wordCount", 
+                    g.is_active AS "isActive",
+                    u.image_url AS "imageUrl"
+            FROM gigs AS g
+            JOIN users AS u
+            ON g.platform_id=u.platform_id
+            WHERE g.platform_id=$1`,
             [platform.id]
         );
 
@@ -144,7 +152,7 @@ class Platform {
             youtubeUsername: "youtube_username"
           });
     
-          const userIdVarIdx = "$" + (values.length + 1);
+        const userIdVarIdx = "$" + (values.length + 1);
         const userQuerySql = `UPDATE users
                           SET ${setCols}
                           WHERE platform_id = ${userIdVarIdx}

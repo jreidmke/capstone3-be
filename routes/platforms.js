@@ -327,6 +327,16 @@ router.get("/:platform_id/gigs/:gig_id/applications", ensureCorrectPlatformOrAdm
     }
 });
 
+//GET APPLICATIONS BY PLATFORM ID
+router.get("/:platform_id/applications", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
+    try {
+        const apps = await Application.getByPlatformId(req.params.platform_id);
+        return res.json({ apps });
+    } catch (error) {
+        return next(error);
+    }
+})
+
 /**PATCH /platforms/[platformId]/gigs/[gigId]/applications/[applicationId], {status} => {gigId, writerId, portfolioId, status, createdAt, updatedAt}
  * 
  * UPDATE STATUS OF APPLICATION SPECIFIED BY ID

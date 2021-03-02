@@ -38,6 +38,33 @@ class Application {
       return results.rows;
     };
 
+    static async getByPlatformId(platformId) {
+      const result = await db.query(`SELECT a.id,
+                                            a.gig_id AS "gigId",
+                                            a.writer_id AS "writer_id",
+                                            a.portfolio_id AS "portfolioId",
+                                            a.status,
+                                            a.created_at AS "createdAt",
+                                            p.title AS "portfolioTitle",
+                                            g.title AS "gigTitle",
+                                            w.first_name AS "firstName",
+                                            w.last_name AS "lastName"
+                                      FROM applications AS a
+                                      JOIN portfolios AS p
+                                      ON a.portfolio_id=p.id
+                                      JOIN gigs AS g
+                                      ON g.id=a.gig_id
+                                      JOIN platforms
+                                      ON g.platform_id=platforms.id
+                                      JOIN writers AS w
+                                      ON a.writer_id = w.id
+                                      WHERE platforms.id=$1`,
+                                      [platformId]);
+      const applications = result.rows;
+      if(!applications.length) throw new NotFoundError(`Platform: ${platformId} Not Found!`);
+      return applications;
+    };
+
     static async getById(platformId, appId) {
       const results = await db.query(`SELECT a.id, 
                                              a.gig_id AS "gigId", 
