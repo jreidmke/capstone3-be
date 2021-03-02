@@ -34,9 +34,16 @@ class Portfolio {
 
     static async getById(portfolioId) {
         const result = await db.query(
-            `SELECT id, title, writer_id AS "writerId", created_at AS "createdAt"
-            FROM portfolios
-            WHERE id=$1`,
+            `SELECT p.id, 
+                    p.title, 
+                    p.writer_id AS "writerId", 
+                    p.created_at AS "createdAt",
+                    w.first_name AS "firstName",
+                    w.last_name AS "lastName"
+            FROM portfolios AS p
+            JOIN writers AS w
+            ON p.writer_id=w.id
+            WHERE p.id=$1`,
             [portfolioId]
         );
         const portfolio = result.rows[0];

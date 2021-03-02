@@ -276,12 +276,18 @@ class Writer {
                   g.is_remote AS "isRemote",
                   g.word_count AS "wordCount",
                   g.is_active AS "isActive",
-                  t.title
+                  t.title AS "tagTitle",
+                  p.display_name AS "displayName",
+                  u.image_url AS "imageUrl"
           FROM gigs AS g
           JOIN gig_tags AS gt
           ON g.id=gt.gig_id
           JOIN tags AS t
           ON gt.tag_id=t.id
+          JOIN platforms AS p
+          ON g.platform_id=p.id
+          JOIN users AS u
+          ON p.id=u.platform_id
           WHERE gt.tag_id IN (${tagIds})`
         );
         return result.rows;
@@ -297,10 +303,13 @@ class Writer {
                   g.is_remote AS "isRemote",
                   g.word_count AS "wordCount",
                   g.is_active AS "isActive",
-                  p.display_name AS "displayName"
+                  p.display_name AS "displayName",
+                  u.image_url AS "imageUrl"
           FROM gigs AS g
           JOIN platforms AS p
           ON p.id=g.platform_id
+          JOIN users AS u
+          ON p.id=u.platform_id
           WHERE p.id IN (${platformIds})`
         );
         return result.rows;

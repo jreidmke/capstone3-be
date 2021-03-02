@@ -43,8 +43,13 @@ class Piece {
      */
     static async getAllByWriterId(writerId) {
         const result = await db.query(
-            `SELECT id, writer_id AS "writerId", title, text, created_at AS "createdAt", updated_at AS "updatedAt"
-            FROM pieces
+            `SELECT p.id, 
+                    p.writer_id AS "writerId", 
+                    p.title, 
+                    p.text, 
+                    p.created_at AS "createdAt", 
+                    p.updated_at AS "updatedAt"
+            FROM pieces AS p
             WHERE writer_id=$1`,
             [writerId]
         );

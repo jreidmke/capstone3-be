@@ -23,7 +23,8 @@ class Application {
                                              p.title AS "portfolioTitle",
                                              g.platform_id AS
                                              "platformId",
-                                             g.title AS "gigTitle"
+                                             g.title AS "gigTitle",
+                                             pl.display_name AS "platformName"
                                       FROM applications AS a
                                       JOIN writers AS w
                                       ON a.writer_id=w.id
@@ -31,6 +32,8 @@ class Application {
                                       ON a.portfolio_id=p.id
                                       JOIN gigs AS g
                                       ON a.gig_id=g.id
+                                      JOIN platforms AS pl
+                                      ON g.platform_id=pl.id
                                       WHERE a.${userType}_id=$1`, [userId]);
       return results.rows;
     };
