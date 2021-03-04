@@ -289,21 +289,22 @@ class Gig {
         return result.rows[0];
     };
 
-    static async makeOffer(platformId, gigId, writerId) {
+    static async makeOffer(platformId, gigId, writerId, message) {
         const authCheck = await db.query(
             `SELECT platform_id FROM gigs where id=$1`, [gigId]
         );
         if(authCheck.rows[0].platform_id !== +platformId) throw new UnauthorizedError();
 
         const result = await db.query(
-            `INSERT INTO offers(writer_id, platform_id, gig_id)
-            VALUES ($1, $2, $3)
+            `INSERT INTO offers(writer_id, platform_id, gig_id, message)
+            VALUES ($1, $2, $3, $4)
             RETURNING id,
                       writer_id AS "writerId",
                       platform_id AS "platformId",
                       gig_id AS "gigId",
-                      created_at AS "createdAt"`,
-            [writerId, platformId, gigId]
+                      created_at AS "createdAt",
+                      message`,
+            [writerId, platformId, gigId, message]
         );
         return result.rows[0];
     };

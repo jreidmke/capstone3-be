@@ -286,7 +286,7 @@ router.delete("/:platform_id/gigs/:gig_id", ensureCorrectPlatformOrAdmin, async 
 
 router.post("/:platform_id/gigs/:gig_id/writers/:writer_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
-        const newOffer = await Gig.makeOffer(req.params.platform_id, req.params.gig_id, req.params.writer_id);
+        const newOffer = await Gig.makeOffer(req.params.platform_id, req.params.gig_id, req.params.writer_id, req.body.message);
         return res.json({ newOffer });
     } catch (error) {
         return next(error);

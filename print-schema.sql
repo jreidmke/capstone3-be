@@ -156,6 +156,7 @@ CREATE TABLE offers(
     writer_id INTEGER REFERENCES writers(id) ON DELETE CASCADE,
     platform_id INTEGER REFERENCES platforms(id) ON DELETE CASCADE,
     gig_id INTEGER NOT NULL REFERENCES gigs(id) ON DELETE CASCADE,
+    message TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (writer_id, platform_id, gig_id)
 );
