@@ -397,7 +397,6 @@ router.post("/:writer_id/pieces/:piece_id/tags/:tag_id", ensureCorrectWriterOrAd
  * Auth: Ensure Admin or Correct writer
  */
 
-
 router.delete("/:writer_id/pieces/:piece_id/tags/:tag_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
     try {
         const removedTag = await Piece.removePieceFromItem(req.params.writer_id, req.params.piece_id, req.params.tag_id, "tag");
@@ -420,6 +419,22 @@ router.get("/:writer_id/applications", ensureCorrectWriterOrAdmin, async(req, re
         return next(error);
     };
 });
+
+/**GET /writers/[writerId]/offers
+ * 
+ * Returns a list of writer offers
+ * 
+ * Auth: Ensure correct writer or admin
+ */
+
+router.get("/:writer_id/offers", ensureCorrectWriterOrAdmin, async(req, res, next) => {
+    try {
+        const offers = await Writer.getAllOffersByWriterId(req.params.writer_id);
+        return res.json({ offers });
+    } catch (error) {
+        return next(error);
+    }
+})
 
 //FEED STUFF
 

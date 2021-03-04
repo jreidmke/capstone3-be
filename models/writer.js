@@ -315,6 +315,30 @@ class Writer {
         return result.rows;
       };
 
+      static async getAllOffersByWriterId(writerId) {
+        const result = await db.query(
+          `SELECT o.id,
+                  o.platform_id AS "platformId",
+                  o.gig_id AS "gigId",
+                  o.message,
+                  p.display_name AS "displayName",
+                  g.title AS "gigTitle",
+                  g.compensation,
+                  g.is_remote AS "isRemote",
+                  g.word_count AS "wordCount",
+                  u.image_url AS "imageUrl"
+          FROM offers AS o
+          JOIN platforms AS p
+          ON o.platform_id=p.id
+          JOIN gigs AS g
+          ON o.gig_id=g.id
+          JOIN users AS u
+          ON o.platform_id=u.platform_id
+          WHERE o.writer_id=$1`, [writerId]
+        );
+        return result.rows;
+      }
+
 };
 
 module.exports = Writer;
