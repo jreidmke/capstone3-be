@@ -291,7 +291,7 @@ class Gig {
 
     static async makeOffer(platformId, gigId, writerId) {
         const authCheck = await db.query(
-            `SELECT platform_id FROM gigs where gig_id=$1`, [gigId]
+            `SELECT platform_id FROM gigs where id=$1`, [gigId]
         );
         if(authCheck.rows[0].platform_id !== +platformId) throw new UnauthorizedError();
 
@@ -300,8 +300,8 @@ class Gig {
             VALUES ($1, $2, $3)
             RETURNING id,
                       writer_id AS "writerId",
-                      platform_id AS "platformId"
-                      gig_id AS "gigId"
+                      platform_id AS "platformId",
+                      gig_id AS "gigId",
                       created_at AS "createdAt"`,
             [writerId, platformId, gigId]
         );
