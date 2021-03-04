@@ -41,7 +41,7 @@ class Application {
     static async getByPlatformId(platformId) {
       const result = await db.query(`SELECT a.id,
                                             a.gig_id AS "gigId",
-                                            a.writer_id AS "writer_id",
+                                            a.writer_id AS "writerId",
                                             a.portfolio_id AS "portfolioId",
                                             a.status,
                                             a.created_at AS "createdAt",
@@ -61,7 +61,8 @@ class Application {
                                       WHERE platforms.id=$1`,
                                       [platformId]);
       const applications = result.rows;
-      if(!applications.length) throw new NotFoundError(`Platform: ${platformId} Not Found!`);
+      console.log(applications)
+      // if(!applications.length) throw new NotFoundError(`Platform: ${platformId} Not Found!`);
       return applications;
     };
 

@@ -9,12 +9,23 @@ const { sqlForPartialUpdate } = require('./../helpers/sql');
 class Piece {
 
     static async getAll(searchFilters = {}) {
-        let query = `SELECT p.id, p.writer_id AS "writerId", p.title, text, p.created_at AS "createdAt"
+        let query = `SELECT p.id, 
+                            p.writer_id AS "writerId", 
+                            p.title, 
+                            text, 
+                            p.created_at AS "createdAt",
+                            u.image_url AS "imageUrl",
+                            w.first_name AS "firstName",
+                            w.last_name AS "lastName"
                         FROM pieces AS p 
                         JOIN piece_tags AS pt 
                         ON p.id=pt.piece_id 
                         JOIN tags AS t 
-                        ON pt.tag_id=t.id`;
+                        ON pt.tag_id=t.id
+                        JOIN users AS u
+                        ON p.writer_id=u.writer_id
+                        JOIN writers AS w
+                        ON p.writer_id=w.id`;
 
         const {tagTitle, text} = searchFilters;
 
@@ -30,7 +41,7 @@ class Piece {
             }
         };
 
-        query += ` GROUP BY p.id, p.title ORDER BY "createdAt"`;
+        query += ` GROUP BY p.id, p.title, u.image_url, w.first_name, w.last_name ORDER BY "createdAt"`;
 
         const results = await db.query(query);
         return results.rows;  
@@ -48,9 +59,12 @@ class Piece {
                     p.title, 
                     p.text, 
                     p.created_at AS "createdAt", 
-                    p.updated_at AS "updatedAt"
+                    p.updated_at AS "updatedAt",
+                    u.image_url AS "imageUrl"
             FROM pieces AS p
-            WHERE writer_id=$1`,
+            JOIN users AS u
+            ON p.writer_id=u.writer_id
+            WHERE p.writer_id=$1`,
             [writerId]
         );
         const pieces = result.rows;
@@ -75,10 +89,13 @@ class Piece {
                     p.created_at AS "createdAt", 
                     p.updated_at AS "updatedAt",
                     w.first_name AS "firstName",
-                    w.last_name AS "lastName"
+                    w.last_name AS "lastName",
+                    u.image_url AS "imageUrl"
             FROM pieces AS p
             JOIN writers AS w
             ON p.writer_id=w.id
+            JOIN users AS u
+            ON p.writer_id=u.writer_id
             WHERE p.id=$1`,
             [pieceId]
         );

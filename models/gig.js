@@ -27,15 +27,18 @@ class Gig {
         let query = `SELECT gigs.id, 
                             gigs.platform_id AS "platformId", 
                             title, 
-                            description, 
+                            gigs.description, 
                             compensation, 
                             is_remote AS "isRemote", 
                             word_count AS "wordCount", 
                             is_active AS "isActive",
-                            image_url AS "imageUrl"
+                            image_url AS "imageUrl",
+                            platforms.display_name AS "displayName"
                     FROM gigs
                     JOIN users
-                    ON gigs.platform_id=users.platform_id`;
+                    ON gigs.platform_id=users.platform_id
+                    JOIN platforms
+                    ON gigs.platform_id=platforms.id`;
 
         let whereExpressions = [];
         let queryValues = [];

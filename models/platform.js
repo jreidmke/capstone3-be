@@ -269,14 +269,15 @@ class Platform {
       static async getPiecesForFeedFromTags(tagIds) {
         const result = await db.query(
           `SELECT p.id,
-                  p.title,
+                  p.title AS "title",
                   p.text,
                   p.writer_id AS "writerId",
                   p.created_at AS "createdAt",
                   w.first_name AS "firstName",
                   w.last_name AS "lastName",
                   t.id,
-                  t.title
+                  t.title AS "tagTitle",
+                  u.image_url AS "imageUrl"
             FROM pieces AS p
             JOIN writers AS w
             ON p.writer_id=w.id
@@ -284,6 +285,8 @@ class Platform {
             ON pt.piece_id=p.id
             JOIN tags AS t
             ON pt.tag_id=t.id
+            JOIN users AS u
+            ON p.writer_id=u.writer_id
             WHERE pt.tag_id IN (${tagIds})`
         );
         return result.rows;
@@ -298,10 +301,13 @@ class Platform {
                   p.writer_id AS "writerId",
                   p.created_at AS "createdAt",
                   w.first_name AS "firstName",
-                  w.last_name AS "lastName"
+                  w.last_name AS "lastName",
+                  u.image_url AS "imageUrl"
             FROM pieces AS p
             JOIN writers AS w
             ON p.writer_id=w.id
+            JOIN users AS u
+            ON p.writer_id=u.writer_id
             WHERE w.id IN (${writerIds})`
         );
         return result.rows;
