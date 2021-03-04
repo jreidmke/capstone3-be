@@ -150,3 +150,12 @@ CREATE TABLE writer_tag_follows(
     updated_at TIMESTAMP DEFAULT NULL,
     UNIQUE (writer_id, tag_id)
 );
+
+CREATE TABLE offers(
+    id SERIAL PRIMARY KEY,
+    writer_id INTEGER REFERENCES writers(id) ON DELETE CASCADE,
+    platform_id INTEGER REFERENCES platforms(id) ON DELETE CASCADE,
+    gig_id INTEGER NOT NULL REFERENCES gigs(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (writer_id, platform_id, gig_id)
+);

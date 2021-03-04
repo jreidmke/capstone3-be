@@ -5,7 +5,6 @@ const {
     BadRequestError,
     UnauthorizedError
   } = require("../expressError");
-const {checkForItem} = require('../helpers/checks');
 const {sqlForPartialUpdate} = require("./../helpers/sql");
 
 class Gig {
@@ -287,6 +286,30 @@ class Gig {
             tag_id AS "tagId"`,
             [gigId, tagId]
         );
+        return result.rows[0];
+    };
+
+    static async makeOffer(platformId, gigId, writerId) {
+        const authCheck = await db.query(
+            `SELECT platform_id FROM gigs where gig_id=$1`, [gigId]
+        );
+        if(authCheck.rows[0].platform_id !== +platformId) throw new UnauthorizedError();
+
+        const result = await db.query(
+            `INSERT INTO offers(writer_id, platform_id, gig_id)
+            VALUES ($1, $2, $3)
+            RETURNING id,
+                      writer_id AS "writerId",
+                      platform_id AS "platformId"
+                      gig_id AS "gigId"
+                      created_at AS "createdAt"`,
+            [writerId, platformId, gigId]
+        );
+        return result.rows[0];
+    };
+
+    static async revokeOffer(offerId) {
+        let result = await db.query(`DELETE FROM offers WHERE id=$1 RETURNING *`, [offerId]);
         return result.rows[0];
     };
 };
