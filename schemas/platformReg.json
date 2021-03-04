@@ -23,7 +23,6 @@
     "required": [
         "email",
         "password",
-        "imageUrl",
         "address1",
         "address2",
         "city",
