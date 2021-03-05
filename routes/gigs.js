@@ -102,4 +102,17 @@ router.delete("/:gig_id/apply/writers/:writer_id", ensureCorrectWriterOrAdmin, a
     }
 });
 
+//RELATED PIECES
+
+router.get("/:gig_id/relatedPieces", ensureLoggedIn, async function(req, res, next) {
+    console.log(req.query);
+    try {
+        const pieces = await Gig.getRelatedPieces(req.query.tagIds);
+        return res.json({ pieces });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+
 module.exports = router;

@@ -289,6 +289,32 @@ class Gig {
         return result.rows[0];
     };
 
+
+    static async getRelatedPieces(tagIds) {
+        const result = await db.query(
+            `SELECT p.id,
+                    p.writer_id AS "writerId",
+                    p.title AS "pieceTitle",
+                    p.text,
+                    w.first_name AS "firstName",
+                    w.last_name AS "lastName",
+                    u.image_url AS "imageUrl"
+            FROM pieces AS p
+            JOIN writers AS w
+            ON p.writer_id=w.id
+            JOIN users AS u
+            ON p.writer_id=u.writer_id
+            JOIN piece_tags AS pt
+            ON pt.piece_id=p.id
+            JOIN tags AS t
+            ON pt.tag_id=t.id
+            WHERE t.id IN (${tagIds})`
+        );
+        return result.rows;
+    };
+
+    //**OFFER STUFF */
+
     static async makeOffer(platformId, gigId, writerId, message) {
         const authCheck = await db.query(
             `SELECT platform_id FROM gigs where id=$1`, [gigId]

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { ensureLoggedIn } = require("../middleware/auth");
 const Piece = require("../models/piece");
+const Gig = require("../models/gig");
 
 /** GET /pieces =>
  *   { jobs: [ { id, writerId, title, text, createdAt }, ...] }
@@ -40,5 +41,6 @@ router.get("/:piece_id", ensureLoggedIn, async function(req, res, next) {
         return next(error);
     }
 });
+
 
 module.exports = router; 
