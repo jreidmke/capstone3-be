@@ -383,7 +383,7 @@ router.patch("/:platform_id/applications/:application_id", ensureCorrectPlatform
     try {
         const {status} = req.body;
         if(status==="Accepted" || status==="Pending" || status==="Rejected") {
-            const app = await Application.setApplicationStatus(req.params.application_id, req.body.status);
+            const app = await Application.setApplicationStatus(req.params.platform_id, req.params.application_id, req.body.status);
             return res.json({ app });
         } throw new BadRequestError('Status must be Sting: "Accepted", "Rejected" or "Pending".');
     } catch (error) {

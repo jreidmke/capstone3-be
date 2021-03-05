@@ -166,6 +166,7 @@ CREATE TABLE application_messages(
     application_id INTEGER REFERENCES applications(id) ON DELETE CASCADE,
     writer_id INTEGER REFERENCES writers(id) ON DELETE CASCADE,
     platform_id INTEGER REFERENCES platforms(id) ON DELETE CASCADE,
+    portfolio_id INTEGER REFERENCES portfolios(id) ON DELETE CASCADE,
     status VARCHAR NOT NULL CHECK (status in('Pending', 'Accepted', 'Rejected')) DEFAULT 'Pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

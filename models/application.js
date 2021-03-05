@@ -139,7 +139,7 @@ class Application {
      * Failure throws Not Found.
      */
     
-    static async setApplicationStatus(applicationId, status) {
+    static async setApplicationStatus(platformId, applicationId, status) {
       const result = await db.query(
         `UPDATE applications
         SET status=$1,
@@ -148,9 +148,21 @@ class Application {
         RETURNING id, gig_id AS "gigId", writer_id AS "writerId", portfolio_ID AS "portfolioId", status, created_at AS "createdAt", updated_at AS "updatedAt"`,
         [status, applicationId]
       );
-      if(!result.rows[0]) throw new NotFoundError(`Application: ${applicationId} not found!`);
+      const app = result.rows[0];
+      if(!app) throw new NotFoundError(`Application: ${applicationId} not found!`);
+
+      await db.query(
+        `INSERT INTO application_messages (application_id,
+                                           writer_id,
+                                           platform_id,
+                                           portfolio_id,
+                                           status)
+          VALUES($1, $2, $3, $4, $5)`, [app.id, app.writerId, +platformId, app.portfolioId, app.status]
+      );
+
       return result.rows[0];
     };
 }
 
 module.exports = Application;
+

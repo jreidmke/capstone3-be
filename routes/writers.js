@@ -420,6 +420,21 @@ router.get("/:writer_id/applications", ensureCorrectWriterOrAdmin, async(req, re
     };
 });
 
+
+/** GET APPLICATION MESSAGES
+ * 
+ * 
+ */
+
+router.get("/:writer_id/application-messages", ensureCorrectWriterOrAdmin, async(req, res, next) => {
+    try {
+        const appMsgs = await Writer.getApplicationMessagesByWriterId(req.params.writer_id);
+        return res.json({ appMsgs });
+    } catch (error) {
+        return next(error);
+    }
+})
+
 /**GET /writers/[writerId]/queries
  * 
  * Returns a list of writer queries

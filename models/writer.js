@@ -337,6 +337,26 @@ class Writer {
           WHERE q.writer_id=$1`, [writerId]
         );
         return result.rows;
+      };
+
+      static async getApplicationMessagesByWriterId(writerId) {
+        const result = await db.query(
+          `SELECT am.application_id AS "appId",
+                  am.platform_id AS "platformId",
+                  am.status,
+                  am.created_at AS "createdAt",
+                  am.portfolio_id AS "portfolioId",
+                  p.display_name AS "displayName",
+                  po.title AS "portfolioTitle"
+          FROM application_messages AS am
+          JOIN platforms AS p
+          ON am.platform_id=p.id
+          JOIN portfolios AS po
+          ON am.portfolio_id=po.id
+          WHERE am.writer_id=$1`,
+          [writerId]
+        );
+        return result.rows;
       }
 
 };
