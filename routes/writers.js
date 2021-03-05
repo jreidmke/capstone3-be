@@ -433,6 +433,20 @@ router.get("/:writer_id/application-messages", ensureCorrectWriterOrAdmin, async
     } catch (error) {
         return next(error);
     }
+});
+
+/** DISMISS APPLICATION MESSAGE
+ * 
+ * 
+ */
+
+router.delete("/:writer_id/application-messages/:application_message_id", ensureCorrectWriterOrAdmin, async(req, res, next) => {
+    try {
+        const deletedAppMsg = await Writer.dismissApplicationMessage(req.params.application_message_id);
+        return res.json({"deleted": "deleted"});
+    } catch (error) {
+        return next(error);
+    }
 })
 
 /**GET /writers/[writerId]/queries

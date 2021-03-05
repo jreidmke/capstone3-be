@@ -156,8 +156,9 @@ class Application {
                                            writer_id,
                                            platform_id,
                                            portfolio_id,
+                                           gig_id,
                                            status)
-          VALUES($1, $2, $3, $4, $5)`, [app.id, app.writerId, +platformId, app.portfolioId, app.status]
+          VALUES($1, $2, $3, $4, $5, $6)`, [app.id, app.writerId, +platformId, app.portfolioId, app.gigId, app.status]
       );
 
       return result.rows[0];

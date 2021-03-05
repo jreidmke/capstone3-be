@@ -321,11 +321,13 @@ class Writer {
                   q.platform_id AS "platformId",
                   q.gig_id AS "gigId",
                   q.message,
+                  q.created_at AS "createdAt",
                   p.display_name AS "displayName",
                   g.title AS "gigTitle",
                   g.compensation,
                   g.is_remote AS "isRemote",
                   g.word_count AS "wordCount",
+                  g.description AS "gigDescription",
                   u.image_url AS "imageUrl"
           FROM queries AS q
           JOIN platforms AS p
@@ -336,28 +338,41 @@ class Writer {
           ON q.platform_id=u.platform_id
           WHERE q.writer_id=$1`, [writerId]
         );
+        console.log(result.rows);
         return result.rows;
       };
 
       static async getApplicationMessagesByWriterId(writerId) {
         const result = await db.query(
-          `SELECT am.application_id AS "appId",
+          `SELECT am.id,
+                  am.application_id AS "appId",
                   am.platform_id AS "platformId",
                   am.status,
                   am.created_at AS "createdAt",
                   am.portfolio_id AS "portfolioId",
+                  am.gig_id AS "gigId",
                   p.display_name AS "displayName",
-                  po.title AS "portfolioTitle"
+                  po.title AS "portfolioTitle",
+                  g.title AS "gigTitle"
           FROM application_messages AS am
           JOIN platforms AS p
           ON am.platform_id=p.id
           JOIN portfolios AS po
           ON am.portfolio_id=po.id
+          JOIN gigs AS g
+          ON am.gig_id=g.id
           WHERE am.writer_id=$1`,
           [writerId]
         );
         return result.rows;
-      }
+      };
+
+      static async dismissApplicationMessage(msgId) {
+        await db.query(
+          `DELETE FROM application_messages
+          WHERE id=$1`, [msgId]
+        );
+      };
 
 };
 
