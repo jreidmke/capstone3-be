@@ -61,7 +61,6 @@ class Application {
                                       WHERE platforms.id=$1`,
                                       [platformId]);
       const applications = result.rows;
-      console.log(applications)
       // if(!applications.length) throw new NotFoundError(`Platform: ${platformId} Not Found!`);
       return applications;
     };

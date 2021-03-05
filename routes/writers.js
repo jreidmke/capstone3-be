@@ -420,17 +420,17 @@ router.get("/:writer_id/applications", ensureCorrectWriterOrAdmin, async(req, re
     };
 });
 
-/**GET /writers/[writerId]/offers
+/**GET /writers/[writerId]/queries
  * 
- * Returns a list of writer offers
+ * Returns a list of writer queries
  * 
  * Auth: Ensure correct writer or admin
  */
 
-router.get("/:writer_id/offers", ensureCorrectWriterOrAdmin, async(req, res, next) => {
+router.get("/:writer_id/queries", ensureCorrectWriterOrAdmin, async(req, res, next) => {
     try {
-        const offers = await Writer.getAllOffersByWriterId(req.params.writer_id);
-        return res.json({ offers });
+        const queries = await Writer.getAllQueriesByWriterId(req.params.writer_id);
+        return res.json({ queries });
     } catch (error) {
         return next(error);
     }

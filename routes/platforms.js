@@ -277,7 +277,7 @@ router.delete("/:platform_id/gigs/:gig_id", ensureCorrectPlatformOrAdmin, async 
 
 /**POST /platforms/[platformId]/gigs/[gigId]/writers/[writerId] 
  * 
- * MAKE AN OFFER
+ * MAKE AN QUERY
  * 
  * Returns: {writerId, platformId, gigId, createdAt}
  * 
@@ -286,8 +286,8 @@ router.delete("/:platform_id/gigs/:gig_id", ensureCorrectPlatformOrAdmin, async 
 
 router.post("/:platform_id/gigs/:gig_id/writers/:writer_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
-        const newOffer = await Gig.makeOffer(req.params.platform_id, req.params.gig_id, req.params.writer_id, req.body.message);
-        return res.json({ newOffer });
+        const newQuery = await Gig.makeQuery(req.params.platform_id, req.params.gig_id, req.params.writer_id, req.body.message);
+        return res.json({ newQuery });
     } catch (error) {
         return next(error);
     }

@@ -296,9 +296,11 @@ class Gig {
                     p.writer_id AS "writerId",
                     p.title AS "pieceTitle",
                     p.text,
+                    p.created_at AS "createdAt",
                     w.first_name AS "firstName",
                     w.last_name AS "lastName",
-                    u.image_url AS "imageUrl"
+                    u.image_url AS "imageUrl",
+                    t.title as "tagTitle"
             FROM pieces AS p
             JOIN writers AS w
             ON p.writer_id=w.id
@@ -308,21 +310,22 @@ class Gig {
             ON pt.piece_id=p.id
             JOIN tags AS t
             ON pt.tag_id=t.id
-            WHERE t.id IN (${tagIds})`
+            WHERE t.id IN (${tagIds})
+            ORDER BY p.created_at`
         );
         return result.rows;
     };
 
     //**OFFER STUFF */
 
-    static async makeOffer(platformId, gigId, writerId, message) {
+    static async makeQuery(platformId, gigId, writerId, message) {
         const authCheck = await db.query(
             `SELECT platform_id FROM gigs where id=$1`, [gigId]
         );
         if(authCheck.rows[0].platform_id !== +platformId) throw new UnauthorizedError();
 
         const result = await db.query(
-            `INSERT INTO offers(writer_id, platform_id, gig_id, message)
+            `INSERT INTO queries(writer_id, platform_id, gig_id, message)
             VALUES ($1, $2, $3, $4)
             RETURNING id,
                       writer_id AS "writerId",
@@ -335,10 +338,10 @@ class Gig {
         return result.rows[0];
     };
 
-    static async revokeOffer(offerId) {
-        let result = await db.query(`DELETE FROM offers WHERE id=$1 RETURNING *`, [offerId]);
-        return result.rows[0];
-    };
+    // static async revokeOffer(offerId) {
+    //     let result = await db.query(`DELETE FROM offers WHERE id=$1 RETURNING *`, [offerId]);
+    //     return result.rows[0];
+    // };
 };
 
 
