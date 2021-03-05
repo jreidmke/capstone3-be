@@ -293,6 +293,16 @@ router.post("/:platform_id/gigs/:gig_id/writers/:writer_id", ensureCorrectPlatfo
     }
 });
 
+router.get("/:platform_id/ongoing", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
+    try {
+        const ongoingGigs = await Platform.getAllOngoingGigs(req.params.platform_id);
+        return res.json({ ongoingGigs });
+    } catch (error) {
+        return next(error);
+    }
+})
+
+
 /**DELETE /platforms/[platformId]/offers/[offerId]
  * 
  * REVOKE OFFER

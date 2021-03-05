@@ -447,6 +447,35 @@ router.delete("/:writer_id/application-messages/:application_message_id", ensure
     } catch (error) {
         return next(error);
     }
+});
+
+/**ACCEPT GIG GIG ACCEPTANCE
+ * 
+ * 
+ * 
+ */
+
+router.post("/:writer_id/applications/:application_id", ensureCorrectWriterOrAdmin, async(req, res, next) => {
+    try {
+        const newOngoingGig = await Writer.acceptGig(req.params.application_id);
+        return res.json({ newOngoingGig });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+/**GET ALL ONGOING GIGS
+ * 
+ * 
+ */
+
+router.get("/:writer_id/ongoing", ensureCorrectWriterOrAdmin, async(req, res, next) => {
+    try {
+        const ongoingGigs = await Writer.getAllOngoingGigs(req.params.writer_id);
+        return res.json({ ongoingGigs });
+    } catch (error) {
+        return next(error);
+    }
 })
 
 /**GET /writers/[writerId]/queries

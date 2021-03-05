@@ -7,7 +7,8 @@ const { BCRYPT_WORK_FACTOR } = require("../config.js");
 const db = require("../db");
 const {
   NotFoundError,
-  BadRequestError
+  BadRequestError,
+  UnauthorizedError
 } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
 
@@ -373,6 +374,57 @@ class Writer {
           WHERE id=$1`, [msgId]
         );
       };
+
+      static async acceptGig(applicationId) {
+        const gigResult = await db.query(
+          `SELECT a.gig_id AS "gigId",
+                  a.writer_id AS "writerId",
+                  a.status,
+                  g.platform_id AS "platformId",
+                  g.deadline
+                  FROM applications AS a
+                  JOIN gigs AS g
+                  ON a.gig_id=g.id
+            WHERE a.id=$1`, 
+            [applicationId]);
+        const gig = gigResult.rows[0];
+        if(gig.status !== "Accepted") throw new UnauthorizedError();
+        
+        await db.query(`DELETE FROM applications WHERE id=$1`, [applicationId]);
+        await db.query(`UPDATE gigs SET is_active=FALSE WHERE id=$1`, [gig.gigId]);
+
+        const onGoingResult = await db.query(
+          `INSERT INTO ongoing_gigs (gig_id, writer_id, platform_id, deadline)
+          VALUES($1, $2, $3, $4)
+          RETURNING gig_id AS "gigId", writer_id AS "writerId", platform_id AS "platformId", deadline`,
+          [gig.gigId, gig.writerId, gig.platformId, gig.deadline]
+        );
+        return onGoingResult.rows[0];
+      };
+
+      static async getAllOngoingGigs(writerId) {
+        const result = await db.query(
+          `SELECT o.id,
+                  o.gig_id AS "gigId",
+                  o.writer_id AS "writerId",
+                  o.platform_id AS "platformId",
+                  o.deadline,
+                  g.title,
+                  g.description,
+                  g.compensation,
+                  g.word_count AS "wordCount",
+                  p.display_name AS "displayName"
+          FROM ongoing_gigs AS o
+          JOIN gigs AS g
+          ON o.gig_id=g.id
+          JOIN platforms AS p
+          on o.platform_id=p.id
+          WHERE o.writer_id=$1`, [writerId]
+        );
+
+        return result.rows;
+      };
+
 
 };
 

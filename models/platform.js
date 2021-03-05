@@ -312,6 +312,30 @@ class Platform {
         );
         return result.rows;
       };
+
+      static async getAllOngoingGigs(platformId) {
+        const result = await db.query(
+          `SELECT o.id,
+                  o.gig_id AS "gigId",
+                  o.writer_id AS "writerId",
+                  o.platform_id AS "platformId",
+                  o.deadline,
+                  g.title,
+                  g.description,
+                  g.compensation,
+                  g.word_count AS "wordCount",
+                  w.first_name AS "firstName",
+                  w.last_name AS "lastName"
+          FROM ongoing_gigs AS o
+          JOIN gigs AS g
+          ON o.gig_id=g.id
+          JOIN writers AS w
+          on o.writer_id=w.id
+          WHERE o.platform_id=$1`, [platformId]
+        );
+
+        return result.rows;
+      };
 };
 
 module.exports = Platform;
