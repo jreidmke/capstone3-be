@@ -1,9 +1,19 @@
+CREATE TABLE tags(
+    id SERIAL PRIMARY KEY,
+    title VARCHAR UNIQUE NOT NULL,
+    is_fiction BOOLEAN NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT NULL
+);
+
 CREATE TABLE writers(
     id SERIAL PRIMARY KEY,
     first_name VARCHAR NOT NULL,
     last_name VARCHAR NOT NULL,
     age INTEGER NOT NULL CHECK (age > 0),
     bio VARCHAR NOT NULL,
+    expertise_1 VARCHAR  NOT NULL REFERENCES tags(title) ON DELETE CASCADE,
+    expertise_2 VARCHAR REFERENCES tags(title),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL
 );
@@ -68,14 +78,6 @@ CREATE TABLE gigs(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL,
     UNIQUE(platform_id, title)
-);
-
-CREATE TABLE tags(
-    id SERIAL PRIMARY KEY,
-    title VARCHAR UNIQUE NOT NULL,
-    is_fiction BOOLEAN NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL
 );
 
 CREATE TABLE applications(

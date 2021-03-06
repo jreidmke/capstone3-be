@@ -24,6 +24,8 @@ class Writer {
       let query = `SELECT w.id,
           w.first_name AS "firstName",
           w.last_name AS "lastName",
+          w.expertise_1 AS "expertise1",
+          w.expertise_2 AS "expertise2",
           w.bio,
           u.image_url AS "imageUrl",
           u.city,
@@ -76,6 +78,8 @@ class Writer {
           w.last_name AS "lastName",
           w.age,
           w.bio,
+          w.expertise_1 AS "expertise1",
+          w.expertise_2 AS "expertise2",
           u.image_url AS "imageUrl",
           u.city,
           u.state,
@@ -167,6 +171,8 @@ class Writer {
           address1: "address_1",
           address2: "address_2",
           postalCode: "postal_code",
+          expertise1: "expertise_1",
+          expertise2: "expertise_2",
           twitterUsername: "twitter_username",
           facebookUsername: "facebook_username",
           youtubeUsername: "youtube_username"
@@ -185,7 +191,9 @@ class Writer {
                                   phone,
                                   twitter_username AS "twitterUsername",
                                   facebook_username AS "facebookUsername",
-                                  youtube_username AS "youtubeUsername"`;
+                                  youtube_username AS "youtubeUsername",
+                                  expertise_1 AS "expertise1",
+                                  expertise_2 AS "expertise2"`;
       const uResult = await db.query(userQuerySql, [...values, writerId]);
       const user = uResult.rows[0];
       return user;

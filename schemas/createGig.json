@@ -18,7 +18,7 @@
         "compensation",
         "isRemote",
         "wordCount",
-        "isActive"
+        "deadline"
     ],
     "properties": {
         "title": {
@@ -71,14 +71,13 @@
                 1000
             ]
         },
-        "isActive": {
-            "$id": "#/properties/isActive",
-            "type": "boolean",
-            "title": "The isActive schema",
+        "deadline": {
+            "$id": "#/properties/deadline",
+            "type": "string",
+            "title": "The deadline schema",
             "description": "An explanation about the purpose of this instance.",
-            "default": false,
             "examples": [
-                true
+                "2008-03-05"
             ]
         }
     },

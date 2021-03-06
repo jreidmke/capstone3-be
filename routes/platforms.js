@@ -213,7 +213,6 @@ router.post("/:platform_id/gigs/new", ensureCorrectPlatformOrAdmin, async functi
         if(q.compensation !== undefined) q.compensation = +q.compensation;
         if(q.wordCount !== undefined) q.wordCount = +q.wordCount;
         q.isRemote = q.isRemote === "true";
-        q.isActive = q.isActive === "true";
 
         const validator = jsonschema.validate(req.body, createGig);
         if(!validator.valid) {
@@ -229,7 +228,7 @@ router.post("/:platform_id/gigs/new", ensureCorrectPlatformOrAdmin, async functi
 
 /**PATCH /platforms/[platformId]/gigs, {title, description, compensation, isRemote, wordCount}
  * 
- * UPDATES GIG
+ * UPDATE GIG
  * 
  * Returns: {title, description, compensation, isRemote, wordCount}
  * 
@@ -242,7 +241,6 @@ router.patch("/:platform_id/gigs/:gig_id", ensureCorrectPlatformOrAdmin, async f
         if(q.compensation !== undefined) q.compensation = +q.compensation;
         if(q.wordCount !== undefined) q.wordCount = +q.wordCount;
         q.isRemote = q.isRemote === "true";
-        q.isActive = q.isActive === "true";
            
         const validator = jsonschema.validate(req.body, updateGig);
         if(!validator.valid) {

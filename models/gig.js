@@ -145,7 +145,7 @@ class Gig {
    * Throws BadRequestError if gig already in database.
    * */
 
-    static async createGig(platformId, { title, description, compensation, isRemote, wordCount }) {
+    static async createGig(platformId, { title, description, compensation, isRemote, wordCount, deadline }) {
         const redundantGigCheck = await db.query(
             `SELECT *
             FROM gigs
@@ -157,10 +157,10 @@ class Gig {
 
 
         const result = await db.query(
-            `INSERT INTO gigs (platform_id, title, description, compensation, is_remote, word_count)
-            VALUES($1, $2, $3, $4, $5, $6)
+            `INSERT INTO gigs (platform_id, title, description, compensation, is_remote, word_count, deadline)
+            VALUES($1, $2, $3, $4, $5, $6, $7)
             RETURNING id, platform_id AS "platformId", title, description, compensation, is_remote AS "isRemote", word_count AS "wordCount", is_active AS "isActive"`,
-            [platformId, title, description, compensation, isRemote, wordCount]
+            [platformId, title, description, compensation, isRemote, wordCount, deadline]
         );
         const newGig = result.rows[0];
         return newGig;

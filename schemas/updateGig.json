@@ -12,7 +12,7 @@
             "compensation": 25.0,
             "isRemote": true,
             "wordCount": 1000,
-            "isActive": true
+            "deadline": "2024-01-01"
         }
     ],
     "required": [],
@@ -67,14 +67,14 @@
                 1000
             ]
         },
-        "isActive": {
-            "$id": "#/properties/isActive",
-            "type": "boolean",
-            "title": "The isActive schema",
+        "deadline": {
+            "$id": "#/properties/deadline",
+            "type": "string",
+            "title": "The deadline schema",
             "description": "An explanation about the purpose of this instance.",
             "default": false,
             "examples": [
-                true
+                "2023-12-24"
             ]
         }
     },
