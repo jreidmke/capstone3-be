@@ -291,6 +291,9 @@ router.post("/:platform_id/gigs/:gig_id/writers/:writer_id", ensureCorrectPlatfo
     }
 });
 
+
+/**GET ONGOING GIGS */
+
 router.get("/:platform_id/ongoing", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
     try {
         const ongoingGigs = await Platform.getAllOngoingGigs(req.params.platform_id);
@@ -301,22 +304,7 @@ router.get("/:platform_id/ongoing", ensureCorrectPlatformOrAdmin, async function
 })
 
 
-/**DELETE /platforms/[platformId]/offers/[offerId]
- * 
- * REVOKE OFFER
- * 
- * Returns {writer_id, platform_id, gig_id, created_at, id}
- * 
- * Auth: Correct Platform or admin
- */
-router.delete("/:platform_id/offers/:offer_id", ensureCorrectPlatformOrAdmin, async function(req, res, next) {
-    try {
-        const revokedOffer = await Gig.revokeOffer(req.params.offer_id);
-        return res.json({ revokedOffer });
-    } catch (error) {
-        return next(error);
-    }
-})
+
 
 //GIG TAGGING//
 

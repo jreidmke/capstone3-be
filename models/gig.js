@@ -360,10 +360,10 @@ class Gig {
         return result.rows[0];
     };
 
-    // static async revokeOffer(offerId) {
-    //     let result = await db.query(`DELETE FROM offers WHERE id=$1 RETURNING *`, [offerId]);
-    //     return result.rows[0];
-    // };
+    static async ignoreQuery(queryId) {
+        let result = await db.query(`DELETE FROM queries WHERE id=$1 RETURNING *`, [queryId]);
+        return result.rows[0];
+    };
 };
 
 

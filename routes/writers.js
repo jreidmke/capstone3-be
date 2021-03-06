@@ -10,6 +10,7 @@ const { ensureLoggedIn, ensureCorrectWriterOrAdmin } = require("../middleware/au
 const Application = require("../models/application");
 const Portfolio = require("../models/portfolio");
 const Piece = require("../models/piece");
+const Gig = require("../models/gig");
 const jsonschema = require("jsonschema");
 const createPiece = require("../schemas/createPiece.json");
 const updatePiece = require("../schemas/updatePiece.json");
@@ -477,6 +478,24 @@ router.get("/:writer_id/ongoing", ensureCorrectWriterOrAdmin, async(req, res, ne
         return next(error);
     }
 })
+
+/**DELETE /platforms/[platformId]/offers/[offerId]
+ * 
+ * REVOKE OFFER
+ * 
+ * Returns {writer_id, platform_id, gig_id, created_at, id}
+ * 
+ * Auth: Correct Platform or admin
+ */
+ router.delete("/:writer_id/queries/:query_id", ensureCorrectWriterOrAdmin, async function(req, res, next) {
+    try {
+        const ignoredQuery = await Gig.ignoreQuery(req.params.query_id);
+        return res.json({ ignoredQuery });
+    } catch (error) {
+        return next(error);
+    }
+})
+
 
 /**GET /writers/[writerId]/queries
  * 
