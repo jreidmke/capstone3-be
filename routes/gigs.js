@@ -113,5 +113,14 @@ router.get("/:gig_id/relatedPieces", ensureLoggedIn, async function(req, res, ne
     }
 });
 
+router.get("/:gig_id/relatedWriters", ensureLoggedIn, async function(req, res, next) {
+    try {
+        const writers = await Gig.getRelatedWriters(req.query.tagIds);
+        return res.json({ writers });
+    } catch (error) {
+        return next(error);
+    }
+});
+
 
 module.exports = router;

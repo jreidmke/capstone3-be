@@ -316,6 +316,28 @@ class Gig {
         return result.rows;
     };
 
+    static async getRelatedWriters(expertise) {
+        const result = await db.query(
+          `SELECT w.id,
+                  w.first_name AS "firstName",
+                  w.last_name AS "lastName",
+                  w.expertise_1 AS "expertise1",
+                  w.expertise_2 AS "expertise2",
+                  u.city,
+                  u.state,
+                  u.image_url AS "imageUrl",
+                  t.title AS "tagTitle"
+          FROM writers AS w
+          JOIN users AS u
+          ON w.id=u.writer_id
+          JOIN tags AS t
+          ON w.expertise_1=t.id
+          WHERE w.expertise_1 IN (${expertise}) OR w.expertise_2 IN (${expertise})`
+        );
+        console.log(result.rows);
+        return result.rows;
+    };
+
     //**OFFER STUFF */
 
     static async makeQuery(platformId, gigId, writerId, message) {

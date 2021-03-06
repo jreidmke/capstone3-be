@@ -110,6 +110,24 @@ class Writer {
       return writer;
      };
 
+     static async getWritersByExpertise(expertise) {
+      const result = await db.query(
+        `SELECT w.id,
+                w.first_name AS "firstName",
+                w.last_name AS "lastName",
+                w.expertise_1 AS "expertise1",
+                w.expertise_2 AS "expertise2",
+                u.city,
+                u.state,
+                u.image_url AS "imageUrl"
+        FROM writers AS w
+        JOIN users AS u
+        ON w.id=u.writer_id
+        WHERE w.expertise_1 IN (${expertise})`
+      );
+      return result.rows;
+    }
+
      /** Given a writer Id, removes writer from database and returns all data on deleted writer
       *
       */
@@ -432,8 +450,6 @@ class Writer {
 
         return result.rows;
       };
-
-
 };
 
 module.exports = Writer;
