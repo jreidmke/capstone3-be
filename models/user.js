@@ -34,6 +34,7 @@ class User {
         if(user) {
             const validPassword = await bcrypt.compare(password, user.password);
             if(validPassword === true) {
+                await db.query(`UPDATE users SET last_login_at=CURRENT_TIMESTAMP WHERE id=${user.id}`)
                 delete user.password;
                 return user;
             };

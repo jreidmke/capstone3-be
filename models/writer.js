@@ -89,7 +89,8 @@ class Writer {
           u.phone,
           u.facebook_username AS "facebookUsername",
           u.twitter_username AS "twitterUsername",
-          u.youtube_username AS "youtubeUsername"
+          u.youtube_username AS "youtubeUsername",
+          u.last_login_at AS "lastLoginAt"
         FROM writers AS w
         JOIN users AS u ON w.id=u.writer_id
         WHERE u.writer_id=$1`,
