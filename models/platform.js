@@ -74,7 +74,10 @@ class Platform {
               u.phone,
               u.facebook_username AS "facebookUsername",
               u.twitter_username AS "twitterUsername",
-              u.youtube_username AS "youtubeUsername"
+              u.youtube_username AS "youtubeUsername",
+              u.last_login_at AS "lastLoginAt",
+              u.created_at AS "createdAt",
+              u.email
           FROM platforms AS p
           JOIN users AS u ON p.id=u.platform_id
           WHERE p.id=$1`,
@@ -92,7 +95,9 @@ class Platform {
                     g.is_remote AS "isRemote", 
                     g.word_count AS "wordCount", 
                     g.is_active AS "isActive",
-                    u.image_url AS "imageUrl"
+                    u.image_url AS "imageUrl",
+                    g.deadline,
+                    g.is_active AS "isActive"
             FROM gigs AS g
             JOIN users AS u
             ON g.platform_id=u.platform_id
@@ -325,7 +330,8 @@ class Platform {
                   g.compensation,
                   g.word_count AS "wordCount",
                   w.first_name AS "firstName",
-                  w.last_name AS "lastName"
+                  w.last_name AS "lastName",
+                  o.created_at AS "createdAt"
           FROM ongoing_gigs AS o
           JOIN gigs AS g
           ON o.gig_id=g.id

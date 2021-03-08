@@ -400,16 +400,21 @@ class Writer {
         return result.rows;
       };
 
-      static async dismissApplicationMessage(msgId) {
+      static async declineGig(applicationId) {
         await db.query(
           `DELETE FROM application_messages
-          WHERE id=$1`, [msgId]
+          WHERE application_id=$1`, [applicationId]
         );
+
+        await db.query(
+          `DELETE FROM applications WHERE id=$1`, [applicationId]
+        )
       };
 
       static async acceptGig(applicationId) {
         const gigResult = await db.query(
-          `SELECT a.gig_id AS "gigId",
+          `SELECT a.id,
+                  a.gig_id AS "gigId",
                   a.writer_id AS "writerId",
                   a.status,
                   g.platform_id AS "platformId",
@@ -420,6 +425,8 @@ class Writer {
             WHERE a.id=$1`, 
             [applicationId]);
         const gig = gigResult.rows[0];
+        console.log(gig.id);
+        console.log(gig.status);
         if(gig.status !== "Accepted") throw new UnauthorizedError();
         
         await db.query(`DELETE FROM applications WHERE id=$1`, [applicationId]);
