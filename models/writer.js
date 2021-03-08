@@ -90,9 +90,14 @@ class Writer {
           u.facebook_username AS "facebookUsername",
           u.twitter_username AS "twitterUsername",
           u.youtube_username AS "youtubeUsername",
-          u.last_login_at AS "lastLoginAt"
+          u.created_at AS "createdAt",
+          u.last_login_at AS "lastLoginAt",
+          t.title AS "expertise1Title",
+          u.email
         FROM writers AS w
         JOIN users AS u ON w.id=u.writer_id
+        JOIN tags AS t
+        ON t.id=w.expertise_1
         WHERE u.writer_id=$1`,
         [writerId]
       );
