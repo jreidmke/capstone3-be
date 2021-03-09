@@ -27,11 +27,14 @@ class Gig {
                             gigs.platform_id AS "platformId", 
                             title, 
                             gigs.description, 
-                            compensation, 
+                            compensation,
+                            deadline, 
                             is_remote AS "isRemote", 
                             word_count AS "wordCount", 
                             is_active AS "isActive",
                             image_url AS "imageUrl",
+                            city,
+                            state,
                             platforms.display_name AS "displayName"
                     FROM gigs
                     JOIN users

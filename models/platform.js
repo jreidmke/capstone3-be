@@ -24,9 +24,13 @@ class Platform {
             u.state,
             u.facebook_username AS "facebookUsername",
             u.twitter_username AS "twitterUsername",
-            u.youtube_username AS "youtubeUsername"
+            u.youtube_username AS "youtubeUsername",
+            COUNT(g.id) AS "gigCount"
           FROM platforms AS p
-          JOIN users AS u ON p.id=u.platform_id`;
+          JOIN users AS u 
+          ON p.id=u.platform_id
+          JOIN gigs AS g
+          ON g.platform_id=p.id`;
 
 
         let whereExpressions = [];
@@ -47,7 +51,7 @@ class Platform {
           query += " WHERE " + whereExpressions.join(" AND ");
         };
 
-        query += ` ORDER BY "displayName"`;
+        query += `  GROUP BY p.id, u.image_url, u.city, u.state, u.facebook_username, u.twitter_username, u.youtube_username ORDER BY "displayName"`;
         const results = await db.query(query, queryValues);
         return results.rows;      
       };
@@ -273,7 +277,7 @@ class Platform {
 
       static async getPiecesForFeedFromTags(tagIds) {
         const result = await db.query(
-          `SELECT p.id,
+          `SELECT p.id AS "pieceId",
                   p.title AS "title",
                   p.text,
                   p.writer_id AS "writerId",
@@ -300,7 +304,7 @@ class Platform {
       static async getPiecesForFeedFromWriters(writerIds) {
 
         const result = await db.query(
-          `SELECT p.id,
+          `SELECT p.id AS "pieceId",
                   p.title,
                   p.text,
                   p.writer_id AS "writerId",

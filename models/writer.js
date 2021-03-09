@@ -32,9 +32,13 @@ class Writer {
           u.state,
           u.facebook_username AS "facebookUsername",
           u.twitter_username AS "twitterUsername",
-          u.youtube_username AS "youtubeUsername"
+          u.youtube_username AS "youtubeUsername",
+          COUNT(p.id) AS "pieceCount"
         FROM writers AS w
-        JOIN users AS u ON w.id=u.writer_id`;
+        JOIN users AS u
+        ON w.id=u.writer_id
+        JOIN pieces AS p
+        ON p.writer_id=w.id`;
 
       let whereExpressions = [];
       let queryValues = [];
@@ -54,7 +58,7 @@ class Writer {
         query += " WHERE " + whereExpressions.join(" AND ");
       };
       
-      query += ` ORDER BY "lastName"`
+      query += ` GROUP BY w.id, u.image_url, u.city, u.state, u.facebook_username, u.twitter_username, u.youtube_username ORDER BY "lastName"`
 
       const results = await db.query(query, queryValues);
       return results.rows;
@@ -215,9 +219,7 @@ class Writer {
                                   phone,
                                   twitter_username AS "twitterUsername",
                                   facebook_username AS "facebookUsername",
-                                  youtube_username AS "youtubeUsername",
-                                  expertise_1 AS "expertise1",
-                                  expertise_2 AS "expertise2"`;
+                                  youtube_username AS "youtubeUsername"`;
       const uResult = await db.query(userQuerySql, [...values, writerId]);
       const user = uResult.rows[0];
       return user;
@@ -305,13 +307,16 @@ class Writer {
                   g.platform_id AS "platformId",
                   g.title,
                   g.description,
+                  g.deadline,
                   g.compensation,
                   g.is_remote AS "isRemote",
                   g.word_count AS "wordCount",
                   g.is_active AS "isActive",
                   t.title AS "tagTitle",
                   p.display_name AS "displayName",
-                  u.image_url AS "imageUrl"
+                  u.image_url AS "imageUrl",
+                  u.city,
+                  u.state
           FROM gigs AS g
           JOIN gig_tags AS gt
           ON g.id=gt.gig_id
@@ -332,12 +337,15 @@ class Writer {
                   g.platform_id AS "platformId",
                   g.title,
                   g.description,
+                  g.deadline,
                   g.compensation,
                   g.is_remote AS "isRemote",
                   g.word_count AS "wordCount",
                   g.is_active AS "isActive",
                   p.display_name AS "displayName",
-                  u.image_url AS "imageUrl"
+                  u.image_url AS "imageUrl",
+                  u.city,
+                  u.state
           FROM gigs AS g
           JOIN platforms AS p
           ON p.id=g.platform_id
