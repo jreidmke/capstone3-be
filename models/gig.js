@@ -71,7 +71,7 @@ class Gig {
 
         if(platformId !== undefined) {
             queryValues.push(platformId);
-            whereExpressions.push(`platform_id=$${queryValues.length}`); 
+            whereExpressions.push(`gigs.platform_id=$${queryValues.length}`); 
         };
 
         if(whereExpressions.length > 0) {
