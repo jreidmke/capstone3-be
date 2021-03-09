@@ -112,15 +112,21 @@ class Gig {
                     g.platform_id AS "platformId", 
                     g.title, 
                     g.created_at AS "createdAt",
-                    g.description, 
+                    g.description,
+                    g.deadline, 
                     g.compensation, 
                     g.is_remote AS "isRemote", 
                     g.word_count AS "wordCount", 
                     g.is_active AS "isActive", 
-                    p.display_name AS "displayName"
+                    p.display_name AS "displayName",
+                    u.image_url AS "imageUrl",
+                    u.city,
+                    u.state
             FROM gigs AS g
             JOIN platforms AS p
             ON p.id=platform_id
+            JOIN users AS u
+            ON g.platform_id=u.platform_id
             WHERE g.id=$1`,
             [id]
         );
