@@ -53,7 +53,7 @@ class User {
     * Auth required: none
     */
 
-    static async register({email, password, imageUrl, address1, address2, city, state, postalCode, phone, twitterUsername, facebookUsername, youtubeUsername, firstName, lastName, age, bio, displayName, description}) {
+    static async register({email, password, imageUrl, address1, address2, city, state, postalCode, phone, twitterUsername, facebookUsername, youtubeUsername, firstName, lastName, age, bio, displayName, description, expertise1}) {
 
         //duplicate email check
         if(await checkForItem(email, 'users', 'email')) throw new BadRequestError(`Duplicate email: ${email}. Please select another.`);
@@ -62,10 +62,10 @@ class User {
 
         if(firstName) {
             const result = await db.query(
-                `INSERT INTO writers (first_name, last_name, age, bio)
-                VALUES ($1, $2, $3, $4)
+                `INSERT INTO writers (first_name, last_name, age, bio, expertise_1)
+                VALUES ($1, $2, $3, $4, $5)
                 RETURNING id`,
-                [firstName, lastName, age, bio]
+                [firstName, lastName, age, bio, expertise1]
             );
             user = result.rows[0];
         } else {

@@ -55,6 +55,7 @@ router.post("/register", async function(req, res, next) {
         let validator;
         req.body.postalCode = +req.body.postalCode;
         if("age" in req.body) req.body.age = +req.body.age; 
+        if("expertise1" in req.body) req.body.expertise1 = +req.body.expertise1;
         if("displayName" in req.body) {
             validator = jsonschema.validate(req.body, platformRegSchema);
         } else {
@@ -64,6 +65,7 @@ router.post("/register", async function(req, res, next) {
             const errs = validator.errors.map(e => e.stack);
             throw new BadRequestError(errs);
         };
+        console.log(req.body);
         const newUser = await User.register({...req.body});
         const token = createToken(newUser);
         return res.status(201).json({ token });

@@ -15,7 +15,7 @@ const Tag = require("./../models/tag");
  * Authorization required: Logged In
  */
 
-router.get("/", ensureLoggedIn, async(req, res, next) => {
+router.get("/", async(req, res, next) => {
     const q = req.query;
     try {
         const tags = await Tag.getAll(q);
