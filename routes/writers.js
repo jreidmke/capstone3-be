@@ -27,7 +27,7 @@ const router = express.Router();
  * Auth required: ensure logged in.
  */
 
-router.get("/", ensureLoggedIn, async function(req, res, next) {
+router.get("/", async function(req, res, next) {
     try {
         const validator = jsonschema.validate(req.query, writerQP);
         if (!validator.valid) {

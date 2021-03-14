@@ -76,6 +76,7 @@ router.post("/register", async function(req, res, next) {
 
 router.get("/users/:user_id", async function(req, res, next) {
     try {
+        console.log("PIZZA")
         const user = await User.getById(req.params.user_id);
         return res.json({ user });
     } catch (error) {
