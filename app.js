@@ -7,6 +7,8 @@ const cors = require("cors");
 
 const { NotFoundError } = require("./expressError");
 
+const Writer = require("./models/writer");
+
 const { authenticateJWT } = require("./middleware/auth");
 const authRoutes = require("./routes/auth");
 const writerRoutes = require("./routes/writers");
@@ -32,8 +34,9 @@ app.use("/tags", tagRoutes);
 app.use("/pieces", pieceRoute);
 app.use("/portfolios", portfolioRoute);
 
-app.get("/", function(req, res, next) {
-  return res.json("Hello");
+app.get("/", async function(req, res, next) {
+  const result = await Writer.getAll();
+  return res.json({result});
 })
 
 /** Handle 404 errors -- this matches everything */
