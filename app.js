@@ -32,6 +32,10 @@ app.use("/tags", tagRoutes);
 app.use("/pieces", pieceRoute);
 app.use("/portfolios", portfolioRoute);
 
+app.get("/", function(req, res, next) {
+  return res.json("Hello");
+})
+
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {
     return next(new NotFoundError());
