@@ -36,6 +36,7 @@ app.use("/portfolios", portfolioRoute);
 
 app.get("/", async function(req, res, next) {
   const result = await Writer.getAll();
+  console.log(result);
   return res.json({result});
 })
 
