@@ -41,6 +41,14 @@ router.get("/", async function(req, res, next) {
     }
 });
 
+router.get("/pizza", async function(req, res, next) {
+    try {
+        return res.json("HELLO PIZZA")
+    } catch (error) {
+        return next(error);
+    }
+})
+
 /**GET /[writerId] => {user}
  *
  * Returns { first_name, last_name, image_url, city, state, facebookUsername, twitterUsername, youtubeUesrname, age, bio, createdAt, address1, address2, phone, portfolios}
