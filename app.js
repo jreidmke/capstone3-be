@@ -35,9 +35,12 @@ app.use("/pieces", pieceRoute);
 app.use("/portfolios", portfolioRoute);
 
 app.get("/", async function(req, res, next) {
-  const result = await Writer.getAll();
-  console.log(result);
-  return res.json({result});
+  try {
+    const result = await Writer.getAll();
+    return res.json({result});
+  } catch (error) {
+    return next(error);
+  }
 })
 
 /** Handle 404 errors -- this matches everything */
