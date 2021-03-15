@@ -43,6 +43,14 @@ app.get("/", async function(req, res, next) {
   }
 })
 
+app.get("/hello", async function(req, res, next) {
+  try {
+    return res.json("HELLO");
+  } catch (error) {
+    return next(error);
+  }
+})
+
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {
     return next(new NotFoundError());
