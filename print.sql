@@ -6,3 +6,4 @@ CREATE DATABASE print;
 \c print; 
 
 \i print-schema.sql
+\i print-seed.sql
