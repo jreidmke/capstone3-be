@@ -162,14 +162,3 @@ CREATE TABLE ongoing_gigs(
     deadline DATE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-CREATE TABLE applications(
-    id SERIAL PRIMARY KEY,
-    gig_id INTEGER NOT NULL REFERENCES gigs(id) ON DELETE CASCADE,
-    writer_id INTEGER NOT NULL REFERENCES writers(id) ON DELETE CASCADE,
-    portfolio_id INTEGER NOT NULL REFERENCES portfolios(id) ON DELETE CASCADE,
-    status VARCHAR NOT NULL CHECK (status in('Pending', 'Accepted', 'Rejected')) DEFAULT 'Pending',
-    pitch TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL
-);
