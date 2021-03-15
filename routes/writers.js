@@ -57,7 +57,7 @@ router.get("/pizza", async function(req, res, next) {
  * Auth required: ensure logged in.
  */
 
-router.get("/:writer_id", ensureLoggedIn, async function(req, res, next) {
+router.get("/:writer_id", async function(req, res, next) {
     try {
         const writer = await Writer.getById(req.params.writer_id);
         return res.json({ writer });
