@@ -173,4 +173,3 @@ CREATE TABLE ongoing_gigs(
     deadline DATE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
