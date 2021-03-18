@@ -6,6 +6,8 @@ This is a RESTful API created for both writers and publishing platforms. Both wr
 
 Base URL: https://print-project-api.herokuapp.com/
 
+Endpoints in `/routes`. 
+
 # Installation
 
 To install, follow these steps:
