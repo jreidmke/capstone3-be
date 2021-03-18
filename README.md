@@ -17,3 +17,22 @@ Download this repository onto your machine by clicking the "Clone or Download" b
 - Via Command Line: 
 
 `$ git clone https://github.com/jreidmke/capstone3-be`
+
+Create databases:
+
+`$ createdb print`
+`$ createdb print-test`
+
+Start the server:
+
+`$ node server.js`
+
+# Backend Build Tools
+- NodeJs
+- ExpressJs
+- PostgreSQL
+- Node-pg
+- JSONSchema
+- Jest/Supertest
+- Bcrypt
+- JSONWebToken
