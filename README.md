@@ -5,3 +5,7 @@ This is a RESTful API created for both writers and publishing platforms. Both wr
 # Endpoints
 
 Base URL: https://print-project-api.herokuapp.com/
+
+## Writers
+
+> Hello
