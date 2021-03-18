@@ -34,23 +34,6 @@ app.use("/tags", tagRoutes);
 app.use("/pieces", pieceRoute);
 app.use("/portfolios", portfolioRoute);
 
-app.get("/", async function(req, res, next) {
-  try {
-    const result = await Writer.getAll();
-    return res.json({result});
-  } catch (error) {
-    return next(error);
-  }
-})
-
-app.get("/hello", async function(req, res, next) {
-  try {
-    return res.json("HELLO");
-  } catch (error) {
-    return next(error);
-  }
-})
-
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {
     return next(new NotFoundError());
