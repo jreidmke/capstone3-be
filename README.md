@@ -6,6 +6,10 @@ This is a RESTful API created for both writers and publishing platforms. Both wr
 
 Base URL: https://print-project-api.herokuapp.com/
 
-## Writers
+## Auth
 
-> Hello
+- POST /auth/login
+returns token for auth. 
+
+`/auth/login
+body: {email, password}`
