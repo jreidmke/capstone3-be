@@ -12,3 +12,5 @@ Base URL: https://print-project-api.herokuapp.com/
 returns token for auth. 
 
     `/auth/login  ||  body: {email, password}`
+
+- /auth/register  returns token for auth.
