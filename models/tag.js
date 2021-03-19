@@ -16,25 +16,15 @@ class Tag {
       let query = `SELECT id, title, is_fiction AS "isFiction", created_at AS "createdAt", updated_at AS "updatedAt" FROM tags`;
       let whereExpressions = [];
       let queryValues = [];
-      const { search, isFiction, tagIds }= searchFilters;
+      const { isFiction, tagIds }= searchFilters;
 
       if(isFiction !== undefined) {
         queryValues.push(isFiction);
         whereExpressions.push(`is_fiction=$${queryValues.length}`);
       };
 
-     
-
       if(whereExpressions.length > 0) {
         query += " WHERE " + whereExpressions.join(" AND ");
-      };
-
-      if(search !== undefined) {
-        if(!whereExpressions.length) {
-          query += ` WHERE title LIKE '%${search}%'`;
-        } else {
-          query += ` AND title LIKE '%${search}%'`;
-        };
       };
 
       if(tagIds !== undefined) {

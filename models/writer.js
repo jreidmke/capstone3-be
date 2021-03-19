@@ -25,7 +25,6 @@ class Writer {
           w.first_name AS "firstName",
           w.last_name AS "lastName",
           w.expertise_1 AS "expertise1",
-          w.expertise_2 AS "expertise2",
           w.bio,
           u.image_url AS "imageUrl",
           u.city,
@@ -83,7 +82,6 @@ class Writer {
           w.age,
           w.bio,
           w.expertise_1 AS "expertise1",
-          w.expertise_2 AS "expertise2",
           u.image_url AS "imageUrl",
           u.city,
           u.state,
@@ -126,7 +124,6 @@ class Writer {
                 w.first_name AS "firstName",
                 w.last_name AS "lastName",
                 w.expertise_1 AS "expertise1",
-                w.expertise_2 AS "expertise2",
                 u.city,
                 u.state,
                 u.image_url AS "imageUrl"

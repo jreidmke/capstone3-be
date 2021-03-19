@@ -36,11 +36,12 @@ class Gig {
                             city,
                             state,
                             platforms.display_name AS "displayName"
-                    FROM gigs
+                    FROM gigs 
                     JOIN users
                     ON gigs.platform_id=users.platform_id
                     JOIN platforms
-                    ON gigs.platform_id=platforms.id`;
+                    ON gigs.platform_id=platforms.id
+                    `;
 
         let whereExpressions = [];
         let queryValues = [];
@@ -80,17 +81,19 @@ class Gig {
 
         if(tagTitle !== undefined) {
             const tagRes = await db.query(
-                `SELECT gt.gig_id FROM tags AS t
+                `SELECT gt.gig_id 
+                FROM tags AS t
                 JOIN gig_tags AS gt
                 ON t.id = gt.tag_id
                 WHERE title LIKE '%${tagTitle}%'`
             );
             let tags = tagRes.rows.map(t => parseInt(t.gig_id));
+            console.log(tags);
             if(!tags.length) throw new NotFoundError(`No Tags Match Tag: ${tagTitle}`)
             if(!whereExpressions.length) {
-                query += ` WHERE id IN (${tags.join(',')})`;
+                query += ` WHERE gigs.id IN (${tags.join(',')})`;
             } else {
-                query += ` AND id IN (${tags.join(',')})`
+                query += ` AND gigs.id IN (${tags.join(',')})`
             };
         };
 
@@ -331,7 +334,6 @@ class Gig {
                   w.first_name AS "firstName",
                   w.last_name AS "lastName",
                   w.expertise_1 AS "expertise1",
-                  w.expertise_2 AS "expertise2",
                   u.city,
                   u.state,
                   u.image_url AS "imageUrl",

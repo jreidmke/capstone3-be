@@ -9,13 +9,14 @@ const Tag = require("./../models/tag");
  * GET ALL GIGS
  * 
  * Can provide search filter in query:
-     * - search
+     * - tagId
      * - isFiction
+     * 
      * 
  * Authorization required: Logged In
  */
 
-router.get("/", async(req, res, next) => {
+router.get("/", ensureLoggedIn, async(req, res, next) => {
     const q = req.query;
     try {
         const tags = await Tag.getAll(q);

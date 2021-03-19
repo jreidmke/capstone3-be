@@ -27,7 +27,7 @@ const router = express.Router();
  * Auth required: ensure logged in.
  */
 
-router.get("/", async function(req, res, next) {
+router.get("/", ensureLoggedIn, async function(req, res, next) {
     try {
         const validator = jsonschema.validate(req.query, writerQP);
         if (!validator.valid) {
@@ -41,13 +41,6 @@ router.get("/", async function(req, res, next) {
     }
 });
 
-router.get("/pizza", async function(req, res, next) {
-    try {
-        return res.json("HELLO PIZZA")
-    } catch (error) {
-        return next(error);
-    }
-})
 
 /**GET /[writerId] => {user}
  *
@@ -57,7 +50,7 @@ router.get("/pizza", async function(req, res, next) {
  * Auth required: ensure logged in.
  */
 
-router.get("/:writer_id", async function(req, res, next) {
+router.get("/:writer_id", ensureLoggedIn, async function(req, res, next) {
     try {
         const writer = await Writer.getById(req.params.writer_id);
         return res.json({ writer });
