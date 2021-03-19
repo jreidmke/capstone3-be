@@ -27,21 +27,32 @@ describe("GET /gigs", function() {
           {
             id: expect.any(Number),
             platformId: expect.any(Number),
-            title: 'gig1',
-            description: 'gig1',
-            compensation: '50.00',
-            isRemote: true,
-            wordCount: 500,
+            title: expect.any(String),
+            description: expect.any(String),
+            compensation: expect.any(String),
+            deadline: expect.any(String),
+            isRemote: expect.any(Boolean),
+            wordCount: expect.any(Number),
+            imageUrl: "platformPic",
+            city: "Business",
+            state: "FL",
+            displayName: "The Platform",
             isActive: true
           },
           {
             id: expect.any(Number),
             platformId: expect.any(Number),
-            title: 'gig2',
-            description: 'gig2',
-            compensation: '500.00',
-            isRemote: false,
-            wordCount: 100,
+            title: expect.any(String),
+            description: expect.any(String),
+            compensation: expect.any(String),
+            deadline: expect.any(String),
+            isRemote: expect.any(Boolean),
+            imageUrl: expect.any(String),
+            wordCount: expect.any(Number),
+            imageUrl: "platformPic",
+            city: "Business",
+            state: "FL",
+            displayName: "The Platform",
             isActive: true
           }])
     });
@@ -60,8 +71,13 @@ describe("GET /gigs", function() {
           title: 'gig1',
           description: 'gig1',
           compensation: '50.00',
+          deadline: expect.any(String),
           isRemote: true,
           wordCount: 500,
+          imageUrl: "platformPic",
+          city: "Business",
+          state: "FL",
+          displayName: "The Platform",
           isActive: true
         }]);
     });
@@ -78,10 +94,16 @@ describe("GET /gigs", function() {
         platformId: expect.any(Number),
         title: 'gig1',
         description: 'gig1',
+        deadline: expect.any(String),
         compensation: '50.00',
         isRemote: true,
         wordCount: 500,
         isActive: true,
+        displayName: "The Platform",
+        imageUrl: "platformPic",
+        city: "Business",
+        state: "FL",
+        createdAt: expect.any(String),
         tags: [ { title: 'cooking', id: 1 }, { title: 'food', id: 2 } ]
       })
     });
@@ -101,7 +123,7 @@ describe("GET /gigs", function() {
         title: 'gig3',
         description: 'gig1',
         compensation: '50.00',
-        isRemote: true,
+        isRemote: false,
         wordCount: 500,
         isActive: true,
         createdAt: expect.any(String),
@@ -133,9 +155,9 @@ describe("POST /platforms/[platformId]/gigs/new", function() {
         "title": "The New Gig",
         "description": "You gotta clean our tables. They are filthy.",
         "compensation": 25.00,
-        "isRemote": true,
+        "isRemote": false,
         "wordCount": 1000,
-        "isActive": true
+        "deadline": "2021-04-13"
       }).set("authorization", tokens[1]);
       expect(resp.body.newGig).toEqual({
         id: expect.any(Number),
@@ -143,7 +165,7 @@ describe("POST /platforms/[platformId]/gigs/new", function() {
         description: 'You gotta clean our tables. They are filthy.',
         compensation: '25.00',
         platformId: expect.any(Number),
-        isRemote: true,
+        isRemote: false,
         wordCount: 1000,
         isActive: true
       })
@@ -169,9 +191,8 @@ describe("POST /platforms/[platformId]/gigs/new", function() {
             'instance requires property "title"',
             'instance requires property "description"',
             'instance requires property "compensation"',
-            'instance requires property "isRemote"',
             'instance requires property "wordCount"',
-            'instance requires property "isActive"',
+            'instance requires property "deadline"',
             'instance is not allowed to have the additional property "blah"'
           ],
           status: 400
@@ -208,6 +229,7 @@ describe("DELETE /platforms/[platformId]/gigs/[gigId]", function() {
     expect(resp.body.deletedGig).toEqual({compensation: "50.00",
                                           created_at: expect.any(String), 
                                           description: "gig1",
+                                          deadline: expect.any(String),
                                           id: expect.any(Number),  
                                           is_active: true, 
                                           is_remote: true, 

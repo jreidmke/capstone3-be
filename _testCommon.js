@@ -49,7 +49,8 @@ async function commonBeforeAll() {
                         firstName: "Maria", 
                         lastName: "Aldapa", 
                         age: 24, 
-                        bio: "I am a writer."});
+                        bio: "I am a writer.",
+                        expertise1: 1});
     const writer2 = await User.register({email: "authcheck@gmail.com", 
                         password: "password", 
                         imageUrl: "picture", 
@@ -65,7 +66,8 @@ async function commonBeforeAll() {
                         firstName: "Maria", 
                         lastName: "Aldapa", 
                         age: 24, 
-                        bio: "I am a writer."})
+                        bio: "I am a writer.",
+                        expertise1: 2})
 
     //platform
     const platform = await User.register({email: "platform@gmail.com", 
@@ -91,15 +93,17 @@ async function commonBeforeAll() {
     testGigs[0] = await Gig.createGig(platform.platform_id, 
                             {title: 'gig1', 
                             description: 'gig1', 
-                            compensation: 50, 
+                            compensation: "50.00", 
                             isRemote: true, 
-                            wordCount: 500});
+                            wordCount: 500,
+                            deadline: "2021-04-17"});
     testGigs[1] = await Gig.createGig(platform.platform_id, 
                             {title: 'gig2', 
                             description: 'gig2', 
-                            compensation: 500, 
+                            compensation: "500.00", 
                             isRemote: false, 
-                            wordCount: 100});
+                            wordCount: 100,
+                            deadline: "2021-04-17"});
 
     //portfolio
     const portfolio = await Portfolio.create(writer.writer_id, 'Portfolio');

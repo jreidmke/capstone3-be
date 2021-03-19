@@ -24,14 +24,21 @@ afterAll(commonAfterAll);
 describe("GET /writers/[writerId]/applications", function() {
     test("Get's all applications by user id", async function() {
         const resp = await request(app).get(`/writers/${testApplications[0].writerId}/applications`).set("authorization", tokens[0]);
-        expect(resp.body.apps).toEqual({id: expect.any(Number),
+        expect(resp.body.apps).toEqual([{id: expect.any(Number),
                                         gigId:  expect.any(Number),
-                                        writerId:  testApplications[0].writerId,
-                                        portfolioId:  testApplications[0].portfolioId,
+                                        writerId: testApplications[0].writerId,
+                                        portfolioId: testApplications[0].portfolioId,
                                         status: 'Pending',
-                                        createdAt: expect.any(String)
-                                    });
+                                        createdAt: expect.any(String),
+                                        firstName: expect.any(String),
+                                        lastName: expect.any(String),
+                                        portfolioTitle: expect.any(String),
+                                        platformId: expect.any(Number),
+                                        gigTitle: expect.any(String),
+                                        platformName: expect.any(String)
+                                    }]);
     });
+  
 
     test("Rejects get user apps on bad auth", async function() {
         const resp = await request(app).get(`/writers/${testApplications[0].writerId}/applications`).set("authorization", tokens[1]);

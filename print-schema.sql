@@ -13,7 +13,6 @@ CREATE TABLE writers(
     age INTEGER NOT NULL CHECK (age > 0),
     bio VARCHAR NOT NULL,
     expertise_1 INTEGER NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
-    expertise_2 INTEGER REFERENCES tags(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL
 );

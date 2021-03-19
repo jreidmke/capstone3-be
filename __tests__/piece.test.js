@@ -30,17 +30,18 @@ describe("GET /writers/[writerId]/pieces", function() {
               title: 'Piece',
               text: 'The text of the piece',
               createdAt: expect.any(String),
+              imageUrl: expect.any(String),
               updatedAt: null
             }]);
     });
     
-    test("throws not found error on bad id", async function() {
+    test("returns empty array with no pieces written", async function() {
         const resp = await request(app).get(`/writers/0/pieces`).set("authorization", tokens[0]);
-        expect(resp.body).toEqual({ error: { message: 'Writer: 0 Not Found!', status: 404 } })
+        expect(resp.body).toEqual({pieces: []})
     });
 
     test("get piece by id", async function() {
-        const resp = await request(app).get(`/writers/${piecePortfolio[0].writerId}/pieces/${piecePortfolio[0].id}`).set("authorization", tokens[0]);
+        const resp = await request(app).get(`/pieces/${piecePortfolio[0].id}`).set("authorization", tokens[0]);
         expect(resp.body.piece).toEqual({
             id: expect.any(Number),
             writerId: expect.any(Number),
@@ -48,6 +49,9 @@ describe("GET /writers/[writerId]/pieces", function() {
             text: 'The text of the piece',
             createdAt: expect.any(String),
             updatedAt: null,
+            firstName: expect.any(String),
+            lastName: expect.any(String),
+            imageUrl: expect.any(String),
             tags: [{ title: 'cooking', id: 1 }, { title: 'food', id: 2 }]
           });
     });
@@ -101,7 +105,7 @@ describe("PATCH /writers/[writerId]/piece/[pieceId]", function() {
     })                                  
 });
 
-//create piece
+// //create piece
 describe("POST /writers/[writerId]/pieces", function() {
     test("can post new piece", async function() {
         const resp = await request(app).post(`/writers/${piecePortfolio[0].writerId}/pieces/new`)
@@ -115,6 +119,7 @@ describe("POST /writers/[writerId]/pieces", function() {
             createdAt: expect.any(String)
         });
     });
+
     test("rejects post new piece with bad auth", async function() {
         const resp = await request(app).post(`/writers/${piecePortfolio[0].writerId}/pieces/new`)
                                             .send({title: "New Title", text: "New Text"})
@@ -147,6 +152,7 @@ describe("DELETE /writers/[writerId]/pieces/[pieceId]", function() {
             writer_id: expect.any(Number),
             title: 'Piece',
             text: 'The text of the piece',
+            pinned: expect.any(Boolean),
             created_at: expect.any(String),
             updated_at: null
         });
@@ -194,6 +200,3 @@ describe("POST/DELETE /writers/[writerId]/pieces/[pieceId]/tags/[tagId]", functi
         expect(resp.body).toEqual({ error: { message: 'Unauthorized', status: 401 } });
     });
 });
-
-
-  

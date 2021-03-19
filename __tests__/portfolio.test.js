@@ -34,17 +34,19 @@ describe("GET /writers/[writerId]/portfolios", function() {
     }); 
 
     test("get portfolio by id", async function() {
-        const resp = await request(app).get(`/writers/${piecePortfolio[0].writerId}/portfolios/${piecePortfolio[1].id}`).set("authorization", tokens[0]);
+        const resp = await request(app).get(`/portfolios/${piecePortfolio[1].id}`).set("authorization", tokens[0]);
         expect(resp.body.portfolio).toEqual({createdAt: expect.any(String), 
                                              id: expect.any(Number), 
                                              pieces: [], 
-                                             title: "Portfolio", 
+                                             title: "Portfolio",
+                                             firstName: expect.any(String),
+                                             lastName: expect.any(String),
                                              writerId: expect.any(Number)});
     });
 
     test("throws not found error on bad id", async function() {
         const resp = await request(app).get(`/writers/${piecePortfolio[0].writerId}/portfolios/0`).set("authorization", tokens[0]);
-        expect(resp.body).toEqual({ error: { message: 'Portfolio: 0 Not Found!', status: 404 } })
+        expect(resp.body).toEqual({ error: { message: 'Not Found', status: 404 } })
     });
 
     test("throws unauth with no token", async function() {

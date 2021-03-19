@@ -81,7 +81,8 @@ describe("POST /auth/register", function() {
                             firstName: "James", 
                             lastName: "Reid", 
                             age: 24, 
-                            bio: "I am a writer."});
+                            bio: "I am a writer.",
+                            expertise1: 2});
           expect(resp.statusCode).toEqual(201);
           expect(resp.body).toEqual({
             "token": expect.any(String),
