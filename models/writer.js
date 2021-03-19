@@ -376,7 +376,6 @@ class Writer {
           ON q.platform_id=u.platform_id
           WHERE q.writer_id=$1`, [writerId]
         );
-        console.log(result.rows);
         return result.rows;
       };
 

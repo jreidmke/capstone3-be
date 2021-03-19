@@ -88,7 +88,6 @@ class Gig {
                 WHERE title LIKE '%${tagTitle}%'`
             );
             let tags = tagRes.rows.map(t => parseInt(t.gig_id));
-            console.log(tags);
             if(!tags.length) throw new NotFoundError(`No Tags Match Tag: ${tagTitle}`)
             if(!whereExpressions.length) {
                 query += ` WHERE gigs.id IN (${tags.join(',')})`;
@@ -345,7 +344,6 @@ class Gig {
           ON w.expertise_1=t.id
           WHERE w.expertise_1 IN (${expertise}) OR w.expertise_2 IN (${expertise})`
         );
-        console.log(result.rows);
         return result.rows;
     };
 
