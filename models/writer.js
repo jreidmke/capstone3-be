@@ -197,7 +197,6 @@ class Writer {
           address2: "address_2",
           postalCode: "postal_code",
           expertise1: "expertise_1",
-          expertise2: "expertise_2",
           twitterUsername: "twitter_username",
           facebookUsername: "facebook_username",
           youtubeUsername: "youtube_username"

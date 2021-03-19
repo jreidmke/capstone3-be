@@ -342,7 +342,7 @@ class Gig {
           ON w.id=u.writer_id
           JOIN tags AS t
           ON w.expertise_1=t.id
-          WHERE w.expertise_1 IN (${expertise}) OR w.expertise_2 IN (${expertise})`
+          WHERE w.expertise_1 IN (${expertise})`
         );
         return result.rows;
     };
