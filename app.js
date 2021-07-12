@@ -33,14 +33,6 @@ app.use("/tags", tagRoutes);
 app.use("/pieces", pieceRoute);
 app.use("/portfolios", portfolioRoute);
 
-const corsOptions = {
-  origin: 'http://accidental-game.surge.sh/',
-  optionsSuccessStatus: 200
-}
-app.use(cors(corsOptions));
-app.options('*', cors());
-app.use('/', routes);
-
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {
     return next(new NotFoundError());
